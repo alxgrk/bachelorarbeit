@@ -22,7 +22,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.alxgrk.level2.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.alxgrk.level1.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -30,7 +30,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         Contact contact = new Contact("alxgrk", "github.com/alxgrk/bachelorarbeit",
                 "alexgirke@gmail.com");
-        return new ApiInfo("Level 2", "Example for Level 2 of the Richardson Maturity Model",
+        return new ApiInfo("Level 1", "Example for Level 1 of the Richardson Maturity Model",
                 "1.0.0", ""/* TODO */, contact, "Apache Licenes 2.0",
                 "http://www.apache.org/licenses/", Lists.newArrayList());
     }
