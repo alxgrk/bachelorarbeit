@@ -4,8 +4,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import javax.transaction.Transactional;
@@ -15,10 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -27,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.alxgrk.level3.Level3Application;
+import com.alxgrk.level3.hateoas.mediatype.MediaTypes;
 import com.alxgrk.level3.models.Account;
 import com.alxgrk.level3.models.Organization;
 import com.alxgrk.level3.models.Resource;
@@ -40,11 +37,6 @@ import com.google.common.collect.Sets;
 @WebAppConfiguration
 @ActiveProfiles("test")
 public class AccountControllerITest {
-
-    private MediaType contentTypeHal = new MediaType("application", "hal+json",
-            Charset.forName("utf8"));
-
-    private MediaType contentTypeJson = MediaType.APPLICATION_JSON_UTF8;
 
     private MockMvc mockMvc;
 
@@ -118,15 +110,15 @@ public class AccountControllerITest {
     public void testAccountsFound() throws Exception {
         mockMvc.perform(get("/accounts"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
-                .andExpect(jsonPath("$._embedded.accounts[0].id").value(idOne))
-                .andExpect(jsonPath("$._embedded.accounts[0].surname").value(userNameOne))
-                .andExpect(jsonPath("$._embedded.accounts[0].name").value(userNameOne))
-                .andExpect(jsonPath("$._embedded.accounts[0].username").value(userNameOne))
-                .andExpect(jsonPath("$._embedded.accounts[1].id").value(idTwo))
-                .andExpect(jsonPath("$._embedded.accounts[1].surname").value(userNameTwo))
-                .andExpect(jsonPath("$._embedded.accounts[1].name").value(userNameTwo))
-                .andExpect(jsonPath("$._embedded.accounts[1].username").value(userNameTwo));
+                .andExpect(content().contentType(MediaTypes.ACCOUNT_TYPE + ";charset=UTF-8"))
+                .andExpect(jsonPath("$.members[0].id").value(idOne))
+                .andExpect(jsonPath("$.members[0].surname").value(userNameOne))
+                .andExpect(jsonPath("$.members[0].name").value(userNameOne))
+                .andExpect(jsonPath("$.members[0].username").value(userNameOne))
+                .andExpect(jsonPath("$.members[1].id").value(idTwo))
+                .andExpect(jsonPath("$.members[1].surname").value(userNameTwo))
+                .andExpect(jsonPath("$.members[1].name").value(userNameTwo))
+                .andExpect(jsonPath("$.members[1].username").value(userNameTwo));
     }
 
     @Test
@@ -134,7 +126,7 @@ public class AccountControllerITest {
     public void testAccountFound() throws Exception {
         mockMvc.perform(get("/accounts/" + idOne))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
+                .andExpect(content().contentType(MediaTypes.ACCOUNT_TYPE + ";charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(idOne))
                 .andExpect(jsonPath("$.surname").value(userNameOne))
                 .andExpect(jsonPath("$.name").value(userNameOne))
@@ -144,7 +136,7 @@ public class AccountControllerITest {
     @Test
     @Transactional
     public void testAccountCreated() throws Exception {
-        mockMvc.perform(post("/accounts").contentType(contentTypeJson)
+        mockMvc.perform(post("/accounts").contentType(MediaTypes.ACCOUNT_TYPE)
                 .content("{"
                         + "     \"name\": \"test\","
                         + "     \"surname\": \"user\","
@@ -157,7 +149,7 @@ public class AccountControllerITest {
     @Test
     @Transactional
     public void testAccountConflictWithAlreadyExisting() throws Exception {
-        mockMvc.perform(post("/accounts").contentType(contentTypeJson)
+        mockMvc.perform(post("/accounts").contentType(MediaTypes.ACCOUNT_TYPE)
                 .content("{"
                         + "     \"name\": \"test\","
                         + "     \"surname\": \"user\","
@@ -170,7 +162,7 @@ public class AccountControllerITest {
     @Test
     @Transactional
     public void testAccountUpdated() throws Exception {
-        mockMvc.perform(put("/accounts/" + idOne).contentType(contentTypeJson)
+        mockMvc.perform(put("/accounts/" + idOne).contentType(MediaTypes.ACCOUNT_TYPE)
                 .content("{"
                         + "     \"name\": \"test\","
                         + "     \"surname\": \"user\","
@@ -182,7 +174,7 @@ public class AccountControllerITest {
     @Test
     @Transactional
     public void testAccountNotFound() throws Exception {
-        mockMvc.perform(put("/accounts/" + 123456).contentType(contentTypeJson)
+        mockMvc.perform(put("/accounts/" + 123456).contentType(MediaTypes.ACCOUNT_TYPE)
                 .content("{"
                         + "     \"name\": \"test\","
                         + "     \"surname\": \"user\","
@@ -203,20 +195,12 @@ public class AccountControllerITest {
     public void testAccountResourcesFound() throws Exception {
         mockMvc.perform(get("/accounts/" + idOne + "/resources"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
-                .andExpect(jsonPath("$._embedded.resources[0].id").isNumber())
-                .andExpect(jsonPath("$._embedded.resources[0].name").value("res"))
-                .andExpect(jsonPath("$._embedded.resources[0].bookedTimeslots")
+                .andExpect(content().contentType(MediaTypes.RESOURCE_TYPE + ";charset=UTF-8"))
+                .andExpect(jsonPath("$.members[0].id").isNumber())
+                .andExpect(jsonPath("$.members[0].name").value("res"))
+                .andExpect(jsonPath("$.members[0].bookedTimeslots")
                         .isArray())
-                .andExpect(jsonPath("$._embedded.resources[0].availableTimeslots")
+                .andExpect(jsonPath("$.members[0].availableTimeslots")
                         .isArray());
-    }
-
-    @SuppressWarnings("unchecked")
-    protected String json(Object o) throws IOException {
-        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-        this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON,
-                mockHttpOutputMessage);
-        return mockHttpOutputMessage.getBodyAsString();
     }
 }

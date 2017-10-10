@@ -4,8 +4,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import javax.transaction.Transactional;
@@ -15,10 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -27,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.alxgrk.level3.Level3Application;
+import com.alxgrk.level3.hateoas.mediatype.MediaTypes;
 import com.alxgrk.level3.models.Account;
 import com.alxgrk.level3.models.Resource;
 import com.alxgrk.level3.repos.AccountRepository;
@@ -38,11 +35,6 @@ import com.google.common.collect.Sets;
 @WebAppConfiguration
 @ActiveProfiles("test")
 public class ResourceControllerITest {
-
-    private MediaType contentTypeHal = new MediaType("application", "hal+json",
-            Charset.forName("utf8"));
-
-    private MediaType contentTypeJson = MediaType.APPLICATION_JSON_UTF8;
 
     private MockMvc mockMvc;
 
@@ -114,12 +106,12 @@ public class ResourceControllerITest {
     public void testResourcesFound() throws Exception {
         mockMvc.perform(get("/resources"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
-                .andExpect(jsonPath("$._embedded.resources[0].id").value(idOne))
-                .andExpect(jsonPath("$._embedded.resources[0].name").value(
+                .andExpect(content().contentType(MediaTypes.RESOURCE_TYPE + ";charset=UTF-8"))
+                .andExpect(jsonPath("$.members[0].id").value(idOne))
+                .andExpect(jsonPath("$.members[0].name").value(
                         resNameOne))
-                .andExpect(jsonPath("$._embedded.resources[1].id").value(idTwo))
-                .andExpect(jsonPath("$._embedded.resources[1].name").value(
+                .andExpect(jsonPath("$.members[1].id").value(idTwo))
+                .andExpect(jsonPath("$.members[1].name").value(
                         resNameTwo));
     }
 
@@ -128,7 +120,7 @@ public class ResourceControllerITest {
     public void testResourceFound() throws Exception {
         mockMvc.perform(get("/resources/" + idOne))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
+                .andExpect(content().contentType(MediaTypes.RESOURCE_TYPE + ";charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(idOne))
                 .andExpect(jsonPath("$.name").value(resNameOne));
     }
@@ -136,7 +128,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceCreated() throws Exception {
-        mockMvc.perform(post("/resources").contentType(contentTypeJson)
+        mockMvc.perform(post("/resources").contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"test\","
                         + "     \"availableTimeslots\": ["
@@ -166,7 +158,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceCreatedWithMissingTimeslots() throws Exception {
-        mockMvc.perform(post("/resources").contentType(contentTypeJson)
+        mockMvc.perform(post("/resources").contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"test\""
                         + "}"))
@@ -176,7 +168,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceConflictWithAlreadyExisting() throws Exception {
-        mockMvc.perform(post("/resources").contentType(contentTypeJson)
+        mockMvc.perform(post("/resources").contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"" + resNameOne + "\""
                         + "}"))
@@ -186,7 +178,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceUpdated() throws Exception {
-        mockMvc.perform(put("/resources/" + idOne).contentType(contentTypeJson)
+        mockMvc.perform(put("/resources/" + idOne).contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"test\","
                         + "     \"availableTimeslots\": ["
@@ -218,7 +210,7 @@ public class ResourceControllerITest {
     public void testResourceUpdatedWithMissingTimeslots() throws Exception {
         // TODO mapper misuses setting booked timeslots by getting all timeslots
         // and calling .addAll() there
-        mockMvc.perform(put("/resources/" + idOne).contentType(contentTypeJson)
+        mockMvc.perform(put("/resources/" + idOne).contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"test\","
                         + "     \"bookedTimeslots\": ["
@@ -248,7 +240,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceNotFound() throws Exception {
-        mockMvc.perform(put("/resources/" + 123456).contentType(contentTypeJson)
+        mockMvc.perform(put("/resources/" + 123456).contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"test\""
                         + "}"))
@@ -267,11 +259,11 @@ public class ResourceControllerITest {
     public void testResourceMembersFound() throws Exception {
         mockMvc.perform(get("/resources/" + idOne + "/administrators"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
-                .andExpect(jsonPath("$._embedded.accounts[0].id").isNumber())
-                .andExpect(jsonPath("$._embedded.accounts[0].surname").isEmpty())
-                .andExpect(jsonPath("$._embedded.accounts[0].name").value(username))
-                .andExpect(jsonPath("$._embedded.accounts[0].username").value(username));
+                .andExpect(content().contentType(MediaTypes.ACCOUNT_TYPE + ";charset=UTF-8"))
+                .andExpect(jsonPath("$.members[0].id").isNumber())
+                .andExpect(jsonPath("$.members[0].surname").isEmpty())
+                .andExpect(jsonPath("$.members[0].name").value(username))
+                .andExpect(jsonPath("$.members[0].username").value(username));
     }
 
     @Test
@@ -296,11 +288,4 @@ public class ResourceControllerITest {
                 .andExpect(status().isNoContent());
     }
 
-    @SuppressWarnings("unchecked")
-    protected String json(Object o) throws IOException {
-        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-        this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON,
-                mockHttpOutputMessage);
-        return mockHttpOutputMessage.getBodyAsString();
-    }
 }

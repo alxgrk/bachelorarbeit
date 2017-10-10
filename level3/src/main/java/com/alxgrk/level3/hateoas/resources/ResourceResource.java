@@ -8,11 +8,13 @@ package com.alxgrk.level3.hateoas.resources;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
+import org.springframework.http.HttpMethod;
 
 import com.alxgrk.level3.controller.ResourceController;
 import com.alxgrk.level3.hateoas.mapping.ResourceMapper;
+import com.alxgrk.level3.hateoas.mediatype.json.LinkWithMethod;
+import com.alxgrk.level3.hateoas.mediatype.json.ResourceSupportWithMethods;
 import com.alxgrk.level3.hateoas.rels.Rels;
 import com.alxgrk.level3.hateoas.rto.ResourceRto;
 import com.alxgrk.level3.models.Resource;
@@ -25,7 +27,7 @@ import lombok.Getter;
 @Relation(
         value = ResourceResource.RESOURCE_NAME,
         collectionRelation = ResourceResource.RESOURCE_NAME + 's')
-public class ResourceResource extends ResourceSupport {
+public class ResourceResource extends ResourceSupportWithMethods {
 
     public static final String RESOURCE_NAME = "resource";
 
@@ -43,16 +45,18 @@ public class ResourceResource extends ResourceSupport {
 
     public ResourceResource addSelfLink() {
 
-        add(linkTo(methodOn(ResourceController.class).getOne(resource.getId()))
-                .withSelfRel());
+        Link selfLink = linkTo(methodOn(ResourceController.class).getOne(resource.getId()))
+                .withSelfRel();
+        add(selfLink, HttpMethod.GET);
 
         return this;
     }
 
     public ResourceResource addAdministratorsLink() {
 
-        add(linkTo(methodOn(ResourceController.class).getAllAdministrators(resource.getId()))
-                .withRel(Rels.ADMINISTRATORS));
+        Link adminsLink = linkTo(methodOn(ResourceController.class)
+                .getAllAdministrators(resource.getId())).withRel(Rels.ADMINISTRATORS);
+        add(adminsLink, HttpMethod.GET);
 
         return this;
     }
@@ -63,7 +67,7 @@ public class ResourceResource extends ResourceSupport {
      * @param links
      * @return
      */
-    public ResourceResource addLinks(Link... links) {
+    public ResourceResource addLinks(LinkWithMethod... links) {
 
         add(links);
 

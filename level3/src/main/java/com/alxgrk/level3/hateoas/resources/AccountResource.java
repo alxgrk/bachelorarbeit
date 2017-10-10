@@ -8,12 +8,14 @@ package com.alxgrk.level3.hateoas.resources;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
+import org.springframework.http.HttpMethod;
 
 import com.alxgrk.level3.controller.AccountController;
 import com.alxgrk.level3.controller.OrganizationController;
 import com.alxgrk.level3.hateoas.mapping.AccountMapper;
+import com.alxgrk.level3.hateoas.mediatype.json.LinkWithMethod;
+import com.alxgrk.level3.hateoas.mediatype.json.ResourceSupportWithMethods;
 import com.alxgrk.level3.hateoas.rels.Rels;
 import com.alxgrk.level3.hateoas.rto.AccountRto;
 import com.alxgrk.level3.models.Account;
@@ -27,7 +29,7 @@ import lombok.Getter;
 @Relation(
         value = AccountResource.RESOURCE_NAME,
         collectionRelation = AccountResource.RESOURCE_NAME + 's')
-public class AccountResource extends ResourceSupport {
+public class AccountResource extends ResourceSupportWithMethods {
 
     public static final String RESOURCE_NAME = "account";
 
@@ -45,8 +47,9 @@ public class AccountResource extends ResourceSupport {
 
     public AccountResource addSelfLink() {
 
-        add(linkTo(methodOn(AccountController.class).getOne(account.getId()))
-                .withSelfRel());
+        Link selfLink = linkTo(methodOn(AccountController.class).getOne(account.getId()))
+                .withSelfRel();
+        add(selfLink, HttpMethod.GET);
 
         return this;
     }
@@ -55,9 +58,9 @@ public class AccountResource extends ResourceSupport {
 
         Organization organization = account.getOrganization();
         if (null != organization) {
-            add(linkTo(methodOn(OrganizationController.class)
-                    .getOne(organization.getId()))
-                            .withRel(Rels.ORGANIZATION));
+            Link orgLink = linkTo(methodOn(OrganizationController.class)
+                    .getOne(organization.getId())).withRel(Rels.ORGANIZATION);
+            add(orgLink, HttpMethod.GET);
         }
 
         return this;
@@ -65,8 +68,10 @@ public class AccountResource extends ResourceSupport {
 
     public AccountResource addAccountResourcesLink() {
 
-        add(linkTo(methodOn(AccountController.class).getAccountResources(account.getId()))
-                .withRel(Rels.RESOURCES));
+        Link resourcesLink = linkTo(methodOn(AccountController.class).getAccountResources(account
+                .getId()))
+                        .withRel(Rels.RESOURCES);
+        add(resourcesLink, HttpMethod.GET);
 
         return this;
     }
@@ -77,7 +82,7 @@ public class AccountResource extends ResourceSupport {
      * @param links
      * @return
      */
-    public AccountResource addLinks(Link... links) {
+    public AccountResource addLinks(LinkWithMethod... links) {
 
         add(links);
 

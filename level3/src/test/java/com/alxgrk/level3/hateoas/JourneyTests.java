@@ -9,8 +9,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,10 +19,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -33,6 +29,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.alxgrk.level3.Level3Application;
+import com.alxgrk.level3.hateoas.mediatype.MediaTypes;
 import com.alxgrk.level3.hateoas.rels.Rels;
 import com.alxgrk.level3.models.Account;
 import com.alxgrk.level3.models.Organization;
@@ -54,9 +51,6 @@ public class JourneyTests {
             Rels.ADMINISTRATORS,
             Rels.ATTACH,
             Rels.DETACH);
-
-    private MediaType contentTypeHal = new MediaType("application", "hal+json",
-            Charset.forName("utf8"));
 
     private MockMvc mockMvc;
 
@@ -142,7 +136,6 @@ public class JourneyTests {
     @Test
     @Transactional
     public void testAttachAndDetachResourceToUserJourney() throws Exception {
-        String prefix = "http://localhost";
         String entryPoint = "/";
         String firstHref = "/resources";
         String secondHref = "/resources/" + resId + "/administrators";
@@ -151,46 +144,35 @@ public class JourneyTests {
 
         mockMvc.perform(get(entryPoint))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
-                .andExpect(jsonPath("$._links." + attachAndDetachResourceToUserJourney.get(0)
-                        + ".href").value(prefix + firstHref));
+                .andExpect(content().contentType(MediaTypes.ROOT_TYPE + ";charset=UTF-8"))
+                .andExpect(jsonPath("$._links[3].rel")
+                        .value(attachAndDetachResourceToUserJourney.get(0)));
 
         mockMvc.perform(get(firstHref))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
-                .andExpect(jsonPath("$._embedded.resources[0].name").value(resName))
-                .andExpect(jsonPath("$._embedded.resources[0]._links."
-                        + attachAndDetachResourceToUserJourney.get(1)
-                        + ".href").value(prefix + secondHref));
+                .andExpect(content().contentType(MediaTypes.RESOURCE_TYPE + ";charset=UTF-8"))
+                .andExpect(jsonPath("$.members[0].name").value(resName))
+                .andExpect(jsonPath("$.members[0]._links[1].rel")
+                        .value(attachAndDetachResourceToUserJourney.get(1)));
 
         mockMvc.perform(get(secondHref))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
-                .andExpect(jsonPath("$._links." + attachAndDetachResourceToUserJourney.get(2)
-                        + ".href").value(prefix + secondHref + "?username={username}"))
-                .andExpect(jsonPath("$._links." + attachAndDetachResourceToUserJourney.get(2)
-                        + ".templated").value("true"));
+                .andExpect(content().contentType(MediaTypes.ACCOUNT_TYPE + ";charset=UTF-8"))
+                .andExpect(jsonPath("$._links[1].rel")
+                        .value(attachAndDetachResourceToUserJourney.get(2)));
 
         mockMvc.perform(post(thirdHref).param("username", userNameTwo))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get(secondHref))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
-                .andExpect(jsonPath("$._embedded.accounts[0].username").value(userNameTwo))
-                .andExpect(jsonPath("$._embedded.accounts[0]._links."
-                        + attachAndDetachResourceToUserJourney.get(3) + ".href")
-                                .value(prefix + fourthHref));
+                .andExpect(content().contentType(MediaTypes.ACCOUNT_TYPE + ";charset=UTF-8"))
+                .andExpect(jsonPath("$.members[0].username").value(userNameTwo))
+                .andExpect(jsonPath("$.members[0]._links[1].rel")
+                        .value(attachAndDetachResourceToUserJourney.get(3)));
 
         mockMvc.perform(delete(fourthHref))
                 .andExpect(status().isNoContent());
     }
 
-    @SuppressWarnings("unchecked")
-    protected String json(Object o) throws IOException {
-        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-        this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON,
-                mockHttpOutputMessage);
-        return mockHttpOutputMessage.getBodyAsString();
-    }
 }

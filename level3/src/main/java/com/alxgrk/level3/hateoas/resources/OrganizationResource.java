@@ -8,11 +8,13 @@ package com.alxgrk.level3.hateoas.resources;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
+import org.springframework.http.HttpMethod;
 
 import com.alxgrk.level3.controller.OrganizationController;
 import com.alxgrk.level3.hateoas.mapping.OrganizationMapper;
+import com.alxgrk.level3.hateoas.mediatype.json.LinkWithMethod;
+import com.alxgrk.level3.hateoas.mediatype.json.ResourceSupportWithMethods;
 import com.alxgrk.level3.hateoas.rels.Rels;
 import com.alxgrk.level3.hateoas.rto.OrganizationRto;
 import com.alxgrk.level3.models.Organization;
@@ -25,7 +27,7 @@ import lombok.Getter;
 @Relation(
         value = OrganizationResource.RESOURCE_NAME,
         collectionRelation = OrganizationResource.RESOURCE_NAME + 's')
-public class OrganizationResource extends ResourceSupport {
+public class OrganizationResource extends ResourceSupportWithMethods {
 
     public static final String RESOURCE_NAME = "organization";
 
@@ -43,16 +45,18 @@ public class OrganizationResource extends ResourceSupport {
 
     public OrganizationResource addSelfLink() {
 
-        add(linkTo(methodOn(OrganizationController.class).getOne(organization.getId()))
-                .withSelfRel());
+        Link selfLink = linkTo(methodOn(OrganizationController.class).getOne(organization.getId()))
+                .withSelfRel();
+        add(selfLink, HttpMethod.GET);
 
         return this;
     }
 
     public OrganizationResource addMembersLink() {
 
-        add(linkTo(methodOn(OrganizationController.class).getAllMembers(organization.getId()))
-                .withRel(Rels.MEMBERS));
+        Link membersLink = linkTo(methodOn(OrganizationController.class)
+                .getAllMembers(organization.getId())).withRel(Rels.MEMBERS);
+        add(membersLink, HttpMethod.GET);
 
         return this;
     }
@@ -63,7 +67,7 @@ public class OrganizationResource extends ResourceSupport {
      * @param links
      * @return
      */
-    public OrganizationResource addLinks(Link... links) {
+    public OrganizationResource addLinks(LinkWithMethod... links) {
 
         add(links);
 

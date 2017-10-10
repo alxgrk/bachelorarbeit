@@ -11,36 +11,39 @@ import java.util.Collection;
 
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceSupport;
-import org.springframework.hateoas.Resources;
+import org.springframework.http.HttpMethod;
 
 import com.alxgrk.level3.controller.CollectionController;
+import com.alxgrk.level3.hateoas.mediatype.json.LinkWithMethod;
+import com.alxgrk.level3.hateoas.mediatype.json.ResourcesWithMethods;
 
 public class ResourcesWithLinks<RESOURCE extends ResourceSupport> {
 
-    private final Resources<RESOURCE> resources;
+    private final ResourcesWithMethods<RESOURCE> resources;
 
     private final CollectionController<?, ?> collectionController;
 
     public ResourcesWithLinks(Collection<RESOURCE> resources,
             CollectionController<?, ?> collectionController) {
-        this.resources = new Resources<>(resources);
+        this.resources = new ResourcesWithMethods<>(resources);
         this.collectionController = collectionController;
     }
 
     public ResourcesWithLinks<RESOURCE> addSelfLink() {
-        resources.add(linkTo(methodOn(collectionController.getClass()).getAll())
-                .withSelfRel());
+        Link selfLink = linkTo(methodOn(collectionController.getClass()).getAll())
+                .withSelfRel();
+        resources.add(selfLink, HttpMethod.GET);
 
         return this;
     }
 
-    public ResourcesWithLinks<RESOURCE> addCustomLinks(Link... links) {
+    public ResourcesWithLinks<RESOURCE> addCustomLinks(LinkWithMethod... links) {
         resources.add(links);
 
         return this;
     }
 
-    public Resources<RESOURCE> create() {
+    public ResourcesWithMethods<RESOURCE> create() {
         return resources;
     }
 

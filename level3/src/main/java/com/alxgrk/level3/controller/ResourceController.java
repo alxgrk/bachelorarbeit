@@ -1,6 +1,7 @@
 package com.alxgrk.level3.controller;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+import static org.springframework.http.HttpMethod.*;
 
 import java.net.URI;
 import java.util.List;
@@ -13,7 +14,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +29,9 @@ import com.alxgrk.level3.error.exceptions.timeslot.NoAvailableTimeslotsException
 import com.alxgrk.level3.error.exceptions.timeslot.TimeslotsNotAvailableException;
 import com.alxgrk.level3.error.exceptions.timeslot.TimeslotsToBookClashException;
 import com.alxgrk.level3.hateoas.mapping.ResourceMapper;
+import com.alxgrk.level3.hateoas.mediatype.MediaTypes;
+import com.alxgrk.level3.hateoas.mediatype.json.LinkWithMethod;
+import com.alxgrk.level3.hateoas.mediatype.json.ResourcesWithMethods;
 import com.alxgrk.level3.hateoas.rels.Rels;
 import com.alxgrk.level3.hateoas.resources.AccountResource;
 import com.alxgrk.level3.hateoas.resources.ResourceResource;
@@ -69,8 +72,8 @@ public class ResourceController implements CollectionController<ResourceRto, Res
     // -------------------
 
     @Override
-    @RequestMapping(method = RequestMethod.GET)
-    public Resources<ResourceResource> getAll() {
+    @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.RESOURCE_TYPE)
+    public ResourcesWithMethods<ResourceResource> getAll() {
         List<ResourceResource> resourceResources = resourceRepository.findAll()
                 .stream()
                 .map(ResourceResource::new)
@@ -87,7 +90,7 @@ public class ResourceController implements CollectionController<ResourceRto, Res
     // ------------------
 
     @Override
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaTypes.RESOURCE_TYPE)
     public ResponseEntity<?> addOne(@RequestBody ResourceRto input) {
         Optional<Resource> resourceOptional = resourceRepository.findByName(input
                 .getName());
@@ -120,7 +123,10 @@ public class ResourceController implements CollectionController<ResourceRto, Res
     }
 
     @Override
-    @RequestMapping(method = RequestMethod.GET, value = "/{resId}")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{resId}",
+            produces = MediaTypes.RESOURCE_TYPE)
     public ResourceResource getOne(@PathVariable Long resId) {
         Resource resource = validator.validateResource(resId);
 
@@ -132,7 +138,10 @@ public class ResourceController implements CollectionController<ResourceRto, Res
     }
 
     @Override
-    @RequestMapping(method = RequestMethod.PUT, value = "/{resId}")
+    @RequestMapping(
+            method = RequestMethod.PUT,
+            value = "/{resId}",
+            consumes = MediaTypes.RESOURCE_TYPE)
     public ResponseEntity<?> updateOne(@PathVariable Long resId,
             @RequestBody ResourceRto input) {
         Resource resource = validator.validateResource(resId);
@@ -170,8 +179,9 @@ public class ResourceController implements CollectionController<ResourceRto, Res
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{resId}/administrators")
-    public Resources<AccountResource> getAllAdministrators(@PathVariable Long resId) {
+            value = "/{resId}/administrators",
+            produces = MediaTypes.ACCOUNT_TYPE)
+    public ResourcesWithMethods<AccountResource> getAllAdministrators(@PathVariable Long resId) {
         Resource resource = validator.validateResource(resId);
 
         // prepare each account
@@ -184,7 +194,7 @@ public class ResourceController implements CollectionController<ResourceRto, Res
                                     .withRel(Rels.DETACH);
 
                     return r.addSelfLink()
-                            .addLinks(detachLink);
+                            .addLinks(new LinkWithMethod(detachLink, DELETE));
                 })
                 .collect(Collectors.toList());
 
@@ -196,7 +206,7 @@ public class ResourceController implements CollectionController<ResourceRto, Res
 
         return new ResourcesWithLinks<>(accountResources, this)
                 .addSelfLink()
-                .addCustomLinks(attachLink)
+                .addCustomLinks(new LinkWithMethod(attachLink, POST))
                 .create();
     }
 

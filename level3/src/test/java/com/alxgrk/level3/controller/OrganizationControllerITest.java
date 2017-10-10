@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import javax.transaction.Transactional;
@@ -27,6 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.alxgrk.level3.Level3Application;
+import com.alxgrk.level3.hateoas.mediatype.MediaTypes;
 import com.alxgrk.level3.models.Account;
 import com.alxgrk.level3.models.Organization;
 import com.alxgrk.level3.repos.AccountRepository;
@@ -38,11 +38,6 @@ import com.google.common.collect.Sets;
 @WebAppConfiguration
 @ActiveProfiles("test")
 public class OrganizationControllerITest {
-
-    private MediaType contentTypeHal = new MediaType("application", "hal+json",
-            Charset.forName("utf8"));
-
-    private MediaType contentTypeJson = MediaType.APPLICATION_JSON_UTF8;
 
     private MockMvc mockMvc;
 
@@ -116,12 +111,12 @@ public class OrganizationControllerITest {
     public void testOrganizationsFound() throws Exception {
         mockMvc.perform(get("/orgs"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
-                .andExpect(jsonPath("$._embedded.organizations[0].id").value(idOne))
-                .andExpect(jsonPath("$._embedded.organizations[0].name").value(
+                .andExpect(content().contentType(MediaTypes.ORGANIZATION_TYPE + ";charset=UTF-8"))
+                .andExpect(jsonPath("$.members[0].id").value(idOne))
+                .andExpect(jsonPath("$.members[0].name").value(
                         orgNameOne))
-                .andExpect(jsonPath("$._embedded.organizations[1].id").value(idTwo))
-                .andExpect(jsonPath("$._embedded.organizations[1].name").value(
+                .andExpect(jsonPath("$.members[1].id").value(idTwo))
+                .andExpect(jsonPath("$.members[1].name").value(
                         orgNameTwo));
     }
 
@@ -130,7 +125,7 @@ public class OrganizationControllerITest {
     public void testOrganizationFound() throws Exception {
         mockMvc.perform(get("/orgs/" + idOne))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
+                .andExpect(content().contentType(MediaTypes.ORGANIZATION_TYPE + ";charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(idOne))
                 .andExpect(jsonPath("$.name").value(orgNameOne));
     }
@@ -138,7 +133,7 @@ public class OrganizationControllerITest {
     @Test
     @Transactional
     public void testOrganizationCreated() throws Exception {
-        mockMvc.perform(post("/orgs").contentType(contentTypeJson)
+        mockMvc.perform(post("/orgs").contentType(MediaTypes.ORGANIZATION_TYPE)
                 .content("{"
                         + "     \"name\": \"test\""
                         + "}"))
@@ -148,7 +143,7 @@ public class OrganizationControllerITest {
     @Test
     @Transactional
     public void testOrganizationConflictWithAlreadyExisting() throws Exception {
-        mockMvc.perform(post("/orgs").contentType(contentTypeJson)
+        mockMvc.perform(post("/orgs").contentType(MediaTypes.ORGANIZATION_TYPE)
                 .content("{"
                         + "     \"name\": \"" + orgNameOne + "\""
                         + "}"))
@@ -158,7 +153,7 @@ public class OrganizationControllerITest {
     @Test
     @Transactional
     public void testOrganizationUpdated() throws Exception {
-        mockMvc.perform(put("/orgs/" + idOne).contentType(contentTypeJson)
+        mockMvc.perform(put("/orgs/" + idOne).contentType(MediaTypes.ORGANIZATION_TYPE)
                 .content("{"
                         + "     \"name\": \"test\""
                         + "}"))
@@ -168,7 +163,7 @@ public class OrganizationControllerITest {
     @Test
     @Transactional
     public void testOrganizationNotFound() throws Exception {
-        mockMvc.perform(put("/orgs/" + 123456).contentType(contentTypeJson)
+        mockMvc.perform(put("/orgs/" + 123456).contentType(MediaTypes.ORGANIZATION_TYPE)
                 .content("{"
                         + "     \"name\": \"test\""
                         + "}"))
@@ -187,11 +182,11 @@ public class OrganizationControllerITest {
     public void testOrganizationMembersFound() throws Exception {
         mockMvc.perform(get("/orgs/" + idOne + "/accounts"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentTypeHal))
-                .andExpect(jsonPath("$._embedded.accounts[0].id").isNumber())
-                .andExpect(jsonPath("$._embedded.accounts[0].surname").isEmpty())
-                .andExpect(jsonPath("$._embedded.accounts[0].name").value(username))
-                .andExpect(jsonPath("$._embedded.accounts[0].username").value(username));
+                .andExpect(content().contentType(MediaTypes.ACCOUNT_TYPE + ";charset=UTF-8"))
+                .andExpect(jsonPath("$.members[0].id").isNumber())
+                .andExpect(jsonPath("$.members[0].surname").isEmpty())
+                .andExpect(jsonPath("$.members[0].name").value(username))
+                .andExpect(jsonPath("$.members[0].username").value(username));
     }
 
     @Test

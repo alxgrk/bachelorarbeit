@@ -1,6 +1,7 @@
 package com.alxgrk.level3.controller;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+import static org.springframework.http.HttpMethod.*;
 
 import java.net.URI;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alxgrk.level3.error.AlreadyExistsError;
 import com.alxgrk.level3.hateoas.mapping.AccountMapper;
+import com.alxgrk.level3.hateoas.mediatype.MediaTypes;
+import com.alxgrk.level3.hateoas.mediatype.json.LinkWithMethod;
+import com.alxgrk.level3.hateoas.mediatype.json.ResourcesWithMethods;
 import com.alxgrk.level3.hateoas.rels.Rels;
 import com.alxgrk.level3.hateoas.resources.AccountResource;
 import com.alxgrk.level3.hateoas.resources.ResourceResource;
@@ -55,8 +58,8 @@ public class AccountController implements CollectionController<AccountRto, Accou
     // ------------------
 
     @Override
-    @RequestMapping(method = RequestMethod.GET)
-    public Resources<AccountResource> getAll() {
+    @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.ACCOUNT_TYPE)
+    public ResourcesWithMethods<AccountResource> getAll() {
         List<AccountResource> accountResources = repository.findAll()
                 .stream()
                 .map(AccountResource::new)
@@ -75,7 +78,7 @@ public class AccountController implements CollectionController<AccountRto, Accou
     // ------------------
 
     @Override
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaTypes.ACCOUNT_TYPE)
     public ResponseEntity<?> addOne(@RequestBody AccountRto input) {
         Optional<Account> accountOptional = repository.findByUsername(input.getUsername());
 
@@ -104,7 +107,8 @@ public class AccountController implements CollectionController<AccountRto, Accou
     @Override
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{accountId}")
+            value = "/{accountId}",
+            produces = MediaTypes.ACCOUNT_TYPE)
     public AccountResource getOne(@PathVariable Long accountId) {
         Account account = validator.validateAccount(accountId);
         AccountResource accountResource = new AccountResource(account);
@@ -118,7 +122,8 @@ public class AccountController implements CollectionController<AccountRto, Accou
 
     @RequestMapping(
             method = RequestMethod.PUT,
-            value = "/{accountId}")
+            value = "/{accountId}",
+            consumes = MediaTypes.ACCOUNT_TYPE)
     public ResponseEntity<?> updateOne(@PathVariable Long accountId,
             @RequestBody @JsonUnwrapped ShortenedAccount input) {
         // TODO correct unwrapping of ShortenedAccount
@@ -162,8 +167,10 @@ public class AccountController implements CollectionController<AccountRto, Accou
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{accountId}/resources")
-    public Resources<ResourceResource> getAccountResources(@PathVariable Long accountId) {
+            value = "/{accountId}/resources",
+            produces = MediaTypes.RESOURCE_TYPE)
+    public ResourcesWithMethods<ResourceResource> getAccountResources(
+            @PathVariable Long accountId) {
         Account account = validator.validateAccount(accountId);
 
         // prepare each resource
@@ -176,7 +183,7 @@ public class AccountController implements CollectionController<AccountRto, Accou
                                     .withRel(Rels.DETACH);
 
                     return r.addSelfLink()
-                            .addLinks(detachLink);
+                            .addLinks(new LinkWithMethod(detachLink, DELETE));
                 })
                 .collect(Collectors.toList());
 
@@ -186,7 +193,7 @@ public class AccountController implements CollectionController<AccountRto, Accou
                         .withSelfRel();
 
         return new ResourcesWithLinks<>(accountResources, this)
-                .addCustomLinks(selfLink)
+                .addCustomLinks(new LinkWithMethod(selfLink, GET))
                 .create();
     }
 

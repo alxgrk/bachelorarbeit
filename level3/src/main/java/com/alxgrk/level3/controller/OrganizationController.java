@@ -1,6 +1,7 @@
 package com.alxgrk.level3.controller;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+import static org.springframework.http.HttpMethod.*;
 
 import java.net.URI;
 import java.util.List;
@@ -13,7 +14,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alxgrk.level3.error.AlreadyExistsError;
 import com.alxgrk.level3.hateoas.mapping.OrganizationMapper;
+import com.alxgrk.level3.hateoas.mediatype.MediaTypes;
+import com.alxgrk.level3.hateoas.mediatype.json.LinkWithMethod;
+import com.alxgrk.level3.hateoas.mediatype.json.ResourcesWithMethods;
 import com.alxgrk.level3.hateoas.rels.Rels;
 import com.alxgrk.level3.hateoas.resources.AccountResource;
 import com.alxgrk.level3.hateoas.resources.OrganizationResource;
@@ -64,8 +67,8 @@ public class OrganizationController implements
     // -----------------------
 
     @Override
-    @RequestMapping(method = RequestMethod.GET)
-    public Resources<OrganizationResource> getAll() {
+    @RequestMapping(method = RequestMethod.GET, produces = MediaTypes.ORGANIZATION_TYPE)
+    public ResourcesWithMethods<OrganizationResource> getAll() {
         List<OrganizationResource> organizationResources = organizationRepository.findAll()
                 .stream()
                 .map(OrganizationResource::new)
@@ -82,7 +85,7 @@ public class OrganizationController implements
     // ----------------------
 
     @Override
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaTypes.ORGANIZATION_TYPE)
     public ResponseEntity<?> addOne(@RequestBody OrganizationRto input) {
         Optional<Organization> organizationOptional = organizationRepository.findByName(input
                 .getName());
@@ -109,7 +112,10 @@ public class OrganizationController implements
     }
 
     @Override
-    @RequestMapping(method = RequestMethod.GET, value = "/{orgId}")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{orgId}",
+            produces = MediaTypes.ORGANIZATION_TYPE)
     public OrganizationResource getOne(@PathVariable Long orgId) {
         Organization organization = validator.validateOrganization(orgId);
 
@@ -121,7 +127,10 @@ public class OrganizationController implements
     }
 
     @Override
-    @RequestMapping(method = RequestMethod.PUT, value = "/{orgId}")
+    @RequestMapping(
+            method = RequestMethod.PUT,
+            value = "/{orgId}",
+            consumes = MediaTypes.ORGANIZATION_TYPE)
     public ResponseEntity<?> updateOne(@PathVariable Long orgId,
             @RequestBody OrganizationRto input) {
         Organization organization = validator.validateOrganization(orgId);
@@ -153,8 +162,9 @@ public class OrganizationController implements
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{orgId}/accounts")
-    public Resources<AccountResource> getAllMembers(@PathVariable Long orgId) {
+            value = "/{orgId}/accounts",
+            produces = MediaTypes.ACCOUNT_TYPE)
+    public ResourcesWithMethods<AccountResource> getAllMembers(@PathVariable Long orgId) {
         Organization organization = validator.validateOrganization(orgId);
 
         // prepare each account
@@ -167,7 +177,7 @@ public class OrganizationController implements
                                     .withRel(Rels.DETACH);
 
                     return r.addSelfLink()
-                            .addLinks(detachLink);
+                            .addLinks(new LinkWithMethod(detachLink, DELETE));
                 })
                 .collect(Collectors.toList());
 
@@ -179,7 +189,7 @@ public class OrganizationController implements
 
         return new ResourcesWithLinks<>(accountResources, this)
                 .addSelfLink()
-                .addCustomLinks(attachLink)
+                .addCustomLinks(new LinkWithMethod(attachLink, POST))
                 .create();
     }
 
