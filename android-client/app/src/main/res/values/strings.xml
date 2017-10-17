@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Bachelorarbeit</string>
+    <string name="creator_name">Alexander Girke</string>
+    <string name="creator_email">alexgirke@web.de</string>
+
+    <string name="navigation_drawer_open">Navigationsleiste öffnen</string>
+    <string name="navigation_drawer_close">Navigationsleiste schließen</string>
+
+    <string name="action_settings">Einstellungen</string>
+
+    <string name="nav_level1">Level 1</string>
+    <string name="nav_level2">Level 2</string>
+    <string name="nav_level3">Level 3</string>
+    <string name="nav_subgroup">Information</string>
+    <string name="nav_subgroup_github">Code on Github</string>
+    <string name="title_activity_settings">Einstellungen</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">Einstellungen</string>
+
+    <string name="pref_title_display_name">Einstiegs-URL</string>
+    <string name="pref_default_display_name">http://localhost:8080/</string>
+
+</resources>
