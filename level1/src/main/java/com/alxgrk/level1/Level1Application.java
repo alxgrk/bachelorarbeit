@@ -99,7 +99,9 @@ public class Level1Application {
 
         return (evt) -> Arrays.asList("jhoeller,dsyer,pwebb,ogierke,rwinch,mfisher,mpollack,jlong"
                 .split(",")).forEach(a -> {
-                    Account account = new Account(a, "password");
+                    Account account = new Account(a, "password")
+                            .setSurname(String.valueOf(a.charAt(0)))
+                            .setName(a.substring(1));
                     account.setOrganization(organization);
                     if (accountRepository.exists(Example.of(account))) {
                         Account savedAccount = accountRepository.findOne(Example.of(account));
