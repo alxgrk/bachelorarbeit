@@ -3,18 +3,15 @@ package com.alxgrk.bachelorarbeit;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.google.common.collect.Lists;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;

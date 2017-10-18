@@ -1,37 +1,26 @@
 package com.alxgrk.bachelorarbeit;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.MenuItem;
-import android.support.v4.app.NavUtils;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import java.util.List;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Set;
 
 public class SettingsActivity extends AppCompatActivity {
 
     public static final String ENTRY_URL_KEY = "ENTRY_URL";
 
-    public static final String ENTRY_URL_DEFAULT = "http://192.168.42.37:8080/";
+    public static final String ENTRY_URL_DEFAULT = "http://alxgrk-bachelor-level3.eu-central-1.elasticbeanstalk.com/";
 
     public static final String SHARED_PREF_NAME = "BACHELOR_APP_WIDE_PREFS";
 
@@ -59,8 +48,14 @@ public class SettingsActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(ENTRY_URL_KEY, s.toString()).apply();
+                try {
+                    URL url = new URL(s.toString());
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString(ENTRY_URL_KEY, url.toString()).apply();
+                } catch (MalformedURLException e) {
+                    Toast.makeText(SettingsActivity.this,
+                            "Not saving enter text - no URL!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

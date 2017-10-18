@@ -1,23 +1,24 @@
 package com.alxgrk.bachelorarbeit.root;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.alxgrk.bachelorarbeit.AbstractAsyncTask;
-import com.alxgrk.bachelorarbeit.MainActivity;
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.SettingsActivity;
+import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
+import com.google.common.collect.Collections2;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -25,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -75,7 +75,8 @@ public class RootFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootContainer = (LinearLayout) inflater.inflate(R.layout.fragment_root, container, false);
+        ScrollView parent = (ScrollView) inflater.inflate(R.layout.fragment_root, container, false);
+        rootContainer = parent.findViewById(R.id.root_container);
         return rootContainer;
     }
 
@@ -96,6 +97,12 @@ public class RootFragment extends Fragment {
         mListener = null;
     }
 
+    void switchToAccountsFragment(String nextHref) {
+        Fragment fragment = AccountsFragment.newInstance(nextHref);
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.main_fragment_layout, fragment).commit();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -107,7 +114,7 @@ public class RootFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction();
+        void onFragmentInteraction(RootFragment rootFragment);
     }
 
     class RootAsyncTask extends AbstractAsyncTask<Root> {
@@ -131,10 +138,8 @@ public class RootFragment extends Fragment {
 
         @Override
         protected void doAfter(Root root) {
-            Collection<RootUi.RootButton> rootButtons = root.getLinks()
-                    .stream()
-                    .map(l -> new RootUi.RootButton(l.getRel(), l.getHref()))
-                    .collect(Collectors.toList());
+            Collection<RootUi.RootButton> rootButtons = Collections2.transform(root.getLinks(),
+                    l -> new RootUi.RootButton(l.getRel(), l.getHref()));
 
             RootUi rootUi = RootUi.builder(RootFragment.this).buttonSpecs(rootButtons).build();
 
@@ -143,7 +148,7 @@ public class RootFragment extends Fragment {
             }
 
             if (mListener != null)
-                mListener.onFragmentInteraction();
+                mListener.onFragmentInteraction(RootFragment.this);
         }
     }
 }

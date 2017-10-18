@@ -11,7 +11,15 @@ import java.util.Map;
 
 import lombok.Getter;
 
-import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.*;
+import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.ACCOUNTS;
+import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.ADMINISTRATORS;
+import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.ATTACH;
+import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.DETACH;
+import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.MEMBERS;
+import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.ORGANIZATION;
+import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.ORGANIZATIONS;
+import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.RESOURCES;
+import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.SELF;
 
 public class PossibleRelationMapping {
 

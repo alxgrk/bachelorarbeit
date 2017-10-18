@@ -17,6 +17,7 @@ import com.alxgrk.bachelorarbeit.SettingsActivity;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.alxgrk.bachelorarbeit.root.Root;
 import com.alxgrk.bachelorarbeit.root.RootUi;
+import com.google.common.collect.Collections2;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -24,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -106,7 +106,7 @@ public class OrganizationsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction();
+        void onFragmentInteraction(OrganizationsFragment rootFragment);
     }
 
     class RootAsyncTask extends AbstractAsyncTask<Root> {
@@ -130,19 +130,17 @@ public class OrganizationsFragment extends Fragment {
 
         @Override
         protected void doAfter(Root root) {
-            Collection<RootUi.RootButton> rootButtons = root.getLinks()
-                    .stream()
-                    .map(l -> new RootUi.RootButton(l.getRel(), l.getHref()))
-                    .collect(Collectors.toList());
+            Collection<RootUi.RootButton> rootButtons = Collections2.transform(root.getLinks(),
+                    l -> new RootUi.RootButton(l.getRel(), l.getHref()));
 
-            RootUi rootUi = RootUi.builder(OrganizationsFragment.this).buttonSpecs(rootButtons).build();
-
-            for (Button button : rootUi.getUiButtons()) {
-                rootContainer.addView(button);
-            }
+//            RootUi rootUi = RootUi.builder(OrganizationsFragment.this).buttonSpecs(rootButtons).build();
+//
+//            for (Button button : rootUi.getUiButtons()) {
+//                rootContainer.addView(button);
+//            }
 
             if (mListener != null)
-                mListener.onFragmentInteraction();
+                mListener.onFragmentInteraction(OrganizationsFragment.this);
         }
     }
 }

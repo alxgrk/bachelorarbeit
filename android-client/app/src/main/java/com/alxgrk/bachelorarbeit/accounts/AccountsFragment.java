@@ -3,6 +3,7 @@ package com.alxgrk.bachelorarbeit.accounts;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,13 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.alxgrk.bachelorarbeit.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.SettingsActivity;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
-import com.alxgrk.bachelorarbeit.root.Root;
-import com.alxgrk.bachelorarbeit.root.RootUi;
+import com.google.common.collect.Collections2;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -24,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -41,9 +41,11 @@ public class AccountsFragment extends Fragment {
 
     private static final String TAG = AccountsFragment.class.getSimpleName();
 
+    private static final String NEXT_HREF_ARG = "NEXT_HREF";
+
     private OnFragmentInteractionListener mListener;
 
-    private LinearLayout rootContainer;
+    private LinearLayout accountsContainer;
 
     public AccountsFragment() {
         // Required empty public constructor
@@ -54,28 +56,32 @@ public class AccountsFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @return A new instance of fragment FragmentOne.
+     * @param nextHref
      */
-    public static AccountsFragment newInstance() {
+    public static AccountsFragment newInstance(String nextHref) {
         AccountsFragment fragment = new AccountsFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
+        Bundle args = new Bundle();
+        args.putString(NEXT_HREF_ARG, nextHref);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            String nextHref = getArguments().getString(NEXT_HREF_ARG);
+            new AccountsAsyncTask(nextHref).execute();
+        }
 
-        new RootAsyncTask(this).execute();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootContainer = (LinearLayout) inflater.inflate(R.layout.fragment_root, container, false);
-        return rootContainer;
+        ScrollView parent = (ScrollView) inflater.inflate(R.layout.fragment_root, container, false);
+        accountsContainer = parent.findViewById(R.id.root_container);
+        return accountsContainer;
     }
 
     @Override
@@ -106,43 +112,47 @@ public class AccountsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction();
+        void onFragmentInteraction(AccountsFragment rootFragment);
     }
 
-    class RootAsyncTask extends AbstractAsyncTask<Root> {
+    class AccountsAsyncTask extends AbstractAsyncTask<AccountCollection> {
 
-        private final String entryUrl;
+        private final String nextHref;
 
-        RootAsyncTask(Fragment fragment) {
-            super(HateoasMediaType.ROOT_TYPE);
+        AccountsAsyncTask(String nextHref) {
+            super(HateoasMediaType.ACCOUNT_TYPE);
 
-            SharedPreferences prefs = fragment.getContext()
-                    .getSharedPreferences(SettingsActivity.SHARED_PREF_NAME, MODE_PRIVATE);
-            entryUrl = prefs.getString(SettingsActivity.ENTRY_URL_KEY, SettingsActivity.ENTRY_URL_DEFAULT);
+            this.nextHref = nextHref;
         }
 
         @Override
-        protected ResponseEntity<Root> doRequest(RestTemplate template, HttpEntity<?> requestEntity) {
-            ResponseEntity<Root> response = template.exchange(entryUrl, HttpMethod.GET, requestEntity, Root.class);
-            Log.d(TAG, "rootAsyncTask: received response " + response);
+        protected ResponseEntity<AccountCollection> doRequest(
+                RestTemplate template, HttpEntity<?> requestEntity) {
+            ResponseEntity<AccountCollection> response = template.exchange(nextHref, HttpMethod.GET,
+                    requestEntity, AccountCollection.class);
+            Log.d(TAG, "accountsAsyncTask: received response " + response);
             return response;
         }
 
         @Override
-        protected void doAfter(Root root) {
-            Collection<RootUi.RootButton> rootButtons = root.getLinks()
-                    .stream()
-                    .map(l -> new RootUi.RootButton(l.getRel(), l.getHref()))
-                    .collect(Collectors.toList());
+        protected void doAfter(AccountCollection accounts) {
+            Collection<AccountUi.AccountButton> rootButtons = Collections2.transform(accounts.getLinks(),
+                    l -> new AccountUi.AccountButton(l.getRel(), l.getHref()));
 
-            RootUi rootUi = RootUi.builder(AccountsFragment.this).buttonSpecs(rootButtons).build();
+            AccountUi rootUi = AccountUi.builder(AccountsFragment.this)
+                    .accounts(accounts.getMembers())
+                    .buttonSpecs(rootButtons)
+                    .build();
 
+            for (ConstraintLayout accountEntry : rootUi.getUiAccountEntries()) {
+                accountsContainer.addView(accountEntry);
+            }
             for (Button button : rootUi.getUiButtons()) {
-                rootContainer.addView(button);
+                accountsContainer.addView(button);
             }
 
             if (mListener != null)
-                mListener.onFragmentInteraction();
+                mListener.onFragmentInteraction(AccountsFragment.this);
         }
     }
 }

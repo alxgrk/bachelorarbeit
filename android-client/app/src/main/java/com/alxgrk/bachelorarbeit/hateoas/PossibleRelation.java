@@ -35,4 +35,11 @@ public enum PossibleRelation {
         return s;
     }
 
+
+    public static PossibleRelation getBy(String value) {
+        for(PossibleRelation v : values())
+            if(v.toString().equalsIgnoreCase(value))
+                return v;
+        throw new IllegalArgumentException();
+    }
 }
