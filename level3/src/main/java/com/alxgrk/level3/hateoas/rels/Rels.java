@@ -25,4 +25,10 @@ public class Rels {
     public static final String DETACH = "detach";
 
     public static final String ATTACH = "attach";
+
+    public static final String CREATE = "create";
+
+    public static final String UPDATE = "update";
+
+    public static final String DELETE = "delete";
 }

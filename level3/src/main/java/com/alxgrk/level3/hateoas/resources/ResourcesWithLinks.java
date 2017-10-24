@@ -16,7 +16,9 @@ import org.springframework.http.HttpMethod;
 import com.alxgrk.level3.controller.CollectionController;
 import com.alxgrk.level3.hateoas.mediatype.json.LinkWithMethod;
 import com.alxgrk.level3.hateoas.mediatype.json.ResourcesWithMethods;
+import com.alxgrk.level3.hateoas.rels.Rels;
 
+@SuppressWarnings("unchecked")
 public class ResourcesWithLinks<RESOURCE extends ResourceSupport> {
 
     private final ResourcesWithMethods<RESOURCE> resources;
@@ -33,6 +35,14 @@ public class ResourcesWithLinks<RESOURCE extends ResourceSupport> {
         Link selfLink = linkTo(methodOn(collectionController.getClass()).getAll())
                 .withSelfRel();
         resources.add(selfLink, HttpMethod.GET);
+
+        return this;
+    }
+
+    public ResourcesWithLinks<RESOURCE> addCreateLink() {
+        Link createLink = linkTo(methodOn(collectionController.getClass()).addOne(null))
+                .withRel(Rels.CREATE);
+        resources.add(createLink, HttpMethod.POST);
 
         return this;
     }

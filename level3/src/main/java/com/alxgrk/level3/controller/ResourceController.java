@@ -82,7 +82,9 @@ public class ResourceController implements CollectionController<ResourceRto, Res
                 .collect(Collectors.toList());
 
         return new ResourcesWithLinks<>(resourceResources, this)
-                .addSelfLink().create();
+                .addSelfLink()
+                .addCreateLink()
+                .create();
     }
 
     // ------------------
@@ -132,6 +134,8 @@ public class ResourceController implements CollectionController<ResourceRto, Res
 
         ResourceResource resourceResource = new ResourceResource(resource)
                 .addSelfLink()
+                .addUpdateLink()
+                .addDeleteLink()
                 .addAdministratorsLink();
 
         return resourceResource;

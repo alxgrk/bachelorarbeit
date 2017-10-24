@@ -20,6 +20,7 @@ import com.alxgrk.level3.hateoas.rels.Rels;
 import com.alxgrk.level3.hateoas.rto.AccountRto;
 import com.alxgrk.level3.models.Account;
 import com.alxgrk.level3.models.Organization;
+import com.alxgrk.level3.models.wrapper.ShortenedAccount;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
@@ -50,6 +51,26 @@ public class AccountResource extends ResourceSupportWithMethods {
         Link selfLink = linkTo(methodOn(AccountController.class).getOne(account.getId()))
                 .withSelfRel();
         add(selfLink, HttpMethod.GET);
+
+        return this;
+    }
+
+    public AccountResource addUpdateLink() {
+
+        Link udpateLink = linkTo(methodOn(AccountController.class)
+                .updateOne(account.getId(), (ShortenedAccount) null))
+                        .withRel(Rels.UPDATE);
+        add(udpateLink, HttpMethod.PUT);
+
+        return this;
+    }
+
+    public AccountResource addDeleteLink() {
+
+        Link deleteLink = linkTo(methodOn(AccountController.class)
+                .deleteOne(account.getId()))
+                        .withRel(Rels.DELETE);
+        add(deleteLink, HttpMethod.DELETE);
 
         return this;
     }

@@ -12,6 +12,7 @@ import org.springframework.hateoas.core.Relation;
 import org.springframework.http.HttpMethod;
 
 import com.alxgrk.level3.controller.OrganizationController;
+import com.alxgrk.level3.controller.ResourceController;
 import com.alxgrk.level3.hateoas.mapping.OrganizationMapper;
 import com.alxgrk.level3.hateoas.mediatype.json.LinkWithMethod;
 import com.alxgrk.level3.hateoas.mediatype.json.ResourceSupportWithMethods;
@@ -48,6 +49,26 @@ public class OrganizationResource extends ResourceSupportWithMethods {
         Link selfLink = linkTo(methodOn(OrganizationController.class).getOne(organization.getId()))
                 .withSelfRel();
         add(selfLink, HttpMethod.GET);
+
+        return this;
+    }
+
+    public OrganizationResource addUpdateLink() {
+
+        Link udpateLink = linkTo(methodOn(ResourceController.class)
+                .updateOne(organization.getId(), null))
+                        .withRel(Rels.UPDATE);
+        add(udpateLink, HttpMethod.PUT);
+
+        return this;
+    }
+
+    public OrganizationResource addDeleteLink() {
+
+        Link deleteLink = linkTo(methodOn(OrganizationController.class)
+                .deleteOne(organization.getId()))
+                        .withRel(Rels.DELETE);
+        add(deleteLink, HttpMethod.DELETE);
 
         return this;
     }

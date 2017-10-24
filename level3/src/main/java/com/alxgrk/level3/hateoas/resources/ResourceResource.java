@@ -52,6 +52,26 @@ public class ResourceResource extends ResourceSupportWithMethods {
         return this;
     }
 
+    public ResourceResource addUpdateLink() {
+
+        Link udpateLink = linkTo(methodOn(ResourceController.class)
+                .updateOne(resource.getId(), null))
+                        .withRel(Rels.UPDATE);
+        add(udpateLink, HttpMethod.PUT);
+
+        return this;
+    }
+
+    public ResourceResource addDeleteLink() {
+
+        Link deleteLink = linkTo(methodOn(ResourceController.class)
+                .deleteOne(resource.getId()))
+                        .withRel(Rels.DELETE);
+        add(deleteLink, HttpMethod.DELETE);
+
+        return this;
+    }
+
     public ResourceResource addAdministratorsLink() {
 
         Link adminsLink = linkTo(methodOn(ResourceController.class)

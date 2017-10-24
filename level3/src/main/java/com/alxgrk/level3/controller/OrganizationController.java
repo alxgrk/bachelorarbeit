@@ -77,7 +77,9 @@ public class OrganizationController implements
                 .collect(Collectors.toList());
 
         return new ResourcesWithLinks<>(organizationResources, this)
-                .addSelfLink().create();
+                .addSelfLink()
+                .addCreateLink()
+                .create();
     }
 
     // ----------------------
@@ -121,6 +123,8 @@ public class OrganizationController implements
 
         OrganizationResource organizationResource = new OrganizationResource(organization)
                 .addSelfLink()
+                .addUpdateLink()
+                .addDeleteLink()
                 .addMembersLink();
 
         return organizationResource;

@@ -70,6 +70,7 @@ public class AccountController implements CollectionController<AccountRto, Accou
 
         return new ResourcesWithLinks<>(accountResources, this)
                 .addSelfLink()
+                .addCreateLink()
                 .create();
     }
 
@@ -114,6 +115,8 @@ public class AccountController implements CollectionController<AccountRto, Accou
         AccountResource accountResource = new AccountResource(account);
 
         accountResource.addSelfLink()
+                .addUpdateLink()
+                .addDeleteLink()
                 .addAccountOrgLink()
                 .addAccountResourcesLink();
 
