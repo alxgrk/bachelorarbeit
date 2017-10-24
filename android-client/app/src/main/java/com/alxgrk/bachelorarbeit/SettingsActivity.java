@@ -12,9 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.util.Set;
 
 public class SettingsActivity extends AppCompatActivity {
 

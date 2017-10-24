@@ -1,4 +1,4 @@
-package com.alxgrk.bachelorarbeit.accounts;
+package com.alxgrk.bachelorarbeit.organizations;
 
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
@@ -22,71 +22,57 @@ import lombok.Value;
 
 import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.SELF;
 
-class AccountUi {
+class OrganizationUi {
 
     @Getter
     private List<Button> uiButtons = Lists.newArrayList();
 
     @Getter
-    private List<ConstraintLayout> uiAccountEntries = Lists.newArrayList();
+    private List<ConstraintLayout> uiOrgEntries = Lists.newArrayList();
 
-    private final AccountsFragment fragment;
+    private final OrganizationsFragment fragment;
 
-    private final List<AccountButton> buttonSpecs;
+    private final List<OrganizationButton> buttonSpecs;
 
-    private final List<Account> accounts;
+    private final List<Organization> organizations;
 
     @lombok.Builder(builderClassName = "InternalBuilder", builderMethodName = "internalBuilder")
-    private AccountUi(AccountsFragment fragment, @Singular List<AccountButton> buttonSpecs,
-                      @Singular List<Account> accounts) {
+    private OrganizationUi(OrganizationsFragment fragment, @Singular List<OrganizationButton> buttonSpecs,
+                           @Singular List<Organization> organizations) {
         this.fragment = fragment;
         this.buttonSpecs = buttonSpecs;
-        this.accounts = accounts;
+        this.organizations = organizations;
     }
 
-    private void createAccountEntries() {
-        Function<Account, ConstraintLayout> accountEntryCreationFuntion = acc -> {
+    private void createOrgEntries() {
+        Function<Organization, ConstraintLayout> orgEntryCreationFuntion = org -> {
             ConstraintLayout result = (ConstraintLayout) fragment.getLayoutInflater()
-                    .inflate(R.layout.entry_account, null);
+                    .inflate(R.layout.entry_org, null);
 
             TextView tvName = result.findViewById(R.id.tv_name);
-            tvName.setText(acc.getName());
+            tvName.setText(org.getName());
 
-            TextView tvSurname = result.findViewById(R.id.tv_surname);
-            tvSurname.setText(acc.getSurname());
-
-            TextView tvUsername = result.findViewById(R.id.tv_username);
-            tvUsername.setText(acc.getUsername());
-
-            Collection<Link> orgLink = Collections2.filter(acc.getLinks(),
-                    l -> PossibleRelation.ORGANIZATION.toString().equalsIgnoreCase(l.getRel()));
-            if (1 == orgLink.size()) {
-                Button btnOrg = result.findViewById(R.id.btn_org);
+            Collection<Link> membersLink = Collections2.filter(org.getLinks(),
+                    l -> PossibleRelation.MEMBERS.toString().equalsIgnoreCase(l.getRel()));
+            if (1 == membersLink.size()) {
+                Button btnOrg = result.findViewById(R.id.btn_members);
                 btnOrg.setVisibility(View.VISIBLE);
-                btnOrg.setText(PossibleRelation.ORGANIZATION.toString());
-            }
-
-            Collection<Link> resourcesLink = Collections2.filter(acc.getLinks(),
-                    l -> PossibleRelation.RESOURCES.toString().equalsIgnoreCase(l.getRel()));
-            if (1 == resourcesLink.size()) {
-                Button btnRes = result.findViewById(R.id.btn_resources);
-                btnRes.setVisibility(View.VISIBLE);
-                btnRes.setText(PossibleRelation.RESOURCES.toString());
+                btnOrg.setText(PossibleRelation.MEMBERS.toString());
             }
 
             return result;
         };
 
-        uiAccountEntries = Lists.newArrayList(Collections2.transform(accounts, accountEntryCreationFuntion));
+        uiOrgEntries = Lists.newArrayList(Collections2.transform(organizations, orgEntryCreationFuntion));
     }
 
     private void createButtons() {
         List<String> expectedRels = Lists.newArrayList(SELF.toString());
 
-        Collection<AccountButton> filtered = Collections2.filter(buttonSpecs,
+        Collection<OrganizationButton> filtered = Collections2.filter(buttonSpecs,
                 rb -> expectedRels.contains(rb.getDisplayText()));
 
-        Function<AccountButton, Button> buttonCreationFunction = rb -> {
+        Function<OrganizationButton, Button> buttonCreationFunction = rb -> {
             PossibleRelation relation = PossibleRelation.getBy(rb.getDisplayText());
 
             switch (relation) {
@@ -101,7 +87,7 @@ class AccountUi {
         uiButtons = Lists.newArrayList(Collections2.transform(filtered, buttonCreationFunction));
     }
 
-    private Button createFollowButton(AccountButton rb, View.OnClickListener onClick) {
+    private Button createFollowButton(OrganizationButton rb, View.OnClickListener onClick) {
         return createButtonWith(rb.getDisplayText(), onClick);
     }
 
@@ -112,27 +98,27 @@ class AccountUi {
         return button;
     }
 
-    static Builder builder(AccountsFragment fragment) {
+    static Builder builder(OrganizationsFragment fragment) {
         return new Builder(fragment);
     }
 
     static class Builder extends InternalBuilder {
-        Builder(AccountsFragment fragment) {
+        Builder(OrganizationsFragment fragment) {
             super();
             fragment(fragment);
         }
 
         @Override
-        public AccountUi build() {
-            AccountUi accountUi = super.build();
-            accountUi.createButtons();
-            accountUi.createAccountEntries();
-            return accountUi;
+        public OrganizationUi build() {
+            OrganizationUi organizationUi = super.build();
+            organizationUi.createButtons();
+            organizationUi.createOrgEntries();
+            return organizationUi;
         }
     }
 
     @Value
-    static class AccountButton {
+    static class OrganizationButton {
         @NonNull
         final String displayText;
 

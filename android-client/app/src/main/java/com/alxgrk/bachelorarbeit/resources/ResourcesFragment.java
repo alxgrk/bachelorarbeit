@@ -1,8 +1,8 @@
 package com.alxgrk.bachelorarbeit.resources;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,10 +13,7 @@ import android.widget.LinearLayout;
 
 import com.alxgrk.bachelorarbeit.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.R;
-import com.alxgrk.bachelorarbeit.SettingsActivity;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
-import com.alxgrk.bachelorarbeit.root.Root;
-import com.alxgrk.bachelorarbeit.root.RootUi;
 import com.google.common.collect.Collections2;
 
 import org.springframework.http.HttpEntity;
@@ -25,8 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -41,9 +36,11 @@ public class ResourcesFragment extends Fragment {
 
     private static final String TAG = ResourcesFragment.class.getSimpleName();
 
+    private static final String NEXT_HREF_ARG = "NEXT_HREF";
+
     private OnFragmentInteractionListener mListener;
 
-    private LinearLayout rootContainer;
+    private LinearLayout resourcesContainer;
 
     public ResourcesFragment() {
         // Required empty public constructor
@@ -54,28 +51,31 @@ public class ResourcesFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @return A new instance of fragment FragmentOne.
+     * @param nextHref
      */
-    public static ResourcesFragment newInstance() {
+    public static ResourcesFragment newInstance(String nextHref) {
         ResourcesFragment fragment = new ResourcesFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
+        Bundle args = new Bundle();
+        args.putString(NEXT_HREF_ARG, nextHref);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            String nextHref = getArguments().getString(NEXT_HREF_ARG);
+            new ResourcesAsyncTask(nextHref).execute();
+        }
 
-        new RootAsyncTask(this).execute();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootContainer = (LinearLayout) inflater.inflate(R.layout.fragment_root, container, false);
-        return rootContainer;
+        resourcesContainer = (LinearLayout) inflater.inflate(R.layout.fragment_root, container, false);
+        return resourcesContainer;
     }
 
     @Override
@@ -106,38 +106,44 @@ public class ResourcesFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(ResourcesFragment rootFragment);
+        void onFragmentInteraction(ResourcesFragment resourcesFragment);
     }
 
-    class RootAsyncTask extends AbstractAsyncTask<Root> {
+    class ResourcesAsyncTask extends AbstractAsyncTask<ResourceCollection> {
 
-        private final String entryUrl;
+        private final String nextHref;
 
-        RootAsyncTask(Fragment fragment) {
-            super(HateoasMediaType.ROOT_TYPE);
+        ResourcesAsyncTask(String nextHref) {
+            super(HateoasMediaType.RESOURCE_TYPE);
 
-            SharedPreferences prefs = fragment.getContext()
-                    .getSharedPreferences(SettingsActivity.SHARED_PREF_NAME, MODE_PRIVATE);
-            entryUrl = prefs.getString(SettingsActivity.ENTRY_URL_KEY, SettingsActivity.ENTRY_URL_DEFAULT);
+            this.nextHref = nextHref;
         }
 
         @Override
-        protected ResponseEntity<Root> doRequest(RestTemplate template, HttpEntity<?> requestEntity) {
-            ResponseEntity<Root> response = template.exchange(entryUrl, HttpMethod.GET, requestEntity, Root.class);
-            Log.d(TAG, "rootAsyncTask: received response " + response);
+        protected ResponseEntity<ResourceCollection> doRequest(
+                RestTemplate template, HttpEntity<?> requestEntity) {
+            ResponseEntity<ResourceCollection> response = template.exchange(nextHref, HttpMethod.GET,
+                    requestEntity, ResourceCollection.class);
+            Log.d(TAG, "resourcesAsyncTask: received response " + response);
             return response;
         }
 
         @Override
-        protected void doAfter(Root root) {
-            Collection<RootUi.RootButton> rootButtons = Collections2.transform(root.getLinks(),
-                    l -> new RootUi.RootButton(l.getRel(), l.getHref()));
+        protected void doAfter(ResourceCollection resources) {
+            Collection<ResourceUi.ResourceButton> resourcesButtons = Collections2.transform(resources.getLinks(),
+                    l -> new ResourceUi.ResourceButton(l.getRel(), l.getHref()));
 
-//            RootUi rootUi = RootUi.builder(ResourcesFragment.this).buttonSpecs(rootButtons).build();
-//
-//            for (Button button : rootUi.getUiButtons()) {
-//                rootContainer.addView(button);
-//            }
+            ResourceUi resourceUi = ResourceUi.builder(ResourcesFragment.this)
+                    .resources(resources.getMembers())
+                    .buttonSpecs(resourcesButtons)
+                    .build();
+
+            for (ConstraintLayout resEntry : resourceUi.getUiResEntries()) {
+                resourcesContainer.addView(resEntry);
+            }
+            for (Button button : resourceUi.getUiButtons()) {
+                resourcesContainer.addView(button);
+            }
 
             if (mListener != null)
                 mListener.onFragmentInteraction(ResourcesFragment.this);

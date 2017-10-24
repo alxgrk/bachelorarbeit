@@ -1,13 +1,16 @@
-package com.alxgrk.bachelorarbeit.accounts;
+package com.alxgrk.bachelorarbeit.resources;
 
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
+import com.alxgrk.bachelorarbeit.view.BookingView;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -22,71 +25,64 @@ import lombok.Value;
 
 import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.SELF;
 
-class AccountUi {
+class ResourceUi {
 
     @Getter
     private List<Button> uiButtons = Lists.newArrayList();
 
     @Getter
-    private List<ConstraintLayout> uiAccountEntries = Lists.newArrayList();
+    private List<ConstraintLayout> uiResEntries = Lists.newArrayList();
 
-    private final AccountsFragment fragment;
+    private final ResourcesFragment fragment;
 
-    private final List<AccountButton> buttonSpecs;
+    private final List<ResourceButton> buttonSpecs;
 
-    private final List<Account> accounts;
+    private final List<Resource> resources;
 
     @lombok.Builder(builderClassName = "InternalBuilder", builderMethodName = "internalBuilder")
-    private AccountUi(AccountsFragment fragment, @Singular List<AccountButton> buttonSpecs,
-                      @Singular List<Account> accounts) {
+    private ResourceUi(ResourcesFragment fragment, @Singular List<ResourceButton> buttonSpecs,
+                       @Singular List<Resource> resources) {
         this.fragment = fragment;
         this.buttonSpecs = buttonSpecs;
-        this.accounts = accounts;
+        this.resources = resources;
     }
 
-    private void createAccountEntries() {
-        Function<Account, ConstraintLayout> accountEntryCreationFuntion = acc -> {
+    private void createResEntries() {
+        Function<Resource, ConstraintLayout> resEntryCreationFuntion = res -> {
             ConstraintLayout result = (ConstraintLayout) fragment.getLayoutInflater()
-                    .inflate(R.layout.entry_account, null);
+                    .inflate(R.layout.entry_res, null);
 
             TextView tvName = result.findViewById(R.id.tv_name);
-            tvName.setText(acc.getName());
+            tvName.setText(res.getName());
 
-            TextView tvSurname = result.findViewById(R.id.tv_surname);
-            tvSurname.setText(acc.getSurname());
-
-            TextView tvUsername = result.findViewById(R.id.tv_username);
-            tvUsername.setText(acc.getUsername());
-
-            Collection<Link> orgLink = Collections2.filter(acc.getLinks(),
-                    l -> PossibleRelation.ORGANIZATION.toString().equalsIgnoreCase(l.getRel()));
-            if (1 == orgLink.size()) {
-                Button btnOrg = result.findViewById(R.id.btn_org);
-                btnOrg.setVisibility(View.VISIBLE);
-                btnOrg.setText(PossibleRelation.ORGANIZATION.toString());
+            if (res.getAvailableTimeslots().size() > 0 || res.getBookedTimeslots().size() > 0) {
+                BookingView bookingView = result.findViewById(R.id.bv_res);
+                bookingView.setVisibility(View.VISIBLE);
+                bookingView.setAvailables(res.getAvailableTimeslots());
+                bookingView.setBooked(res.getBookedTimeslots());
             }
 
-            Collection<Link> resourcesLink = Collections2.filter(acc.getLinks(),
-                    l -> PossibleRelation.RESOURCES.toString().equalsIgnoreCase(l.getRel()));
-            if (1 == resourcesLink.size()) {
-                Button btnRes = result.findViewById(R.id.btn_resources);
+            Collection<Link> membersLink = Collections2.filter(res.getLinks(),
+                    l -> PossibleRelation.ADMINISTRATORS.toString().equalsIgnoreCase(l.getRel()));
+            if (1 == membersLink.size()) {
+                Button btnRes = result.findViewById(R.id.btn_admins);
                 btnRes.setVisibility(View.VISIBLE);
-                btnRes.setText(PossibleRelation.RESOURCES.toString());
+                btnRes.setText(PossibleRelation.ADMINISTRATORS.toString());
             }
 
             return result;
         };
 
-        uiAccountEntries = Lists.newArrayList(Collections2.transform(accounts, accountEntryCreationFuntion));
+        uiResEntries = Lists.newArrayList(Collections2.transform(resources, resEntryCreationFuntion));
     }
 
     private void createButtons() {
         List<String> expectedRels = Lists.newArrayList(SELF.toString());
 
-        Collection<AccountButton> filtered = Collections2.filter(buttonSpecs,
+        Collection<ResourceButton> filtered = Collections2.filter(buttonSpecs,
                 rb -> expectedRels.contains(rb.getDisplayText()));
 
-        Function<AccountButton, Button> buttonCreationFunction = rb -> {
+        Function<ResourceButton, Button> buttonCreationFunction = rb -> {
             PossibleRelation relation = PossibleRelation.getBy(rb.getDisplayText());
 
             switch (relation) {
@@ -101,7 +97,7 @@ class AccountUi {
         uiButtons = Lists.newArrayList(Collections2.transform(filtered, buttonCreationFunction));
     }
 
-    private Button createFollowButton(AccountButton rb, View.OnClickListener onClick) {
+    private Button createFollowButton(ResourceButton rb, View.OnClickListener onClick) {
         return createButtonWith(rb.getDisplayText(), onClick);
     }
 
@@ -112,27 +108,27 @@ class AccountUi {
         return button;
     }
 
-    static Builder builder(AccountsFragment fragment) {
+    static Builder builder(ResourcesFragment fragment) {
         return new Builder(fragment);
     }
 
     static class Builder extends InternalBuilder {
-        Builder(AccountsFragment fragment) {
+        Builder(ResourcesFragment fragment) {
             super();
             fragment(fragment);
         }
 
         @Override
-        public AccountUi build() {
-            AccountUi accountUi = super.build();
-            accountUi.createButtons();
-            accountUi.createAccountEntries();
-            return accountUi;
+        public ResourceUi build() {
+            ResourceUi resourceUi = super.build();
+            resourceUi.createButtons();
+            resourceUi.createResEntries();
+            return resourceUi;
         }
     }
 
     @Value
-    static class AccountButton {
+    static class ResourceButton {
         @NonNull
         final String displayText;
 

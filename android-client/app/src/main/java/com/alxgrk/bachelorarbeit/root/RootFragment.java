@@ -11,13 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 import com.alxgrk.bachelorarbeit.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.SettingsActivity;
 import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
+import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
+import com.alxgrk.bachelorarbeit.resources.ResourcesFragment;
 import com.google.common.collect.Collections2;
 
 import org.springframework.http.HttpEntity;
@@ -75,8 +76,7 @@ public class RootFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ScrollView parent = (ScrollView) inflater.inflate(R.layout.fragment_root, container, false);
-        rootContainer = parent.findViewById(R.id.root_container);
+        rootContainer = (LinearLayout) inflater.inflate(R.layout.fragment_root, container, false);
         return rootContainer;
     }
 
@@ -97,11 +97,11 @@ public class RootFragment extends Fragment {
         mListener = null;
     }
 
-    void switchToAccountsFragment(String nextHref) {
-        Fragment fragment = AccountsFragment.newInstance(nextHref);
+    <T extends Fragment> void switchTo(T fragment) {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.main_fragment_layout, fragment).commit();
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

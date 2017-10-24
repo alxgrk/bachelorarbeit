@@ -1,4 +1,4 @@
-package com.alxgrk.bachelorarbeit.accounts;
+package com.alxgrk.bachelorarbeit.organizations;
 
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,20 +10,16 @@ import lombok.Data;
 
 /**
  * The model for a root representation according to
- * {@link com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType#ACCOUNT_TYPE}.
+ * {@link com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType#ORGANIZATION_TYPE}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-public class Account {
+public class Organization {
 
     @JsonProperty("_links")
     private List<Link> links;
 
     private Integer id;
-
-    private String username;
-
-    private String surname;
 
     private String name;
 }

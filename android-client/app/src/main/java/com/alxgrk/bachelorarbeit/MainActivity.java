@@ -18,12 +18,16 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
+import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
+import com.alxgrk.bachelorarbeit.resources.ResourcesFragment;
 import com.alxgrk.bachelorarbeit.root.RootFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         RootFragment.OnFragmentInteractionListener,
-        AccountsFragment.OnFragmentInteractionListener
+        AccountsFragment.OnFragmentInteractionListener,
+        OrganizationsFragment.OnFragmentInteractionListener,
+        ResourcesFragment.OnFragmentInteractionListener
 {
 
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -121,7 +125,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(AccountsFragment rootFragment) {
+    public void onFragmentInteraction(AccountsFragment accountsFragment) {
+
+    }
+
+    @Override
+    public void onFragmentInteraction(OrganizationsFragment organizationsFragment) {
+
+    }
+
+    @Override
+    public void onFragmentInteraction(ResourcesFragment resourcesFragment) {
 
     }
 }

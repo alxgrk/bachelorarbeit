@@ -1,7 +1,6 @@
 package com.alxgrk.bachelorarbeit.accounts;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -11,11 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 import com.alxgrk.bachelorarbeit.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.R;
-import com.alxgrk.bachelorarbeit.SettingsActivity;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.google.common.collect.Collections2;
 
@@ -25,8 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -79,8 +74,7 @@ public class AccountsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ScrollView parent = (ScrollView) inflater.inflate(R.layout.fragment_root, container, false);
-        accountsContainer = parent.findViewById(R.id.root_container);
+        accountsContainer = (LinearLayout) inflater.inflate(R.layout.fragment_root, container, false);
         return accountsContainer;
     }
 
@@ -112,7 +106,7 @@ public class AccountsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(AccountsFragment rootFragment);
+        void onFragmentInteraction(AccountsFragment accountsFragment);
     }
 
     class AccountsAsyncTask extends AbstractAsyncTask<AccountCollection> {
@@ -136,18 +130,18 @@ public class AccountsFragment extends Fragment {
 
         @Override
         protected void doAfter(AccountCollection accounts) {
-            Collection<AccountUi.AccountButton> rootButtons = Collections2.transform(accounts.getLinks(),
+            Collection<AccountUi.AccountButton> accountButtons = Collections2.transform(accounts.getLinks(),
                     l -> new AccountUi.AccountButton(l.getRel(), l.getHref()));
 
-            AccountUi rootUi = AccountUi.builder(AccountsFragment.this)
+            AccountUi accountUi = AccountUi.builder(AccountsFragment.this)
                     .accounts(accounts.getMembers())
-                    .buttonSpecs(rootButtons)
+                    .buttonSpecs(accountButtons)
                     .build();
 
-            for (ConstraintLayout accountEntry : rootUi.getUiAccountEntries()) {
+            for (ConstraintLayout accountEntry : accountUi.getUiAccountEntries()) {
                 accountsContainer.addView(accountEntry);
             }
-            for (Button button : rootUi.getUiButtons()) {
+            for (Button button : accountUi.getUiButtons()) {
                 accountsContainer.addView(button);
             }
 

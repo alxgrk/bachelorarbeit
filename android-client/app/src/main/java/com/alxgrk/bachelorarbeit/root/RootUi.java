@@ -1,12 +1,14 @@
 package com.alxgrk.bachelorarbeit.root;
 
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.alxgrk.bachelorarbeit.MainActivity;
+import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
+import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
+import com.alxgrk.bachelorarbeit.resources.ResourcesFragment;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -58,15 +60,17 @@ public class RootUi {
                 case ACCOUNTS:
                     return createFollowButton(rb, view -> {
                         Log.d(MainActivity.TAG, "clicked on accounts button");
-                        fragment.switchToAccountsFragment(rb.getHref());
+                        fragment.switchTo(AccountsFragment.newInstance(rb.getHref()));
                     });
                 case ORGANIZATIONS:
                     return createFollowButton(rb, view -> {
                         Log.d(MainActivity.TAG, "clicked on orgs button");
+                        fragment.switchTo(OrganizationsFragment.newInstance(rb.getHref()));
                     });
                 case RESOURCES:
                     return createFollowButton(rb, view -> {
                         Log.d(MainActivity.TAG, "clicked on resources button");
+                        fragment.switchTo(ResourcesFragment.newInstance(rb.getHref()));
                     });
                 default:
                     // will never be passed due to filtering beforehand
@@ -87,11 +91,11 @@ public class RootUi {
         return button;
     }
 
-    public static Builder builder(RootFragment fragment) {
+    static Builder builder(RootFragment fragment) {
         return new Builder(fragment);
     }
 
-    public static class Builder extends InternalBuilder {
+    static class Builder extends InternalBuilder {
         Builder(RootFragment fragment) {
             super();
             fragment(fragment);
@@ -106,7 +110,7 @@ public class RootUi {
     }
 
     @Value
-    public static class RootButton {
+    static class RootButton {
         @NonNull
         final String displayText;
 
