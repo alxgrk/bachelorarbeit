@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.alxgrk.bachelorarbeit.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.R;
@@ -42,6 +43,8 @@ public class AccountsFragment extends Fragment {
 
     private LinearLayout accountsContainer;
 
+    private ProgressBar progressBar;
+
     public AccountsFragment() {
         // Required empty public constructor
     }
@@ -50,8 +53,8 @@ public class AccountsFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment FragmentOne.
      * @param nextHref
+     * @return A new instance of fragment FragmentOne.
      */
     public static AccountsFragment newInstance(String nextHref) {
         AccountsFragment fragment = new AccountsFragment();
@@ -64,17 +67,22 @@ public class AccountsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String nextHref = getArguments().getString(NEXT_HREF_ARG);
-            new AccountsAsyncTask(nextHref).execute();
-        }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         accountsContainer = (LinearLayout) inflater.inflate(R.layout.fragment_root, container, false);
+
+        progressBar = container.findViewById(R.id.transition_progress);
+
+        if (getArguments() != null) {
+            progressBar.setVisibility(View.VISIBLE);
+
+            String nextHref = getArguments().getString(NEXT_HREF_ARG);
+            new AccountsAsyncTask(nextHref).execute();
+        }
+
         return accountsContainer;
     }
 
@@ -144,6 +152,8 @@ public class AccountsFragment extends Fragment {
             for (Button button : accountUi.getUiButtons()) {
                 accountsContainer.addView(button);
             }
+
+            progressBar.setVisibility(View.GONE);
 
             if (mListener != null)
                 mListener.onFragmentInteraction(AccountsFragment.this);

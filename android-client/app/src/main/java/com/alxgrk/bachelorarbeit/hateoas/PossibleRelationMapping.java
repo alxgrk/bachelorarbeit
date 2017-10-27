@@ -41,7 +41,7 @@ public class PossibleRelationMapping {
         relsPerMediaTypeMap.put(HateoasMediaType.RESOURCE_TYPE, resourcesRelations);
         relsPerMediaTypeMap.put(HateoasMediaType.ORGANIZATION_TYPE, orgsRelations);
         relsPerMediaTypeMap.put(MediaType.APPLICATION_JSON, genericRelations);
-        
+
         this.relsPerMediaTypeMap = Collections.unmodifiableMap(relsPerMediaTypeMap);
     }
 

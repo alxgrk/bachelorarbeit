@@ -6,14 +6,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.View;
 
 import com.alxgrk.bachelorarbeit.resources.Timeslot;
+import com.alxgrk.bachelorarbeit.util.TimeslotUtils;
 import com.google.common.collect.Lists;
 
-import java.util.Calendar;
 import java.util.List;
 
 import lombok.Getter;
@@ -36,6 +36,7 @@ public class BookingView extends View {
     private int lineHeightAvailables;
 
     private int lineHeightBooked;
+
     private float textSize;
 
     // visible for usage in editor
@@ -44,7 +45,6 @@ public class BookingView extends View {
 
         paint = new Paint();
         paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.STROKE);
         paint.setTextScaleX(0.95f);
     }
 
@@ -65,10 +65,12 @@ public class BookingView extends View {
         lineHeightAvailables = h / 3;
         lineHeightBooked = 2 * h / 3;
 
-        float strokeWidth = Math.max(5.0f, Math.max(w / 200, h / 200));
+        int smallerPossibleStrokeWidth = Math.min(w / 200, h / 200);
+        float strokeWidth = Math.max(5.0f, smallerPossibleStrokeWidth);
         paint.setStrokeWidth(strokeWidth);
 
-        textSize = Math.max(50, Math.max(w / 20, h / 20));
+        int smallerPossibleTextSize = Math.min(w / 20, h / 20);
+        textSize = Math.max(45, smallerPossibleTextSize);
         paint.setTextSize(textSize);
     }
 
@@ -83,31 +85,45 @@ public class BookingView extends View {
 
         if (availables.size() > 0 && booked.size() > 0) {
 
+            // FIXME use relative value instead of "... - 150"
             // draw the interval line and the text for availables timeslots
-            canvas.drawText("Year"+availables.get(0).getBeginning().get(Calendar.DATE),
+            Timeslot firstAvailable = availables.get(0);
+            Timeslot lastAvailable = availables.get(availables.size() - 1);
+            canvas.drawText(TimeslotUtils.beginAndEndString(firstAvailable).first,
                     withPaddingLeft, bounds.top + textSize, paint);
-            canvas.drawText(availables.get(availables.size()-1).getEnding().toString(),
-                    withPaddingRight, bounds.top, paint);
+            canvas.drawText(TimeslotUtils.beginAndEndString(lastAvailable).second,
+                    withPaddingRight - 170, bounds.top + textSize, paint);
 
+            // set color to green
+            paint.setColor(Color.argb(120, 71, 193, 19));
             canvas.drawLine(withPaddingLeft, lineHeightAvailables,
                     withPaddingRight, lineHeightAvailables, paint);
             canvas.drawLine(withPaddingLeft, lineHeightAvailables - borderLineHeight,
                     withPaddingLeft, lineHeightAvailables + borderLineHeight, paint);
             canvas.drawLine(withPaddingRight, lineHeightAvailables - borderLineHeight,
                     withPaddingRight, lineHeightAvailables + borderLineHeight, paint);
+            paint.setColor(Color.BLACK);
 
             // draw the interval line for booked timeslots
-            canvas.drawText(booked.get(0).getBeginning().toString(),
-                    withPaddingLeft, bounds.bottom, paint);
-            canvas.drawText(booked.get(booked.size()-1).getEnding().toString(),
-                    withPaddingRight, bounds.bottom, paint);
+            Pair<Float, Float> beginAndEndPos = TimeslotUtils.relativeTo(availables, booked);
+            float startX = bounds.right * beginAndEndPos.first;
+            float stopX = bounds.right * beginAndEndPos.second;
 
-            canvas.drawLine(withPaddingLeft, lineHeightBooked,
-                    withPaddingRight, lineHeightBooked, paint);
-            canvas.drawLine(withPaddingLeft, lineHeightBooked - borderLineHeight,
-                    withPaddingLeft, lineHeightBooked + borderLineHeight, paint);
-            canvas.drawLine(withPaddingRight, lineHeightBooked - borderLineHeight,
-                    withPaddingRight, lineHeightBooked + borderLineHeight, paint);
+            Timeslot firstBooked = booked.get(0);
+            Timeslot lastBooked = booked.get(booked.size() - 1);
+            canvas.drawText(TimeslotUtils.beginAndEndString(firstBooked).first,
+                    Math.max(withPaddingLeft, startX - 170), bounds.bottom - textSize / 2, paint);
+            canvas.drawText(TimeslotUtils.beginAndEndString(lastBooked).first,
+                    Math.min(withPaddingRight - 170, stopX), bounds.bottom - textSize / 2, paint);
+
+            // set color to red
+            paint.setColor(Color.argb(120, 204, 34, 34));
+            canvas.drawLine(startX, lineHeightBooked, stopX, lineHeightBooked, paint);
+            canvas.drawLine(startX, lineHeightBooked - borderLineHeight,
+                    startX, lineHeightBooked + borderLineHeight, paint);
+            canvas.drawLine(stopX, lineHeightBooked - borderLineHeight,
+                    stopX, lineHeightBooked + borderLineHeight, paint);
+            paint.setColor(Color.BLACK);
         }
     }
 }

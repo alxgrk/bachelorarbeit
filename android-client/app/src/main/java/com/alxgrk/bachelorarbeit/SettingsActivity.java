@@ -32,7 +32,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         prefs = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
 
+        String hint = prefs.getString(SettingsActivity.ENTRY_URL_KEY, SettingsActivity.ENTRY_URL_DEFAULT);
+
         EditText prefEntryUrl = findViewById(R.id.pref_entry_url);
+        prefEntryUrl.setHint(hint);
         prefEntryUrl.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

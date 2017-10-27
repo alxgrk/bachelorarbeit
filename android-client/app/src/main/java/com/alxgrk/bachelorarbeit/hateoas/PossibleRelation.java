@@ -30,16 +30,15 @@ public enum PossibleRelation {
         this.s = s;
     }
 
+    public static PossibleRelation getBy(String value) {
+        for (PossibleRelation v : values())
+            if (v.toString().equalsIgnoreCase(value))
+                return v;
+        throw new IllegalArgumentException();
+    }
+
     @Override
     public String toString() {
         return s;
-    }
-
-
-    public static PossibleRelation getBy(String value) {
-        for(PossibleRelation v : values())
-            if(v.toString().equalsIgnoreCase(value))
-                return v;
-        throw new IllegalArgumentException();
     }
 }

@@ -22,7 +22,6 @@
         android:id="@+id/pref_entry_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textUri"
-        android:hint="@string/pref_default_display_name"/>
+        android:inputType="textUri"/>
 
 </LinearLayout>

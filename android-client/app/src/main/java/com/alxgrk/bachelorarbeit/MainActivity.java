@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
@@ -27,8 +29,7 @@ public class MainActivity extends AppCompatActivity
         RootFragment.OnFragmentInteractionListener,
         AccountsFragment.OnFragmentInteractionListener,
         OrganizationsFragment.OnFragmentInteractionListener,
-        ResourcesFragment.OnFragmentInteractionListener
-{
+        ResourcesFragment.OnFragmentInteractionListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -40,9 +41,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
+            ProgressBar progressBar = findViewById(R.id.transition_progress);
+            progressBar.setVisibility(View.VISIBLE);
+
             Fragment fragment = RootFragment.newInstance();
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.main_fragment_layout, fragment).commit();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_fragment_layout, fragment)
+                    .commit();
         }
 
         setUpUiComponents();

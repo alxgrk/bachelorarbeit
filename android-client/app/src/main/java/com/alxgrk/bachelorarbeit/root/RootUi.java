@@ -1,10 +1,12 @@
 package com.alxgrk.bachelorarbeit.root;
 
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.alxgrk.bachelorarbeit.MainActivity;
+import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
 import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
@@ -28,17 +30,19 @@ import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.SELF;
 
 public class RootUi {
 
+    private final RootFragment fragment;
+    private final List<RootButton> buttonSpecs;
     @Getter
     private List<Button> uiButtons = Lists.newArrayList();
-
-    private final RootFragment fragment;
-
-    private final List<RootButton> buttonSpecs;
 
     @lombok.Builder(builderClassName = "InternalBuilder", builderMethodName = "internalBuilder")
     private RootUi(RootFragment fragment, @Singular List<RootButton> buttonSpecs) {
         this.fragment = fragment;
         this.buttonSpecs = buttonSpecs;
+    }
+
+    static Builder builder(RootFragment fragment) {
+        return new Builder(fragment);
     }
 
     private void createButtons() {
@@ -55,7 +59,14 @@ public class RootUi {
 
             switch (relation) {
                 case SELF:
-                    return createButtonWith("Reload", view -> { // TODO
+                    return createButtonWith("Reload", view -> {
+                        FragmentManager fragmentManager = fragment.getFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .remove(fragment)
+                                .commitNowAllowingStateLoss();
+                        fragmentManager.beginTransaction()
+                                .add(R.id.main_fragment_layout, fragment)
+                                .commit();
                     });
                 case ACCOUNTS:
                     return createFollowButton(rb, view -> {
@@ -89,10 +100,6 @@ public class RootUi {
         button.setText(displayText);
         button.setOnClickListener(onClick);
         return button;
-    }
-
-    static Builder builder(RootFragment fragment) {
-        return new Builder(fragment);
     }
 
     static class Builder extends InternalBuilder {

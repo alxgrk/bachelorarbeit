@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.alxgrk.bachelorarbeit.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.R;
@@ -42,6 +43,8 @@ public class ResourcesFragment extends Fragment {
 
     private LinearLayout resourcesContainer;
 
+    private ProgressBar progressBar;
+
     public ResourcesFragment() {
         // Required empty public constructor
     }
@@ -50,8 +53,8 @@ public class ResourcesFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment FragmentOne.
      * @param nextHref
+     * @return A new instance of fragment FragmentOne.
      */
     public static ResourcesFragment newInstance(String nextHref) {
         ResourcesFragment fragment = new ResourcesFragment();
@@ -64,17 +67,22 @@ public class ResourcesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String nextHref = getArguments().getString(NEXT_HREF_ARG);
-            new ResourcesAsyncTask(nextHref).execute();
-        }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         resourcesContainer = (LinearLayout) inflater.inflate(R.layout.fragment_root, container, false);
+
+        progressBar = container.findViewById(R.id.transition_progress);
+
+        if (getArguments() != null) {
+            progressBar.setVisibility(View.VISIBLE);
+
+            String nextHref = getArguments().getString(NEXT_HREF_ARG);
+            new ResourcesAsyncTask(nextHref).execute();
+        }
+
         return resourcesContainer;
     }
 
@@ -144,6 +152,8 @@ public class ResourcesFragment extends Fragment {
             for (Button button : resourceUi.getUiButtons()) {
                 resourcesContainer.addView(button);
             }
+
+            progressBar.setVisibility(View.GONE);
 
             if (mListener != null)
                 mListener.onFragmentInteraction(ResourcesFragment.this);

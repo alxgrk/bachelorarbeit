@@ -60,7 +60,8 @@ public abstract class AbstractAsyncTask<T> extends AsyncTask<Void, Void, T> {
 
     /**
      * Use this method to call whatever method on a pre-configure RestTemplate.
-     * @param template the RestTemplate configured with a specific MessageConverter
+     *
+     * @param template      the RestTemplate configured with a specific MessageConverter
      * @param requestEntity a HttpEntity configure with the SupportedMediaType accept header
      * @return the response
      */
@@ -68,6 +69,7 @@ public abstract class AbstractAsyncTask<T> extends AsyncTask<Void, Void, T> {
 
     /**
      * Will be executed after the task finished. Parent thread is UI-Thread!
+     *
      * @param result the body of the response
      */
     protected abstract void doAfter(T result);

@@ -1,6 +1,7 @@
 package com.alxgrk.bachelorarbeit.accounts;
 
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,17 +25,13 @@ import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.SELF;
 
 class AccountUi {
 
+    private final AccountsFragment fragment;
+    private final List<AccountButton> buttonSpecs;
+    private final List<Account> accounts;
     @Getter
     private List<Button> uiButtons = Lists.newArrayList();
-
     @Getter
     private List<ConstraintLayout> uiAccountEntries = Lists.newArrayList();
-
-    private final AccountsFragment fragment;
-
-    private final List<AccountButton> buttonSpecs;
-
-    private final List<Account> accounts;
 
     @lombok.Builder(builderClassName = "InternalBuilder", builderMethodName = "internalBuilder")
     private AccountUi(AccountsFragment fragment, @Singular List<AccountButton> buttonSpecs,
@@ -42,6 +39,10 @@ class AccountUi {
         this.fragment = fragment;
         this.buttonSpecs = buttonSpecs;
         this.accounts = accounts;
+    }
+
+    static Builder builder(AccountsFragment fragment) {
+        return new Builder(fragment);
     }
 
     private void createAccountEntries() {
@@ -91,7 +92,14 @@ class AccountUi {
 
             switch (relation) {
                 case SELF:
-                    return createButtonWith("Reload", view -> { // TODO
+                    return createButtonWith("Reload", view -> {
+                        FragmentManager fragmentManager = fragment.getFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .remove(fragment)
+                                .commitNowAllowingStateLoss();
+                        fragmentManager.beginTransaction()
+                                .add(R.id.main_fragment_layout, fragment)
+                                .commit();
                     });
                 default:
                     // will never be passed due to filtering beforehand
@@ -110,10 +118,6 @@ class AccountUi {
         button.setText(displayText);
         button.setOnClickListener(onClick);
         return button;
-    }
-
-    static Builder builder(AccountsFragment fragment) {
-        return new Builder(fragment);
     }
 
     static class Builder extends InternalBuilder {

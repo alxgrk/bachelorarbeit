@@ -11,14 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.alxgrk.bachelorarbeit.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.SettingsActivity;
-import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
-import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
-import com.alxgrk.bachelorarbeit.resources.ResourcesFragment;
 import com.google.common.collect.Collections2;
 
 import org.springframework.http.HttpEntity;
@@ -47,23 +45,14 @@ public class RootFragment extends Fragment {
 
     private LinearLayout rootContainer;
 
+    private ProgressBar progressBar;
+
     public RootFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment FragmentOne.
-     */
     public static RootFragment newInstance() {
-        RootFragment fragment = new RootFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-        return fragment;
+        return new RootFragment();
     }
 
     @Override
@@ -77,6 +66,9 @@ public class RootFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootContainer = (LinearLayout) inflater.inflate(R.layout.fragment_root, container, false);
+
+        progressBar = container.findViewById(R.id.transition_progress);
+
         return rootContainer;
     }
 
@@ -98,21 +90,16 @@ public class RootFragment extends Fragment {
     }
 
     <T extends Fragment> void switchTo(T fragment) {
+        progressBar.setVisibility(View.VISIBLE);
+
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.main_fragment_layout, fragment).commit();
+        fragmentManager.beginTransaction()
+                .add(R.id.main_fragment_layout, fragment)
+                .addToBackStack(null)
+                .hide(this)
+                .commit();
     }
 
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(RootFragment rootFragment);
     }
@@ -146,6 +133,8 @@ public class RootFragment extends Fragment {
             for (Button button : rootUi.getUiButtons()) {
                 rootContainer.addView(button);
             }
+
+            progressBar.setVisibility(View.GONE);
 
             if (mListener != null)
                 mListener.onFragmentInteraction(RootFragment.this);

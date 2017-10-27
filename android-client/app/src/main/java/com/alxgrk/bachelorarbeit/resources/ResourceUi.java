@@ -1,10 +1,9 @@
 package com.alxgrk.bachelorarbeit.resources;
 
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alxgrk.bachelorarbeit.R;
@@ -27,17 +26,13 @@ import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.SELF;
 
 class ResourceUi {
 
+    private final ResourcesFragment fragment;
+    private final List<ResourceButton> buttonSpecs;
+    private final List<Resource> resources;
     @Getter
     private List<Button> uiButtons = Lists.newArrayList();
-
     @Getter
     private List<ConstraintLayout> uiResEntries = Lists.newArrayList();
-
-    private final ResourcesFragment fragment;
-
-    private final List<ResourceButton> buttonSpecs;
-
-    private final List<Resource> resources;
 
     @lombok.Builder(builderClassName = "InternalBuilder", builderMethodName = "internalBuilder")
     private ResourceUi(ResourcesFragment fragment, @Singular List<ResourceButton> buttonSpecs,
@@ -45,6 +40,10 @@ class ResourceUi {
         this.fragment = fragment;
         this.buttonSpecs = buttonSpecs;
         this.resources = resources;
+    }
+
+    static Builder builder(ResourcesFragment fragment) {
+        return new Builder(fragment);
     }
 
     private void createResEntries() {
@@ -87,7 +86,14 @@ class ResourceUi {
 
             switch (relation) {
                 case SELF:
-                    return createButtonWith("Reload", view -> { // TODO
+                    return createButtonWith("Reload", view -> {
+                        FragmentManager fragmentManager = fragment.getFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .remove(fragment)
+                                .commitNowAllowingStateLoss();
+                        fragmentManager.beginTransaction()
+                                .add(R.id.main_fragment_layout, fragment)
+                                .commit();
                     });
                 default:
                     // will never be passed due to filtering beforehand
@@ -106,10 +112,6 @@ class ResourceUi {
         button.setText(displayText);
         button.setOnClickListener(onClick);
         return button;
-    }
-
-    static Builder builder(ResourcesFragment fragment) {
-        return new Builder(fragment);
     }
 
     static class Builder extends InternalBuilder {
