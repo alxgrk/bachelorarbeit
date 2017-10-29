@@ -12,7 +12,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.alxgrk.bachelorarbeit.AbstractAsyncTask;
+import com.alxgrk.bachelorarbeit.hateoas.Link;
+import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.google.common.collect.Collections2;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -58,9 +60,11 @@ public class AccountsFragment extends Fragment {
      */
     public static AccountsFragment newInstance(String nextHref) {
         AccountsFragment fragment = new AccountsFragment();
+
         Bundle args = new Bundle();
         args.putString(NEXT_HREF_ARG, nextHref);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -108,13 +112,9 @@ public class AccountsFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(AccountsFragment accountsFragment);
+        void onFragmentInteraction(AccountsFragment accountsFragment, List<Link> links);
     }
 
     class AccountsAsyncTask extends AbstractAsyncTask<AccountCollection> {
@@ -156,7 +156,7 @@ public class AccountsFragment extends Fragment {
             progressBar.setVisibility(View.GONE);
 
             if (mListener != null)
-                mListener.onFragmentInteraction(AccountsFragment.this);
+                mListener.onFragmentInteraction(AccountsFragment.this, accounts.getLinks());
         }
     }
 }

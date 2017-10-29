@@ -22,4 +22,12 @@
 
     <string name="pref_title_display_name">Einstiegs-URL</string>
 
+    <!-- Creation, Updating, Deletion -->
+    <string name="new_account_title">New Account</string>
+    <string name="surname">surname</string>
+    <string name="name">name</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="btn_create">create</string>
+
 </resources>

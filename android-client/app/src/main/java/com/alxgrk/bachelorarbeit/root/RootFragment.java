@@ -13,10 +13,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.alxgrk.bachelorarbeit.AbstractAsyncTask;
+import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.SettingsActivity;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
+import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.google.common.collect.Collections2;
 
 import org.springframework.http.HttpEntity;
@@ -25,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
+import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -101,7 +103,7 @@ public class RootFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(RootFragment rootFragment);
+        void onFragmentInteraction(RootFragment rootFragment, List<Link> links);
     }
 
     class RootAsyncTask extends AbstractAsyncTask<Root> {
@@ -137,7 +139,7 @@ public class RootFragment extends Fragment {
             progressBar.setVisibility(View.GONE);
 
             if (mListener != null)
-                mListener.onFragmentInteraction(RootFragment.this);
+                mListener.onFragmentInteraction(RootFragment.this, root.getLinks());
         }
     }
 }

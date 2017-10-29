@@ -22,7 +22,13 @@ public enum PossibleRelation {
 
     DETACH("detach"),
 
-    ATTACH("attach");
+    ATTACH("attach"),
+
+    CREATE("create"),
+
+    UPDATE("update"),
+
+    DELETE("delete");
 
     private final String s;
 

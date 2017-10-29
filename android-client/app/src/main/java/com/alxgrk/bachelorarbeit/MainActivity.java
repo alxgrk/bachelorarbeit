@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -19,10 +18,19 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.alxgrk.bachelorarbeit.accounts.Account;
 import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
+import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
+import com.alxgrk.bachelorarbeit.hateoas.Link;
+import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
 import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
 import com.alxgrk.bachelorarbeit.resources.ResourcesFragment;
 import com.alxgrk.bachelorarbeit.root.RootFragment;
+import com.alxgrk.bachelorarbeit.shared.CreationFragment;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -57,12 +65,6 @@ public class MainActivity extends AppCompatActivity
     private void setUpUiComponents() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-        });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -125,14 +127,34 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public void onFragmentInteraction(RootFragment rootFragment) {
-
+    private void transition(Fragment from, Fragment to) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .add(R.id.main_fragment_layout, to)
+                .addToBackStack(null)
+                .hide(from)
+                .commit();
     }
 
     @Override
-    public void onFragmentInteraction(AccountsFragment accountsFragment) {
+    public void onFragmentInteraction(RootFragment rootFragment, List<Link> links) {
+        // yet nothing to do
+    }
 
+    @Override
+    public void onFragmentInteraction(AccountsFragment accountsFragment, List<Link> links) {
+        List<Link> createLink = Lists.newArrayList(Collections2.filter(links, l ->
+                PossibleRelation.CREATE.toString().equalsIgnoreCase(l.getRel())));
+
+        if (1 == createLink.size()) {
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setVisibility(View.VISIBLE);
+            fab.setOnClickListener(view -> {
+                CreationFragment fragment = CreationFragment.newInstance(createLink.get(0),
+                        HateoasMediaType.ACCOUNT_TYPE, Account.class, R.layout.add_screen_account);
+                transition(accountsFragment, fragment);
+            });
+        }
     }
 
     @Override
