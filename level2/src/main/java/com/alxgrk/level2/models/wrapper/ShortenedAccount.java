@@ -1,5 +1,7 @@
 package com.alxgrk.level2.models.wrapper;
 
+import java.util.Date;
+
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +26,7 @@ public class ShortenedAccount {
     private String surname;
 
     private String name;
+
+    private Date dateOfBirth;
 
 }

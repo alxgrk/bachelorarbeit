@@ -133,7 +133,8 @@ public class AccountController implements CollectionController<AccountRto, Accou
         AccountRto translatedAccount = new AccountRto()
                 .setUsername(input.getUsername())
                 .setSurname(input.getSurname())
-                .setName(input.getName());
+                .setName(input.getName())
+                .setDateOfBirth(input.getDateOfBirth());
 
         return updateOne(accountId, translatedAccount);
     }

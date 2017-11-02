@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -101,7 +102,8 @@ public class Level1Application {
                 .split(",")).forEach(a -> {
                     Account account = new Account(a, "password")
                             .setSurname(String.valueOf(a.charAt(0)))
-                            .setName(a.substring(1));
+                            .setName(a.substring(1))
+                            .setDateOfBirth(new Date(1509665674));
                     account.setOrganization(organization);
                     if (accountRepository.exists(Example.of(account))) {
                         Account savedAccount = accountRepository.findOne(Example.of(account));

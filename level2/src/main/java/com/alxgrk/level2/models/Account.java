@@ -1,5 +1,6 @@
 package com.alxgrk.level2.models;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,6 +49,8 @@ public class Account {
     private String surname;
 
     private String name;
+
+    private Date dateOfBirth;
 
     @ManyToOne(optional = true)
     private Organization organization;

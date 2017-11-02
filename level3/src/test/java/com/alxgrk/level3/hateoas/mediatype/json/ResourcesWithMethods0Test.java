@@ -30,6 +30,6 @@ public class ResourcesWithMethods0Test {
 
         assertThat(actualJson).isEqualTo(
                 "{\"_links\":[{\"rel\":\"foo\",\"href\":\"" + HREF + "\",\"method\":\"GET\"}],"
-                        + "\"members\":[{\"id\":null,\"username\":\"foo\",\"surname\":null,\"name\":null,\"_links\":[]}]}");
+                        + "\"members\":[{\"id\":null,\"username\":\"foo\",\"surname\":null,\"name\":null,\"dateOfBirth\":null,\"_links\":[]}]}");
     }
 }

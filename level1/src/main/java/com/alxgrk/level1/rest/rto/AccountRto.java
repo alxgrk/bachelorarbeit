@@ -1,5 +1,7 @@
 package com.alxgrk.level1.rest.rto;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -21,5 +23,7 @@ public class AccountRto {
     private String surname;
 
     private String name;
+
+    private Date dateOfBirth;
 
 }
