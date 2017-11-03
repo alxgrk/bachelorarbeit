@@ -78,7 +78,8 @@ public class ResourceController implements CollectionController<ResourceRto, Res
                 .stream()
                 .map(ResourceResource::new)
                 .map((r) -> r.addSelfLink()
-                        .addAdministratorsLink())
+                        .addAdministratorsLink()
+                        .addBillingLink())
                 .collect(Collectors.toList());
 
         return new ResourcesWithLinks<>(resourceResources, this)
@@ -136,7 +137,8 @@ public class ResourceController implements CollectionController<ResourceRto, Res
                 .addSelfLink()
                 .addUpdateLink()
                 .addDeleteLink()
-                .addAdministratorsLink();
+                .addAdministratorsLink()
+                .addBillingLink();
 
         return resourceResource;
     }

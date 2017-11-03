@@ -11,6 +11,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.core.Relation;
 import org.springframework.http.HttpMethod;
 
+import com.alxgrk.level3.controller.BillingController;
 import com.alxgrk.level3.controller.ResourceController;
 import com.alxgrk.level3.hateoas.mapping.ResourceMapper;
 import com.alxgrk.level3.hateoas.mediatype.json.LinkWithMethod;
@@ -76,6 +77,15 @@ public class ResourceResource extends ResourceSupportWithMethods {
 
         Link adminsLink = linkTo(methodOn(ResourceController.class)
                 .getAllAdministrators(resource.getId())).withRel(Rels.ADMINISTRATORS);
+        add(adminsLink, HttpMethod.GET);
+
+        return this;
+    }
+
+    public ResourceResource addBillingLink() {
+
+        Link adminsLink = linkTo(methodOn(BillingController.class)
+                .getAll()).withRel("bills");
         add(adminsLink, HttpMethod.GET);
 
         return this;
