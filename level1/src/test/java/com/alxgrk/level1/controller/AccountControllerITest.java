@@ -199,7 +199,7 @@ public class AccountControllerITest {
     @Test
     @Transactional
     public void testAccountResourcesFound() throws Exception {
-        mockMvc.perform(post("/accounts/get-resources-of-account")
+        mockMvc.perform(post("/accounts/get-properties-of-account")
                 .param("accountId", idOne.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentTypeJson))

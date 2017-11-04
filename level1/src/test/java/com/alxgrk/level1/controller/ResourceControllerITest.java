@@ -115,7 +115,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourcesFound() throws Exception {
-        mockMvc.perform(post("/resources/get-all"))
+        mockMvc.perform(post("/properties/get-all"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentTypeJson))
                 .andExpect(jsonPath("$[0].id").value(idOne))
@@ -129,7 +129,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceFound() throws Exception {
-        mockMvc.perform(post("/resources/get-one").param("resId", resourceOne.getId().toString()))
+        mockMvc.perform(post("/properties/get-one").param("propId", resourceOne.getId().toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentTypeJson))
                 .andExpect(jsonPath("$.id").value(idOne))
@@ -139,7 +139,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceCreated() throws Exception {
-        mockMvc.perform(post("/resources/create").contentType(contentTypeJson)
+        mockMvc.perform(post("/properties/create").contentType(contentTypeJson)
                 .content("{"
                         + "     \"name\": \"test\","
                         + "     \"availableTimeslots\": ["
@@ -169,7 +169,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceCreatedWithMissingTimeslots() throws Exception {
-        mockMvc.perform(post("/resources/create").contentType(contentTypeJson)
+        mockMvc.perform(post("/properties/create").contentType(contentTypeJson)
                 .content("{"
                         + "     \"name\": \"test\""
                         + "}"))
@@ -179,7 +179,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceConflictWithAlreadyExisting() throws Exception {
-        mockMvc.perform(post("/resources/create").contentType(contentTypeJson)
+        mockMvc.perform(post("/properties/create").contentType(contentTypeJson)
                 .content("{"
                         + "     \"name\": \"" + resNameOne + "\""
                         + "}"))
@@ -189,7 +189,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceUpdated() throws Exception {
-        mockMvc.perform(post("/resources/update").param("resId", resourceOne.getId().toString())
+        mockMvc.perform(post("/properties/update").param("propId", resourceOne.getId().toString())
                 .contentType(contentTypeJson)
                 .content("{"
                         + "     \"name\": \"test\","
@@ -220,7 +220,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceUpdatedWithMissingTimeslots() throws Exception {
-        mockMvc.perform(post("/resources/update").param("resId", resourceOne.getId().toString())
+        mockMvc.perform(post("/properties/update").param("propId", resourceOne.getId().toString())
                 .contentType(contentTypeJson)
                 .content("{"
                         + "     \"name\": \"test\","
@@ -251,7 +251,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceNotFound() throws Exception {
-        mockMvc.perform(post("/resources/update").param("resId", "123456")
+        mockMvc.perform(post("/properties/update").param("propId", "123456")
                 .contentType(contentTypeJson)
                 .content("{"
                         + "     \"name\": \"test\""
@@ -262,15 +262,15 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceDeleted() throws Exception {
-        mockMvc.perform(post("/resources/delete").param("resId", resourceOne.getId().toString()))
+        mockMvc.perform(post("/properties/delete").param("propId", resourceOne.getId().toString()))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     @Transactional
     public void testResourceMembersFound() throws Exception {
-        mockMvc.perform(post("/resources/get-administrators-of-resource")
-                .param("resId", resourceOne.getId().toString()))
+        mockMvc.perform(post("/properties/get-administrators-of-property")
+                .param("propId", resourceOne.getId().toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentTypeJson))
                 .andExpect(jsonPath("$[0].id").isNumber())
@@ -282,8 +282,8 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceMemberAttached() throws Exception {
-        mockMvc.perform(post("/resources/add-administrator-to-resource")
-                .param("resId", resourceOne.getId().toString())
+        mockMvc.perform(post("/properties/add-administrator-to-property")
+                .param("propId", resourceOne.getId().toString())
                 .param("username", username))
                 .andExpect(status().isCreated());
     }
@@ -291,8 +291,8 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceMemberAttachNotExisting() throws Exception {
-        mockMvc.perform(post("/resources/add-administrator-to-resource")
-                .param("resId", resourceOne.getId().toString())
+        mockMvc.perform(post("/properties/add-administrator-to-property")
+                .param("propId", resourceOne.getId().toString())
                 .param("username", "agdjiojdft"))
                 .andExpect(status().isNotFound());
     }
@@ -300,8 +300,8 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceMemberDetached() throws Exception {
-        mockMvc.perform(post("/resources/delete-administrator-from-resource")
-                .param("resId", resourceOne.getId().toString())
+        mockMvc.perform(post("/properties/delete-administrator-from-property")
+                .param("propId", resourceOne.getId().toString())
                 .param("adminId", accountId.toString()))
                 .andExpect(status().isNoContent());
     }

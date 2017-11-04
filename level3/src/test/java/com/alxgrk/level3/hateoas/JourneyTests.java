@@ -137,10 +137,10 @@ public class JourneyTests {
     @Transactional
     public void testAttachAndDetachResourceToUserJourney() throws Exception {
         String entryPoint = "/";
-        String firstHref = "/resources";
-        String secondHref = "/resources/" + resId + "/administrators";
-        String thirdHref = "/resources/" + resId + "/administrators";
-        String fourthHref = "/resources/" + resId + "/administrators/" + idTwo;
+        String firstHref = "/properties";
+        String secondHref = "/properties/" + resId + "/administrators";
+        String thirdHref = "/properties/" + resId + "/administrators";
+        String fourthHref = "/properties/" + resId + "/administrators/" + idTwo;
 
         mockMvc.perform(get(entryPoint))
                 .andExpect(status().isOk())

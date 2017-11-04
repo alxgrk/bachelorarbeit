@@ -2,7 +2,6 @@ package com.alxgrk.level1.controller;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,9 +37,9 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "Resources", description = "managing resources")
+@Api(tags = "Properties", description = "managing properties")
 @RestController
-@RequestMapping("/resources")
+@RequestMapping("/properties")
 @RequiredArgsConstructor
 @Slf4j
 public class ResourceController implements CollectionController<ResourceRto> {
@@ -105,17 +104,17 @@ public class ResourceController implements CollectionController<ResourceRto> {
 
     @Override
     @RequestMapping(method = RequestMethod.POST, value = "/get-one")
-    public ResourceRto getOne(@RequestParam Long resId) {
-        Resource resource = validator.validateResource(resId);
+    public ResourceRto getOne(@RequestParam Long propId) {
+        Resource resource = validator.validateResource(propId);
 
         return mapper.resourceToResourceRto(resource);
     }
 
     @Override
     @RequestMapping(method = RequestMethod.POST, value = "/update")
-    public ResponseEntity<?> updateOne(@RequestParam Long resId,
+    public ResponseEntity<?> updateOne(@RequestParam Long propId,
             @RequestBody ResourceRto input) {
-        Resource resource = validator.validateResource(resId);
+        Resource resource = validator.validateResource(propId);
 
         try {
             mapper.updateResourceFromResourceRto(input, resource);
@@ -135,8 +134,8 @@ public class ResourceController implements CollectionController<ResourceRto> {
     @RequestMapping(
             method = RequestMethod.POST,
             value = "/delete")
-    public ResponseEntity<?> deleteOne(@RequestParam Long resId) {
-        resourceRepository.delete(resId);
+    public ResponseEntity<?> deleteOne(@RequestParam Long propId) {
+        resourceRepository.delete(propId);
 
         return ResponseEntity.noContent().build();
     }
@@ -147,9 +146,9 @@ public class ResourceController implements CollectionController<ResourceRto> {
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/get-administrators-of-resource")
-    public Collection<AccountRto> getAllAdministrators(@RequestParam Long resId) {
-        Resource resource = validator.validateResource(resId);
+            value = "/get-administrators-of-property")
+    public Collection<AccountRto> getAllAdministrators(@RequestParam Long propId) {
+        Resource resource = validator.validateResource(propId);
 
         return resource.getAdministrators()
                 .stream()
@@ -159,11 +158,11 @@ public class ResourceController implements CollectionController<ResourceRto> {
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/add-administrator-to-resource")
+            value = "/add-administrator-to-property")
     @Transactional
-    public ResponseEntity<?> attachMemberToResource(@RequestParam Long resId,
+    public ResponseEntity<?> attachMemberToResource(@RequestParam Long propId,
             @RequestParam("username") String username) {
-        Resource resource = validator.validateResource(resId);
+        Resource resource = validator.validateResource(propId);
 
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
 
@@ -179,18 +178,18 @@ public class ResourceController implements CollectionController<ResourceRto> {
             administrators.add(account);
             resource.setAdministrators(administrators);
 
-            return ResponseEntity.created(URI.create("http://localhost:8080/resources/" + resource
+            return ResponseEntity.created(URI.create("http://localhost:8080/property/" + resource
                     .getId() + "/administrators")).build();
         }
     }
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/delete-administrator-from-resource")
+            value = "/delete-administrator-from-property")
     @Transactional
-    public ResponseEntity<?> detachMemberFromResource(@RequestParam Long resId,
+    public ResponseEntity<?> detachMemberFromResource(@RequestParam Long propId,
             @RequestParam Long adminId) {
-        Resource resource = validator.validateResource(resId);
+        Resource resource = validator.validateResource(propId);
 
         Account account = validator.validateAccount(adminId);
         Set<Resource> connectedResources = account.getConnectedResources();
@@ -202,7 +201,7 @@ public class ResourceController implements CollectionController<ResourceRto> {
         resource.setAdministrators(admins);
 
         return ResponseEntity.noContent()
-                .location(URI.create("http://localhost:8080/resources/" + resource
+                .location(URI.create("http://localhost:8080/property/" + resource
                         .getId() + "/administrators"))
                 .build();
     }

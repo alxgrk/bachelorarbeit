@@ -38,9 +38,9 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "Resources", description = "managing resources")
+@Api(tags = "Properties", description = "managing properties")
 @RestController
-@RequestMapping("/resources")
+@RequestMapping("/properties")
 @RequiredArgsConstructor
 @Slf4j
 public class ResourceController implements CollectionController<ResourceRto> {
@@ -92,40 +92,40 @@ public class ResourceController implements CollectionController<ResourceRto> {
 
                 resourceRepository.save(newResource);
 
-                return ResponseEntity.created(URI.create("http://localhost:8080/resources/"
+                return ResponseEntity.created(URI.create("http://localhost:8080/properties/"
                         + newResource.getId())).build();
             } catch (NoAvailableTimeslotsException | TimeslotsNotAvailableException
                     | TimeslotsToBookClashException e) {
-                log.warn("Trying to create a resource failed with the following reason: {}", e);
+                log.warn("Trying to create a property failed with the following reason: {}", e);
                 throw new BookingFailedException(e);
             }
         }
     }
 
     @Override
-    @RequestMapping(method = RequestMethod.GET, value = "/{resId}")
-    public ResourceRto getOne(@PathVariable Long resId) {
-        Resource resource = validator.validateResource(resId);
+    @RequestMapping(method = RequestMethod.GET, value = "/{propId}")
+    public ResourceRto getOne(@PathVariable Long propId) {
+        Resource resource = validator.validateResource(propId);
 
         return mapper.resourceToResourceRto(resource);
     }
 
     @Override
-    @RequestMapping(method = RequestMethod.PUT, value = "/{resId}")
-    public ResponseEntity<?> updateOne(@PathVariable Long resId,
+    @RequestMapping(method = RequestMethod.PUT, value = "/{propId}")
+    public ResponseEntity<?> updateOne(@PathVariable Long propId,
             @RequestBody ResourceRto input) {
-        Resource resource = validator.validateResource(resId);
+        Resource resource = validator.validateResource(propId);
 
         try {
             mapper.updateResourceFromResourceRto(input, resource);
 
             resourceRepository.save(resource);
 
-            return ResponseEntity.created(URI.create("http://localhost:8080/resources/" + resource
+            return ResponseEntity.created(URI.create("http://localhost:8080/properties/" + resource
                     .getId())).build();
         } catch (NoAvailableTimeslotsException | TimeslotsNotAvailableException
                 | TimeslotsToBookClashException e) {
-            log.warn("Trying to create a resource failed with the following reason: {}", e);
+            log.warn("Trying to create a property failed with the following reason: {}", e);
             throw new BookingFailedException(e);
         }
     }
@@ -133,9 +133,9 @@ public class ResourceController implements CollectionController<ResourceRto> {
     @Override
     @RequestMapping(
             method = RequestMethod.DELETE,
-            value = "/{resId}")
-    public ResponseEntity<?> deleteOne(@PathVariable Long resId) {
-        resourceRepository.delete(resId);
+            value = "/{propId}")
+    public ResponseEntity<?> deleteOne(@PathVariable Long propId) {
+        resourceRepository.delete(propId);
 
         return ResponseEntity.noContent().build();
     }
@@ -146,9 +146,9 @@ public class ResourceController implements CollectionController<ResourceRto> {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{resId}/administrators")
-    public Collection<AccountRto> getAllAdministrators(@PathVariable Long resId) {
-        Resource resource = validator.validateResource(resId);
+            value = "/{propId}/administrators")
+    public Collection<AccountRto> getAllAdministrators(@PathVariable Long propId) {
+        Resource resource = validator.validateResource(propId);
 
         return resource.getAdministrators()
                 .stream()
@@ -158,11 +158,11 @@ public class ResourceController implements CollectionController<ResourceRto> {
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/{resId}/administrators")
+            value = "/{propId}/administrators")
     @Transactional
-    public ResponseEntity<?> attachMemberToResource(@PathVariable Long resId,
+    public ResponseEntity<?> attachMemberToResource(@PathVariable Long propId,
             @RequestParam("username") String username) {
-        Resource resource = validator.validateResource(resId);
+        Resource resource = validator.validateResource(propId);
 
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
 
@@ -178,18 +178,18 @@ public class ResourceController implements CollectionController<ResourceRto> {
             administrators.add(account);
             resource.setAdministrators(administrators);
 
-            return ResponseEntity.created(URI.create("http://localhost:8080/resources/" + resource
+            return ResponseEntity.created(URI.create("http://localhost:8080/properties/" + resource
                     .getId() + "/administrators")).build();
         }
     }
 
     @RequestMapping(
             method = RequestMethod.DELETE,
-            value = "/{resId}/administrators/{adminId}")
+            value = "/{propId}/administrators/{adminId}")
     @Transactional
-    public ResponseEntity<?> detachMemberFromResource(@PathVariable Long resId,
+    public ResponseEntity<?> detachMemberFromResource(@PathVariable Long propId,
             @PathVariable Long adminId) {
-        Resource resource = validator.validateResource(resId);
+        Resource resource = validator.validateResource(propId);
 
         Account account = validator.validateAccount(adminId);
         Set<Resource> connectedResources = account.getConnectedResources();
@@ -201,7 +201,7 @@ public class ResourceController implements CollectionController<ResourceRto> {
         resource.setAdministrators(admins);
 
         return ResponseEntity.noContent()
-                .location(URI.create("http://localhost:8080/resources/" + resource
+                .location(URI.create("http://localhost:8080/properties/" + resource
                         .getId() + "/administrators"))
                 .build();
     }

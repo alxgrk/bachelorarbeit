@@ -135,7 +135,7 @@ public class AccountController implements CollectionController<AccountRto> {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{accountId}/resources")
+            value = "/{accountId}/properties")
     public Collection<ResourceRto> getAccountResources(@PathVariable Long accountId) {
         Account account = validator.validateAccount(accountId);
         return account.getConnectedResources()

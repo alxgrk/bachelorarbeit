@@ -193,7 +193,7 @@ public class AccountControllerITest {
     @Test
     @Transactional
     public void testAccountResourcesFound() throws Exception {
-        mockMvc.perform(get("/accounts/" + idOne + "/resources"))
+        mockMvc.perform(get("/accounts/" + idOne + "/properties"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaTypes.RESOURCE_TYPE + ";charset=UTF-8"))
                 .andExpect(jsonPath("$.members[0].id").isNumber())

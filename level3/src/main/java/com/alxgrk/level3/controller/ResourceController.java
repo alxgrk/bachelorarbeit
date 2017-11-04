@@ -47,9 +47,9 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "Resources", description = "managing resources")
+@Api(tags = "Properties", description = "managing properties")
 @RestController
-@RequestMapping("/resources")
+@RequestMapping("/properties")
 @RequiredArgsConstructor
 @Slf4j
 public class ResourceController implements CollectionController<ResourceRto, ResourceResource> {
@@ -127,10 +127,10 @@ public class ResourceController implements CollectionController<ResourceRto, Res
     @Override
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{resId}",
+            value = "/{propId}",
             produces = MediaTypes.RESOURCE_TYPE)
-    public ResourceResource getOne(@PathVariable Long resId) {
-        Resource resource = validator.validateResource(resId);
+    public ResourceResource getOne(@PathVariable Long propId) {
+        Resource resource = validator.validateResource(propId);
 
         ResourceResource resourceResource = new ResourceResource(resource)
                 .addSelfLink()
@@ -144,11 +144,11 @@ public class ResourceController implements CollectionController<ResourceRto, Res
     @Override
     @RequestMapping(
             method = RequestMethod.PUT,
-            value = "/{resId}",
+            value = "/{propId}",
             consumes = MediaTypes.RESOURCE_TYPE)
-    public ResponseEntity<?> updateOne(@PathVariable Long resId,
+    public ResponseEntity<?> updateOne(@PathVariable Long propId,
             @RequestBody ResourceRto input) {
-        Resource resource = validator.validateResource(resId);
+        Resource resource = validator.validateResource(propId);
 
         try {
             mapper.updateResourceFromResourceRto(input, resource);
@@ -170,9 +170,9 @@ public class ResourceController implements CollectionController<ResourceRto, Res
     @Override
     @RequestMapping(
             method = RequestMethod.DELETE,
-            value = "/{resId}")
-    public ResponseEntity<?> deleteOne(@PathVariable Long resId) {
-        resourceRepository.delete(resId);
+            value = "/{propId}")
+    public ResponseEntity<?> deleteOne(@PathVariable Long propId) {
+        resourceRepository.delete(propId);
 
         return ResponseEntity.noContent().build();
     }
@@ -183,10 +183,10 @@ public class ResourceController implements CollectionController<ResourceRto, Res
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{resId}/administrators",
+            value = "/{propId}/administrators",
             produces = MediaTypes.ACCOUNT_TYPE)
-    public ResourcesWithMethods<AccountResource> getAllAdministrators(@PathVariable Long resId) {
-        Resource resource = validator.validateResource(resId);
+    public ResourcesWithMethods<AccountResource> getAllAdministrators(@PathVariable Long propId) {
+        Resource resource = validator.validateResource(propId);
 
         // prepare each account
         List<AccountResource> accountResources = resource.getAdministrators()
@@ -194,7 +194,7 @@ public class ResourceController implements CollectionController<ResourceRto, Res
                 .map(AccountResource::new)
                 .map((r) -> {
                     Link detachLink = linkTo(methodOn(ResourceController.class)
-                            .detachMemberFromResource(resId, r.getAccount().getId()))
+                            .detachMemberFromResource(propId, r.getAccount().getId()))
                                     .withRel(Rels.DETACH);
 
                     return r.addSelfLink()
@@ -205,7 +205,7 @@ public class ResourceController implements CollectionController<ResourceRto, Res
         // prepare the surrounding resource
 
         Link attachLink = linkTo(methodOn(ResourceController.class)
-                .attachMemberToResource(resId, null))
+                .attachMemberToResource(propId, null))
                         .withRel(Rels.ATTACH);
 
         return new ResourcesWithLinks<>(accountResources, this)
@@ -216,11 +216,11 @@ public class ResourceController implements CollectionController<ResourceRto, Res
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/{resId}/administrators")
+            value = "/{propId}/administrators")
     @Transactional
-    public ResponseEntity<?> attachMemberToResource(@PathVariable Long resId,
+    public ResponseEntity<?> attachMemberToResource(@PathVariable Long propId,
             @RequestParam("username") String username) {
-        Resource resource = validator.validateResource(resId);
+        Resource resource = validator.validateResource(propId);
 
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
 
@@ -245,11 +245,11 @@ public class ResourceController implements CollectionController<ResourceRto, Res
 
     @RequestMapping(
             method = RequestMethod.DELETE,
-            value = "/{resId}/administrators/{adminId}")
+            value = "/{propId}/administrators/{adminId}")
     @Transactional
-    public ResponseEntity<?> detachMemberFromResource(@PathVariable Long resId,
+    public ResponseEntity<?> detachMemberFromResource(@PathVariable Long propId,
             @PathVariable Long adminId) {
-        Resource resource = validator.validateResource(resId);
+        Resource resource = validator.validateResource(propId);
 
         Account account = validator.validateAccount(adminId);
         Set<Resource> connectedResources = account.getConnectedResources();

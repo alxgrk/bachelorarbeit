@@ -104,7 +104,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourcesFound() throws Exception {
-        mockMvc.perform(get("/resources"))
+        mockMvc.perform(get("/properties"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaTypes.RESOURCE_TYPE + ";charset=UTF-8"))
                 .andExpect(jsonPath("$.members[0].id").value(idOne))
@@ -118,7 +118,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceFound() throws Exception {
-        mockMvc.perform(get("/resources/" + idOne))
+        mockMvc.perform(get("/properties/" + idOne))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaTypes.RESOURCE_TYPE + ";charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(idOne))
@@ -128,7 +128,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceCreated() throws Exception {
-        mockMvc.perform(post("/resources").contentType(MediaTypes.RESOURCE_TYPE)
+        mockMvc.perform(post("/properties").contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"test\","
                         + "     \"availableTimeslots\": ["
@@ -158,7 +158,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceCreatedWithMissingTimeslots() throws Exception {
-        mockMvc.perform(post("/resources").contentType(MediaTypes.RESOURCE_TYPE)
+        mockMvc.perform(post("/properties").contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"test\""
                         + "}"))
@@ -168,7 +168,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceConflictWithAlreadyExisting() throws Exception {
-        mockMvc.perform(post("/resources").contentType(MediaTypes.RESOURCE_TYPE)
+        mockMvc.perform(post("/properties").contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"" + resNameOne + "\""
                         + "}"))
@@ -178,7 +178,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceUpdated() throws Exception {
-        mockMvc.perform(put("/resources/" + idOne).contentType(MediaTypes.RESOURCE_TYPE)
+        mockMvc.perform(put("/properties/" + idOne).contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"test\","
                         + "     \"availableTimeslots\": ["
@@ -210,7 +210,7 @@ public class ResourceControllerITest {
     public void testResourceUpdatedWithMissingTimeslots() throws Exception {
         // TODO mapper misuses setting booked timeslots by getting all timeslots
         // and calling .addAll() there
-        mockMvc.perform(put("/resources/" + idOne).contentType(MediaTypes.RESOURCE_TYPE)
+        mockMvc.perform(put("/properties/" + idOne).contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"test\","
                         + "     \"bookedTimeslots\": ["
@@ -240,7 +240,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceNotFound() throws Exception {
-        mockMvc.perform(put("/resources/" + 123456).contentType(MediaTypes.RESOURCE_TYPE)
+        mockMvc.perform(put("/properties/" + 123456).contentType(MediaTypes.RESOURCE_TYPE)
                 .content("{"
                         + "     \"name\": \"test\""
                         + "}"))
@@ -250,14 +250,14 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceDeleted() throws Exception {
-        mockMvc.perform(delete("/resources/" + idOne))
+        mockMvc.perform(delete("/properties/" + idOne))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     @Transactional
     public void testResourceMembersFound() throws Exception {
-        mockMvc.perform(get("/resources/" + idOne + "/administrators"))
+        mockMvc.perform(get("/properties/" + idOne + "/administrators"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaTypes.ACCOUNT_TYPE + ";charset=UTF-8"))
                 .andExpect(jsonPath("$.members[0].id").isNumber())
@@ -269,14 +269,15 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceMemberAttached() throws Exception {
-        mockMvc.perform(post("/resources/" + idOne + "/administrators").param("username", username))
+        mockMvc.perform(post("/properties/" + idOne + "/administrators").param("username",
+                username))
                 .andExpect(status().isCreated());
     }
 
     @Test
     @Transactional
     public void testResourceMemberAttachNotExisting() throws Exception {
-        mockMvc.perform(post("/resources/" + idOne + "/administrators").param("username",
+        mockMvc.perform(post("/properties/" + idOne + "/administrators").param("username",
                 "agdjiojdft"))
                 .andExpect(status().isNotFound());
     }
@@ -284,7 +285,7 @@ public class ResourceControllerITest {
     @Test
     @Transactional
     public void testResourceMemberDetached() throws Exception {
-        mockMvc.perform(delete("/resources/" + idOne + "/administrators/" + accountId))
+        mockMvc.perform(delete("/properties/" + idOne + "/administrators/" + accountId))
                 .andExpect(status().isNoContent());
     }
 

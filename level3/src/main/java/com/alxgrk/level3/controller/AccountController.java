@@ -170,7 +170,7 @@ public class AccountController implements CollectionController<AccountRto, Accou
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{accountId}/resources",
+            value = "/{accountId}/properties",
             produces = MediaTypes.RESOURCE_TYPE)
     public ResourcesWithMethods<ResourceResource> getAccountResources(
             @PathVariable Long accountId) {
