@@ -2,21 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.mercateo.content</groupId>
-        <artifactId>content-mvn-pom-base</artifactId>
-        <version>1.0.8</version>
-        <relativePath />
-    </parent>
-
     <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <artifactId>content-api-raml</artifactId>
 
     <scm>
-        <connection>scm:git:ssh://git@bitbucket.mercateo.lan:7999/con/content-api-raml.git
-        </connection>
-        <url>https://bitbucket.mercateo.lan/projects/CON</url>
         <tag>content-api-raml-0.0.32</tag>
     </scm>
 
