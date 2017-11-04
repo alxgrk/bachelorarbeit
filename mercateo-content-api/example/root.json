@@ -1,0 +1,34 @@
+{
+  "_status": {
+    "timeMs": 35
+  },
+  "_schema": {
+    "links": [
+      {
+        "href": "/content",
+        "rel": "self",
+        "method": "GET"
+      },
+      {
+        "href": "/content/bshops",
+        "rel": "bshops",
+        "method": "GET"
+      },
+      {
+        "href": "/content/articles",
+        "rel": "articles",
+        "method": "GET"
+      },
+      {
+        "href": "/content/articles/{articleId}",
+        "rel": "article-by-id",
+        "method": "GET"
+      },
+      {
+        "href": "/content/groups",
+        "rel": "groups",
+        "method": "GET"
+      }
+    ]
+  }
+}

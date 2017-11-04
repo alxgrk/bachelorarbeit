@@ -1,0 +1,917 @@
+<!DOCTYPE HTML><html><head><title>CONTENT API (generated at Fr 20 Okt 2017 16:52:42 CEST) API documentation</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="generator" content="https://github.com/raml2html/raml2html 6.2.0"><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css"><script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script><script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script><script type="text/javascript">
+      $(document).ready(function() {
+        $('.page-header pre code, .top-resource-description pre code, .modal-body pre code').each(function(i, block) {
+          hljs.highlightBlock(block);
+        });
+
+        $('[data-toggle]').click(function() {
+          var selector = $(this).data('target') + ' pre code';
+          $(selector).each(function(i, block) {
+            hljs.highlightBlock(block);
+          });
+        });
+
+        // open modal on hashes like #_action_get
+        $(window).bind('hashchange', function(e) {
+          var anchor_id = document.location.hash.substr(1); //strip #
+          var element = $('#' + anchor_id);
+
+          // do we have such element + is it a modal?  --> show it
+          if (element.length && element.hasClass('modal')) {
+            element.modal('show');
+          }
+        });
+
+        // execute hashchange on first page load
+        $(window).trigger('hashchange');
+
+        // remove url fragment on modal hide
+        $('.modal').on('hidden.bs.modal', function() {
+          try {
+            if (history && history.replaceState) {
+                history.replaceState({}, '', '#');
+            }
+          } catch(e) {}
+        });
+      });
+    </script><style>
+      .hljs {
+        background: transparent;
+      }
+      .parent {
+        color: #999;
+      }
+      .list-group-item > .badge {
+        float: none;
+        margin-right: 6px;
+      }
+      .panel-title > .methods {
+        float: right;
+      }
+      .badge {
+        border-radius: 0;
+        text-transform: uppercase;
+        width: 70px;
+        font-weight: normal;
+        color: #f3f3f6;
+        line-height: normal;
+      }
+      .badge_get {
+        background-color: #63a8e2;
+      }
+      .badge_post {
+        background-color: #6cbd7d;
+      }
+      .badge_put {
+        background-color: #22bac4;
+      }
+      .badge_delete {
+        background-color: #d26460;
+      }
+      .badge_patch {
+        background-color: #ccc444;
+      }
+      .list-group, .panel-group {
+        margin-bottom: 0;
+      }
+      .panel-group .panel+.panel-white {
+        margin-top: 0;
+      }
+      .panel-group .panel-white {
+        border-bottom: 1px solid #F5F5F5;
+        border-radius: 0;
+      }
+      .panel-white:last-child {
+        border-bottom-color: white;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+      }
+      .panel-white .panel-heading {
+        background: white;
+      }
+      .tab-pane ul {
+        padding-left: 2em;
+      }
+      .tab-pane h1 {
+        font-size: 1.3em;
+      }
+      .tab-pane h2 {
+        font-size: 1.2em;
+        padding-bottom: 4px;
+        border-bottom: 1px solid #ddd;
+      }
+      .tab-pane h3 {
+        font-size: 1.1em;
+      }
+      .tab-content {
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+      }
+      #sidebar {
+        margin-top: 30px;
+        padding-right: 5px;
+        overflow: auto;
+        height: 90%;
+      }
+      .top-resource-description {
+        border-bottom: 1px solid #ddd;
+        background: #fcfcfc;
+        padding: 15px 15px 0 15px;
+        margin: -15px -15px 10px -15px;
+      }
+      .resource-description {
+        border-bottom: 1px solid #fcfcfc;
+        background: #fcfcfc;
+        padding: 15px 15px 0 15px;
+        margin: -15px -15px 10px -15px;
+      }
+      .resource-description p:last-child {
+        margin: 0;
+      }
+      .list-group .badge {
+        float: left;
+      }
+      .method_description {
+        margin-left: 85px;
+      }
+      .method_description p:last-child {
+        margin: 0;
+      }
+      .list-group-item {
+        cursor: pointer;
+      }
+      .list-group-item:hover {
+        background-color: #f5f5f5;
+      }
+      pre code {
+        overflow: auto;
+        word-wrap: normal;
+        white-space: pre;
+      }
+      .items {
+        background: #f5f5f5;
+        color: #333;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 9.5px;
+        margin: 0 0 10px;
+        font-size: 13px;
+        line-height: 1.42857143;
+      }
+      .examples {
+        margin-left: 0.5em;
+      }
+      .resource-modal li > ul {
+        margin-bottom: 1em;
+      }
+    </style></head><body data-spy="scroll" data-target="#sidebar"><div class="container"><div class="row"><div class="col-md-9" role="main"><div class="page-header"><h1>CONTENT API (generated at Fr 20 Okt 2017 16:52:42 CEST) API documentation <small>version 1.0.1-SNAPSHOT</small></h1><p>https://content.integration.unite.services/content/</p></div><div class="panel panel-default"><div class="panel-heading"><h3 id="content" class="panel-title">/content</h3></div><div class="panel-body"><div class="top-resource-description"><p>Single entry point for accessing the Content API. Resource is protected by an Identity Token, which we (for now) assume contains</p><ul><li>TenantId</li><li>CompanyId</li><li>EmployeeId</li></ul><p>Response might contain following rels:</p><ul><li>self</li><li>articles</li><li>article-by-id</li><li>business-shops</li></ul></div><div class="panel-group"><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_content"><span class="parent"></span>/content</a> <span class="methods"><a href="#content_get"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span></a></span></h4></div><div id="panel_content" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#content_get'" class="list-group-item"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span><div class="method_description"></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="content_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span> <span class="parent"></span>/content</h4></div><div class="modal-body"><div class="alert alert-warning"><span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by <b>identity-jwt</b><p>expects an identity token in the header</p></div><ul class="nav nav-tabs"><li class="active"><a href="#content_get_response" data-toggle="tab">Response</a></li><li><a href="#content_get_securedby" data-toggle="tab">Security</a></li></ul><div class="tab-content"><div class="tab-pane active" id="content_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/vnd.mercateo.content.v1+json</p><p><strong>Type</strong>: Response</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "_status": {
+    "timeMs": 35
+  },
+  "_schema": {
+    "links": [
+      {
+        "href": "/content",
+        "rel": "self",
+        "method": "GET"
+      },
+      {
+        "href": "/content/bshops",
+        "rel": "bshops",
+        "method": "GET"
+      },
+      {
+        "href": "/content/articles",
+        "rel": "articles",
+        "method": "GET"
+      },
+      {
+        "href": "/content/articles/{articleId}",
+        "rel": "article-by-id",
+        "method": "GET"
+      },
+      {
+        "href": "/content/groups",
+        "rel": "groups",
+        "method": "GET"
+      }
+    ]
+  }
+}
+</code></pre></div></div><div class="tab-pane" id="content_get_securedby"><h1>Secured by identity-jwt</h1><h3>Headers</h3><ul><li><strong>x-unite-access-token</strong>: <em>required (string)</em><p>IdentityToken as signed by central Authentication Authority (Auth0?)</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+</code></pre></div></li></ul></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="content_business_shops" class="panel-title">/content/business-shops</h3></div><div class="panel-body"><div class="top-resource-description"><p>Returns a list of all available BShops with a link to the detailed meta information.</p></div><div class="panel-group"><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_content_business_shops"><span class="parent"></span>/content/business-shops</a> <span class="methods"><a href="#content_business_shops_get"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span></a></span></h4></div><div id="panel_content_business_shops" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#content_business_shops_get'" class="list-group-item"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span><div class="method_description"></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="content_business_shops_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span> <span class="parent"></span>/content/business-shops</h4></div><div class="modal-body"><div class="alert alert-warning"><span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by <b>identity-jwt</b><p>expects an identity token in the header</p></div><ul class="nav nav-tabs"><li class="active"><a href="#content_business_shops_get_request" data-toggle="tab">Request</a></li><li><a href="#content_business_shops_get_response" data-toggle="tab">Response</a></li><li><a href="#content_business_shops_get_securedby" data-toggle="tab">Security</a></li></ul><div class="tab-content"><div class="tab-pane active" id="content_business_shops_get_request"><h3>Query Parameters</h3><ul><li><strong>businessShopId</strong>: <em>(array of string)</em></li><li><strong>hash</strong>: <em>(string)</em><p>used to mark versions of content, so that results can be marked immutable</p></li></ul></div><div class="tab-pane" id="content_business_shops_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Headers</h3><ul><li><strong>Cache-Control</strong>: <em>required (string - default: private, max-age=31536000)</em><p>Activates caching and defines cache behavior through cache response directives. Usually defines public or private (cacheable by proxy or not) and max-age for resource. See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html</a> for more information.</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>private, max-age=31536000</code></pre></div></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/vnd.mercateo.content.v1+json</p><p><strong>Type</strong>: Response</p><strong>Properties</strong><ul><li><strong>members</strong>: <em>required (array of WithSchema)</em><p><strong>Items</strong>: WithSchema</p><div class="items"><ul><li><strong>_schema</strong>: <em>required (object)</em><ul><li><strong>links</strong>: <em>required (array of Link)</em><p><strong>Items</strong>: Link</p><div class="items"><ul><li><strong>href</strong>: <em>(string)</em></li><li><strong>mediaType</strong>: <em>(string)</em></li><li><strong>method</strong>: <em>(one of POST, GET, PUT, PATCH, DELETE, OPTIONS, HEAD)</em></li><li><strong>rel</strong>: <em>required (string)</em></li></ul></div></li></ul></li></ul></div></li></ul><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "_status": {
+    "timeMs": 35
+  },
+  "members": [
+    {
+      "id": "d53a954f-381e-46da-8a33-0c917a1cef10",
+      "_schema": {
+        "links": [
+          {
+            "href": "/content/business-shops/d53a954f-381e-46da-8a33-0c917a1cef10",
+            "rel": "self",
+            "method": "GET"
+          }
+        ]
+      }
+    },
+    {
+      "id": "12c70a92-1a24-4cd4-aa6c-314afff92ce9",
+      "_schema": {
+        "links": [
+          {
+            "href": "/content/business-shops/12c70a92-1a24-4cd4-aa6c-314afff92ce9",
+            "rel": "self",
+            "method": "GET"
+          }
+        ]
+      }
+    }
+  ],
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/business-shops",
+        "rel": "self",
+        "method": "GET"
+      }
+    ]
+  }
+}
+</code></pre></div></div><div class="tab-pane" id="content_business_shops_get_securedby"><h1>Secured by identity-jwt</h1><h3>Headers</h3><ul><li><strong>x-unite-access-token</strong>: <em>required (string)</em><p>IdentityToken as signed by central Authentication Authority (Auth0?)</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+</code></pre></div></li></ul></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_content_business_shops__businessshopid_"><span class="parent">/content/business-shops</span>/{businessShopId}</a> <span class="methods"><a href="#content_business_shops__businessshopid__get"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span></a></span></h4></div><div id="panel_content_business_shops__businessshopid_" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>Delivers information about the BusinessShop specified via {businessShopId}-parameter.</p></div><div class="list-group"><div onclick="window.location.href = '#content_business_shops__businessshopid__get'" class="list-group-item"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span><div class="method_description"></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="content_business_shops__businessshopid__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span> <span class="parent">/content/business-shops</span>/{businessShopId}</h4></div><div class="modal-body"><div class="alert alert-warning"><span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by <b>identity-jwt</b><p>expects an identity token in the header</p></div><ul class="nav nav-tabs"><li class="active"><a href="#content_business_shops__businessshopid__get_request" data-toggle="tab">Request</a></li><li><a href="#content_business_shops__businessshopid__get_response" data-toggle="tab">Response</a></li><li><a href="#content_business_shops__businessshopid__get_securedby" data-toggle="tab">Security</a></li></ul><div class="tab-content"><div class="tab-pane active" id="content_business_shops__businessshopid__get_request"><h3>URI Parameters</h3><ul><li><strong>businessShopId</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>hash</strong>: <em>(string)</em><p>used to mark versions of content, so that results can be marked immutable</p></li></ul></div><div class="tab-pane" id="content_business_shops__businessshopid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Headers</h3><ul><li><strong>Cache-Control</strong>: <em>required (string - default: private, max-age=31536000)</em><p>Activates caching and defines cache behavior through cache response directives. Usually defines public or private (cacheable by proxy or not) and max-age for resource. See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html</a> for more information.</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>private, max-age=31536000</code></pre></div></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/vnd.mercateo.content.v1+json</p><p><strong>Type</strong>: Response</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "_status": {
+    "timeMs": 35
+  },
+  "id": "d53a954f-381e-46da-8a33-0c917a1cef10",
+  "shopName": "The perfect BusinessShop",
+  "logo": {
+    "mimeType": "image/jpeg",
+    "href": "http://images.com/perfect-bshop-logo.jpg",
+    "description": "the BusinessShop&#39;s logo"
+  },
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/business-shops/d53a954f-381e-46da-8a33-0c917a1cef10",
+        "rel": "self",
+        "method": "GET"
+      }
+    ]
+  }
+}
+</code></pre></div></div><div class="tab-pane" id="content_business_shops__businessshopid__get_securedby"><h1>Secured by identity-jwt</h1><h3>Headers</h3><ul><li><strong>x-unite-access-token</strong>: <em>required (string)</em><p>IdentityToken as signed by central Authentication Authority (Auth0?)</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+</code></pre></div></li></ul></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="content_articles" class="panel-title">/content/articles</h3></div><div class="panel-body"><div class="top-resource-description"><p>Retrieves all available articles within the BusinessShop. Top-selling articles will appear first by default. To search and filter for specific articles, use query parameters.</p><p>Response: a collection of articles matching the specified query paramters</p><p>Response might contain following rels:</p><ul><li>self</li><li>next</li><li>prev</li><li>first</li><li>last</li></ul></div><div class="panel-group"><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_content_articles"><span class="parent"></span>/content/articles</a> <span class="methods"><a href="#content_articles_get"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span></a></span></h4></div><div id="panel_content_articles" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#content_articles_get'" class="list-group-item"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span><div class="method_description"></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="content_articles_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span> <span class="parent"></span>/content/articles</h4></div><div class="modal-body"><div class="alert alert-warning"><span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by <b>identity-jwt</b><p>expects an identity token in the header</p></div><ul class="nav nav-tabs"><li class="active"><a href="#content_articles_get_request" data-toggle="tab">Request</a></li><li><a href="#content_articles_get_response" data-toggle="tab">Response</a></li><li><a href="#content_articles_get_securedby" data-toggle="tab">Security</a></li></ul><div class="tab-content"><div class="tab-pane active" id="content_articles_get_request"><h3>Query Parameters</h3><ul><li><strong>businessShopId</strong>: <em>(array of string)</em></li><li><strong>q</strong>: <em>(string)</em><p>query string If this parameter is not present but fq is a filter for UNSPSC-7 then a search for the given UNSPSC group is triggered. This search is not guaranteed to find all matching products.</p></li><li><strong>fq</strong>: <em>(string)</em><p>filter expression</p><p><strong>Examples</strong>:</p><div class="examples"><p><strong>fq2</strong>:<br></p><pre><code>{
+  "expression": {
+    "type": "Or",
+    "operands": [
+      {
+        "type": "ExactStringMatch",
+        "field": "manufacturer",
+        "value": "HP"
+      },
+      {
+        "type": "ExactStringMatch",
+        "field": "manufacturer",
+        "value": "Dell"
+      },
+      {
+        "type": "ExactStringMatch",
+        "field": "manufacturer",
+        "value": "Lenovo"
+      }
+    ]
+  }
+}
+</code></pre><p><strong>fq3</strong>:<br></p><pre><code>{
+  "expression": {
+    "type": "And",
+    "operands": [
+      {
+        "type": "ExactStringMatch",
+        "field": "manufacturer",
+        "value": "HP"
+      },
+      {
+        "type": "DecimalRangeMatch",
+        "field": "price",
+        "lowerBound": {
+          "value": 100
+        },
+        "upperBound": {
+          "value": 200
+        }
+      },
+      {
+        "type": "ExactReferenceFeatureMatch",
+        "systemName": "UNSPSC-7",
+        "group": "14111506"
+      }
+    ]
+  }
+}
+</code></pre></div></li><li><strong>limit</strong>: <em>(integer - default: 20)</em><p>max number of results returned</p></li><li><strong>offset</strong>: <em>(integer - default: 0)</em><p>number of hits to skip (used for paging)</p></li><li><strong>sort</strong>: <em>(string)</em><p>comma-separated list of sort directions, indicated by &#39;+&#39; or &#39;-&#39;, and field names</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>+description,-pricePerMinimumOrderQuantity</code></pre></div></li></ul></div><div class="tab-pane" id="content_articles_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/vnd.mercateo.content.v1+json</p><p><strong>Type</strong>: Response</p><strong>Properties</strong><ul><li><strong>total</strong>: <em>required (integer)</em></li><li><strong>offset</strong>: <em>required (integer)</em></li><li><strong>limit</strong>: <em>required (integer)</em></li><li><strong>members</strong>: <em>required (array of Hit)</em><p><strong>Items</strong>: Hit</p><div class="items"><ul><li><strong>article</strong>: <em>required (object)</em><ul><li><strong>id</strong>: <em>required (string)</em></li><li><strong>description</strong>: <em>required (string)</em></li><li><strong>manufacturerArticleId</strong>: <em>required (string)</em></li><li><strong>manufacturerName</strong>: <em>required (string)</em></li><li><strong>supplierArticleId</strong>: <em>required (string)</em></li><li><strong>minimumOrderQuantity</strong>: <em>required (integer)</em></li><li><strong>pricePerMinimumOrderQuantity</strong>: <em>required (object)</em><ul><li><strong>amount</strong>: <em>required (object)</em><p>represents a decimal as an integer and specifies how many digits are separated with a decimal seperator</p><ul><li><strong>value</strong>: <em>required (integer)</em><p>integer part of decimal</p></li><li><strong>decimalDigits</strong>: <em>(integer - default: 0)</em><p>How many digits are separated with a decimal seperator. Is positive for numbers with decimal places (e.g. 4,25 is represented by (425, 2) and negative for large numbers (e.g. 125.000.000.000 is represented by (125, -9).</p></li></ul></li><li><strong>currency</strong>: <em>required (string)</em></li><li><strong>priceType</strong>: <em>required (NET_CUSTOMER)</em></li><li><strong>tax</strong>: <em>required (object)</em><p>represents a decimal as an integer and specifies how many digits are separated with a decimal seperator</p><ul><li><strong>value</strong>: <em>required (integer)</em><p>integer part of decimal</p></li><li><strong>decimalDigits</strong>: <em>(integer - default: 0)</em><p>How many digits are separated with a decimal seperator. Is positive for numbers with decimal places (e.g. 4,25 is represented by (425, 2) and negative for large numbers (e.g. 125.000.000.000 is represented by (125, -9).</p></li></ul></li></ul></li><li><strong>orderUnit</strong>: <em>required (one of 4G, AA, BE, BG, BJ, BL, BLI, BND, BO, BX, C4, C5, C62, CA, CG, CH, CL, CLT, CMK, CMQ, CMT, CQ, CS, CT, CV, D64, D97, DAY, DI, DPC, DZN, EA, ETI, EV, FOI, FOT, GRM, HUR, JR, KGM, KIS, KMT, KST, KT, LBR, LTR, M4, MC, MGM, MLT, MMT, MTK, MTQ, MTR, OP, PA, PAD, PD, PF, PK, PR, QR, RD, RL, RM, RO, SA, SCH, SET, SPD, SR, ST, STK, TAB, TC, TN, TNE, TU, TUC, WEE, WP, Z3)</em></li><li><strong>shippingCostsEstimated</strong>: <em>required (object)</em><ul><li><strong>amount</strong>: <em>required (object)</em><p>represents a decimal as an integer and specifies how many digits are separated with a decimal seperator</p><ul><li><strong>value</strong>: <em>required (integer)</em><p>integer part of decimal</p></li><li><strong>decimalDigits</strong>: <em>(integer - default: 0)</em><p>How many digits are separated with a decimal seperator. Is positive for numbers with decimal places (e.g. 4,25 is represented by (425, 2) and negative for large numbers (e.g. 125.000.000.000 is represented by (125, -9).</p></li></ul></li><li><strong>currency</strong>: <em>required (string)</em></li></ul></li><li><strong>firstMimeImage</strong>: <em>(object)</em><ul><li><strong>mimeType</strong>: <em>required (string)</em></li><li><strong>href</strong>: <em>required (string)</em></li><li><strong>description</strong>: <em>(string)</em></li><li><strong>purpose</strong>: <em>(string)</em></li><li><strong>alt</strong>: <em>(string)</em></li></ul></li><li><strong>articleFeatures</strong>: <em>required (array of ArticleFeatures)</em><p><strong>Items</strong>: ArticleFeatures</p><div class="items"><ul><li><strong>features</strong>: <em>(array of Feature)</em><p><strong>Items</strong>: Feature</p><div class="items"><ul><li><strong>name</strong>: <em>required (string)</em></li><li><strong>values</strong>: <em>required (array of )</em></li><li><strong>unit</strong>: <em>(string)</em></li><li><strong>order</strong>: <em>(integer)</em></li></ul></div></li><li><strong>reference</strong>: <em>(object)</em><ul><li><strong>systemName</strong>: <em>required (string)</em></li><li><strong>groupId</strong>: <em>required (string)</em></li></ul></li></ul></div></li><li><strong>keywords</strong>: <em>(array of string)</em></li></ul></li><li><strong>score</strong>: <em>required (number)</em></li></ul></div></li><li><strong>facets</strong>: <em>(array of Facet)</em><p><strong>Items</strong>: Facet</p><div class="items"><ul><li><strong>field</strong>: <em>required (string)</em></li><li><strong>buckets</strong>: <em>required (array of Bucket)</em><p><strong>Items</strong>: Bucket</p><div class="items"><ul><li><strong>bucketType</strong>: <em>required (one of RANGE, STRING)</em></li><li><strong>range</strong>: <em>(object)</em><p>an open/closed numeric interval</p><ul><li><strong>lowerBound</strong>: <em>(object)</em><p>range&#39;s lower bound, might be absent, then signals: left-unbounded</p><ul><li><strong>value</strong>: <em>required (integer)</em><p>integer part of decimal</p></li><li><strong>decimalDigits</strong>: <em>(integer - default: 0)</em><p>How many digits are separated with a decimal seperator. Is positive for numbers with decimal places (e.g. 4,25 is represented by (425, 2) and negative for large numbers (e.g. 125.000.000.000 is represented by (125, -9).</p></li></ul></li><li><strong>upperBound</strong>: <em>(object)</em><p>range&#39;s upper bound, might be absent, then signals: right-unbounded</p><ul><li><strong>value</strong>: <em>required (integer)</em><p>integer part of decimal</p></li><li><strong>decimalDigits</strong>: <em>(integer - default: 0)</em><p>How many digits are separated with a decimal seperator. Is positive for numbers with decimal places (e.g. 4,25 is represented by (425, 2) and negative for large numbers (e.g. 125.000.000.000 is represented by (125, -9).</p></li></ul></li><li><strong>includeLower</strong>: <em>(boolean - default: true)</em><p>signals to include lower bound (left-closed)</p></li><li><strong>includeUpper</strong>: <em>(boolean - default: true)</em><p>signals to include upper bound (right-closed)</p></li></ul></li><li><strong>value</strong>: <em>(string)</em></li><li><strong>count</strong>: <em>required (number)</em></li></ul></div></li></ul></div></li></ul><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "_status": {
+    "timeMs": 35
+  },
+  "total": 2,
+  "offset": 0,
+  "limit": 20,
+  "members": [
+    {
+      "article": {
+        "id": "7d4c0b4-ed4d-4e68-bfe8-8aa09912f4c4",
+        "description": "Pelikan Lasertoner 621764 HP C4096A sw",
+        "manufacturerArticleId": "123456789",
+        "supplierArticleId": "123",
+        "manufacturerName": "Pelikan",
+        "orderUnit": "4G",
+        "minimumOrderQuantity": 1,
+        "pricePerMinimumOrderQuantity": {
+          "priceType": "NET_CUSTOMER",
+          "amount": {
+            "value": 4784,
+            "decimalDigits": 2
+          },
+          "currency": "EUR",
+          "tax": {
+            "value": 1900,
+            "decimalDigits": 2
+          }
+        },
+        "shippingCostsEstimated": {
+          "amount": {
+            "value": 320,
+            "decimalDigits": 2
+          },
+          "currency": "EUR"
+        },
+        "firstMimeImage": {
+          "description": "tinyImage",
+          "purpose": "tinyImage",
+          "href": "http://images.com/foo-tiny.jpg",
+          "mimeType": "image/jpeg"
+        },
+        "articleFeatures": [
+          {
+            "reference": {
+              "systemName": "ECLASS-4.1",
+              "groupId": "24-29-11-01"
+            }
+          },
+          {
+            "reference": {
+              "systemName": "ETIM-6.0",
+              "groupId": "EC000001"
+            }
+          },
+          {
+            "reference": {
+              "systemName": "UNSPSC-6.0801",
+              "groupId": "31230000"
+            }
+          }
+        ],
+        "keywords": [
+          "toner",
+          "laser",
+          "laster toner"
+        ]
+      },
+      "score": 31,
+      "_schema": {
+        "links": [
+          {
+            "rel": "details",
+            "href": "/content/articles/7d4c0b4-ed4d-4e68-bfe8-8aa09912f4c4?hash=123456789",
+            "method": "GET"
+          },
+          {
+            "href": "/content/bshops/d53a954f-381e-46da-8a33-0c917a1cef10?hash=123456789",
+            "rel": "bshop",
+            "method": "GET"
+          }
+        ]
+      }
+    },
+    {
+      "article": {
+        "id": "b1c3f8f3-4cc1-494d-975c-1611e438f6b6",
+        "description": "Pelikan Lasertoner 621122 HP C4129X sw",
+        "manufacturerArticleId": "123456789",
+        "supplierArticleId": "123",
+        "manufacturerName": "Pelikan",
+        "orderUnit": "4G",
+        "minimumOrderQuantity": 2,
+        "pricePerMinimumOrderQuantity": {
+          "priceType": "NET_CUSTOMER",
+          "amount": {
+            "value": 2706,
+            "decimalDigits": 2
+          },
+          "currency": "EUR",
+          "tax": {
+            "value": 1900,
+            "decimalDigits": 2
+          }
+        },
+        "shippingCostsEstimated": {
+          "amount": {
+            "value": 320,
+            "decimalDigits": 2
+          },
+          "currency": "EUR"
+        },
+        "firstMimeImage": {
+          "description": "tinyImage",
+          "purpose": "tinyImage",
+          "href": "http://images.com/foo-tiny.jpg",
+          "mimeType": "image/jpeg"
+        },
+        "articleFeatures": [
+          {
+            "reference": {
+              "systemName": "ECLASS-4.1",
+              "groupId": "24-29-11-01"
+            }
+          }
+        ],
+        "keywords": []
+      },
+      "score": 31,
+      "_schema": {
+        "links": [
+          {
+            "rel": "details",
+            "href": "/content/articles/b1c3f8f3-4cc1-494d-975c-1611e438f6b6?hash=123456789",
+            "method": "GET"
+          },
+          {
+            "href": "/content/bshops/d53a954f-381e-46da-8a33-0c917a1cef10?hash=123456789",
+            "rel": "bshop",
+            "method": "GET"
+          }
+        ]
+      }
+    }
+  ],
+  "facets": [
+    {
+      "field": "price",
+      "buckets": [
+        {
+          "bucketType": "RANGE",
+          "range": {
+            "upperBound": {
+              "value": 30
+            },
+            "includeUpper": true,
+            "includeLower": false
+          },
+          "count": 1
+        }
+      ]
+    },
+    {
+      "field": "mname",
+      "buckets": [
+        {
+          "bucketType": "STRING",
+          "value": "HP",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/articles?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;appId=b1c3f8f3-4cc1-494d-975c-1611e438f6b6",
+        "rel": "self",
+        "method": "GET"
+      }
+    ]
+  }
+}
+</code></pre></div></div><div class="tab-pane" id="content_articles_get_securedby"><h1>Secured by identity-jwt</h1><h3>Headers</h3><ul><li><strong>x-unite-access-token</strong>: <em>required (string)</em><p>IdentityToken as signed by central Authentication Authority (Auth0?)</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+</code></pre></div></li></ul></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_content_articles__articleid_"><span class="parent">/content/articles</span>/{articleId}</a> <span class="methods"><a href="#content_articles__articleid__get"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span></a></span></h4></div><div id="panel_content_articles__articleid_" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>Retrieves details for the specified article referenced by the articleId.</p><p>Response: a single article with all its details</p><p>Response might contain following rels:</p><ul><li>self</li><li>business-shop</li><li>return-policy</li><li>shipping-costs</li><li>minimum-order-value</li></ul></div><div class="list-group"><div onclick="window.location.href = '#content_articles__articleid__get'" class="list-group-item"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span><div class="method_description"></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="content_articles__articleid__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span> <span class="parent">/content/articles</span>/{articleId}</h4></div><div class="modal-body"><div class="alert alert-warning"><span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by <b>identity-jwt</b><p>expects an identity token in the header</p></div><ul class="nav nav-tabs"><li class="active"><a href="#content_articles__articleid__get_request" data-toggle="tab">Request</a></li><li><a href="#content_articles__articleid__get_response" data-toggle="tab">Response</a></li><li><a href="#content_articles__articleid__get_securedby" data-toggle="tab">Security</a></li></ul><div class="tab-content"><div class="tab-pane active" id="content_articles__articleid__get_request"><h3>URI Parameters</h3><ul><li><strong>articleId</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>hint</strong>: <em>(one of MSHOP, UNITE)</em><p>a hint for the proxy to figure out, &#39;where&#39; (in MercateoShop or Unite) the article can be found</p></li><li><strong>hash</strong>: <em>(string)</em><p>used to mark versions of content, so that results can be marked immutable</p></li></ul></div><div class="tab-pane" id="content_articles__articleid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Headers</h3><ul><li><strong>Cache-Control</strong>: <em>required (string - default: private, max-age=31536000)</em><p>Activates caching and defines cache behavior through cache response directives. Usually defines public or private (cacheable by proxy or not) and max-age for resource. See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html</a> for more information.</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>private, max-age=31536000</code></pre></div></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/vnd.mercateo.content.v1+json</p><p><strong>Type</strong>: Response</p><strong>Properties</strong><ul><li><strong>groups</strong>: <em>required (object)</em><ul><li><strong>members</strong>: <em>required (array of WithSchema)</em><p><strong>Items</strong>: WithSchema</p><div class="items"><ul><li><strong>_schema</strong>: <em>required (object)</em><ul><li><strong>links</strong>: <em>required (array of Link)</em><p><strong>Items</strong>: Link</p><div class="items"><ul><li><strong>href</strong>: <em>(string)</em></li><li><strong>mediaType</strong>: <em>(string)</em></li><li><strong>method</strong>: <em>(one of POST, GET, PUT, PATCH, DELETE, OPTIONS, HEAD)</em></li><li><strong>rel</strong>: <em>required (string)</em></li></ul></div></li></ul></li></ul></div></li></ul></li></ul><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "_status": {
+    "timeMs": 35
+  },
+  "id": "801e3cb6-160a-4f55-91be-6c85896cc8c5",
+  "manufacturerArticleId": "99",
+  "manufacturerName": "Hersteller A",
+  "description": "V-Deichsel,f. Rollbox,L 600mm,Ring Ø 35mm",
+  "mimeInfo": [
+    {
+      "description": "tinyImage",
+      "purpose": "tinyImage",
+      "href": "http://images.com/foo-tiny.jpg",
+      "mimeType": "image/jpeg"
+    },
+    {
+      "description": "largeImage",
+      "purpose": "largeImage",
+      "href": "http://images.com/foo-large.jpg",
+      "mimeType": "image/jpeg"
+    }
+  ],
+  "details": {
+    "descriptionLong": "Eine wirklich schöne Deichsel.",
+    "supplierArticleId": "123",
+    "internationalArticleId": [
+      {
+        "type": "ean",
+        "value": "123456789"
+      }
+    ]
+  },
+  "blockPricing": [
+    {
+      "priceType": "NET_CUSTOMER",
+      "amount": {
+        "value": 100,
+        "decimalDigits": 2
+      },
+      "currency": "EUR",
+      "tax": {
+        "value": 1900,
+        "decimalDigits": 2
+      },
+      "lowerBound": 1
+    }
+  ],
+  "orderDetails": {
+    "orderUnit": "PK",
+    "contentUnit": "C62",
+    "numberOfContentUnitsPerOrderUnit": {
+      "value": 500,
+      "decimalDigits": 0
+    },
+    "minimumOrderQuantity": 5,
+    "orderQuantityInterval": 5,
+    "priceQuantity": 100,
+    "deliveryTime": 2
+  },
+  "references": [
+    {
+      "articleReferenceType": "SIMILAR",
+      "refId": "96c51d95-ac5f-43cf-a793-284c88f78289"
+    }
+  ],
+  "articleFeatures": [
+    {
+      "reference": {
+        "systemName": "ECLASS-5.1.4",
+        "groupId": "29-33-24-12"
+      },
+      "features": [
+        {
+          "name": "Gefahrenhinweise",
+          "values": [
+            "H225 Flüssigkeit und Dampf leicht entzündbar.",
+            "H319 Verursacht schwere Augenreizung."
+          ]
+        },
+        {
+          "name": "Breite",
+          "values": [
+            "15"
+          ],
+          "unit": "cm"
+        }
+      ]
+    }
+  ],
+  "groups": {
+    "members": [
+      {
+        "id": "BOXES_STORAGE",
+        "_schema": {
+          "links": [
+            {
+              "href": "/content/groups/BOXES_STORAGE?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;hash=123456789",
+              "rel": "self",
+              "method": "GET"
+            }
+          ]
+        }
+      },
+      {
+        "id": "BOXES_TRANSPORT",
+        "_schema": {
+          "links": [
+            {
+              "href": "/content/groups/BOXES_TRANSPORT?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;hash=123456789",
+              "rel": "self",
+              "method": "GET"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/articles/801e3cb6-160a-4f55-91be-6c85896cc8c5?hash=123456789",
+        "rel": "self",
+        "method": "GET"
+      },
+      {
+        "href": "/content/business-shops/d53a954f-381e-46da-8a33-0c917a1cef10?hash=123456789",
+        "rel": "business-shop",
+        "method": "GET"
+      },
+      {
+        "href": "/content/return-policies/3bbe8827-6951-49d8-ace0-a44485aee066?hint=unite",
+        "rel": "return-policy",
+        "method": "GET"
+      },
+      {
+        "href": "/content/shipping-costs/d146973c-7d8e-416e-bacc-d656a905cf9e?hint=unite",
+        "rel": "shipping-costs",
+        "method": "GET"
+      },
+      {
+        "href": "/content/minimum-order-values/d146973c-7d8e-416e-bacc-d656a905cf9e?hint=unite",
+        "rel": "minimum-order-value",
+        "method": "GET"
+      }
+    ]
+  }
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2></div><div class="tab-pane" id="content_articles__articleid__get_securedby"><h1>Secured by identity-jwt</h1><h3>Headers</h3><ul><li><strong>x-unite-access-token</strong>: <em>required (string)</em><p>IdentityToken as signed by central Authentication Authority (Auth0?)</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+</code></pre></div></li></ul></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="content_groups" class="panel-title">/content/groups</h3></div><div class="panel-body"><div class="top-resource-description"><p>Retrieves group lists or subtrees as defined in content</p><p>Response: defined groups of the content</p><p>Response might contain following rels:</p><ul><li>self</li><li>next</li><li>prev</li><li>first</li><li>last</li></ul></div><div class="panel-group"><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_content_groups"><span class="parent"></span>/content/groups</a> <span class="methods"><a href="#content_groups_get"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span></a></span></h4></div><div id="panel_content_groups" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#content_groups_get'" class="list-group-item"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span><div class="method_description"></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="content_groups_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span> <span class="parent"></span>/content/groups</h4></div><div class="modal-body"><div class="alert alert-warning"><span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by <b>identity-jwt</b><p>expects an identity token in the header</p></div><ul class="nav nav-tabs"><li class="active"><a href="#content_groups_get_request" data-toggle="tab">Request</a></li><li><a href="#content_groups_get_response" data-toggle="tab">Response</a></li><li><a href="#content_groups_get_securedby" data-toggle="tab">Security</a></li></ul><div class="tab-content"><div class="tab-pane active" id="content_groups_get_request"><h3>Query Parameters</h3><ul><li><strong>businessShopId</strong>: <em>required (string)</em></li><li><strong>root</strong>: <em>(string - default: __root)</em><p>optional root node to start iterating from. if left empty, answer will contain top-level nodes. the root node will NOT be included in the response.</p></li><li><strong>depth</strong>: <em>(integer - default: 1)</em><p>number of levels to descend. Defaults to 1, so that you get only the direct children for a given root node (or the top-level ones, if no root is given)</p></li><li><strong>hash</strong>: <em>(string)</em><p>used to mark versions of content, so that results can be marked immutable</p></li></ul></div><div class="tab-pane" id="content_groups_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Headers</h3><ul><li><strong>Cache-Control</strong>: <em>required (string - default: private, max-age=31536000)</em><p>Activates caching and defines cache behavior through cache response directives. Usually defines public or private (cacheable by proxy or not) and max-age for resource. See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html</a> for more information.</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>private, max-age=31536000</code></pre></div></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/vnd.mercateo.content.v1+json</p><p><strong>Type</strong>: Response</p><strong>Properties</strong><ul><li><strong>total</strong>: <em>required (integer)</em></li><li><strong>root</strong>: <em>required (string)</em></li><li><strong>depth</strong>: <em>required (integer)</em></li><li><strong>members</strong>: <em>required (array of Group)</em><p><strong>Items</strong>: Group</p><div class="items"><ul><li><strong>id</strong>: <em>required (string)</em></li><li><strong>name</strong>: <em>required (string)</em></li><li><strong>description</strong>: <em>required (string)</em></li><li><strong>mimeInfo</strong>: <em>required (array of Mime)</em><p><strong>Items</strong>: Mime</p><div class="items"><ul><li><strong>mimeType</strong>: <em>required (string)</em></li><li><strong>href</strong>: <em>required (string)</em></li><li><strong>description</strong>: <em>(string)</em></li><li><strong>purpose</strong>: <em>(string)</em></li><li><strong>alt</strong>: <em>(string)</em></li></ul></div></li><li><strong>parentId</strong>: <em>required (string)</em></li><li><strong>order</strong>: <em>required (integer)</em></li><li><strong>keyword</strong>: <em>required (array of string)</em></li></ul></div></li></ul><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "_status": {
+    "timeMs": 35
+  },
+  "total": 2,
+  "root": "__root",
+  "depth": 1,
+  "members": [
+    {
+      "id": "CLOTHING_001",
+      "name": "Kleidung",
+      "description": "",
+      "parentId": "__root",
+      "order": 1,
+      "mimeInfo": [
+        {
+          "mimeType": "image/png",
+          "href": "http://www.fairnet-medien.de/files/bilder/eCommerce-Begriffe/BMEcat.png",
+          "description": "Tolles Logo",
+          "purpose": "fullsize_logo"
+        }
+      ],
+      "keyword": [
+        "kleidung",
+        "pollover",
+        "tshirt"
+      ],
+      "_schema": {
+        "links": [
+          {
+            "rel": "self",
+            "href": "/content/groups/CLOTHING_001?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;hash=123456789",
+            "method": "GET"
+          },
+          {
+            "rel": "descendants",
+            "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;root=CLOTHING_001&amp;hash=123456789",
+            "method": "GET"
+          },
+          {
+            "rel": "parent",
+            "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;root=__root&amp;hash=123456789",
+            "method": "GET"
+          }
+        ]
+      }
+    },
+    {
+      "id": "WATCHES_001",
+      "name": "Uhren",
+      "description": "",
+      "parentId": "__root",
+      "order": 1,
+      "mimeInfo": [
+        {
+          "mimeType": "image/png",
+          "href": "https://cdn.def-shop.com/original/bangastic-jogginghose-olive-304903.jpg",
+          "description": "Fiese Hose in grün",
+          "purpose": "product_img"
+        }
+      ],
+      "keyword": [
+        "uhr",
+        "zeit",
+        "accessoire"
+      ],
+      "_schema": {
+        "links": [
+          {
+            "rel": "self",
+            "href": "/content/groups/WATCHES_001?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;hash=123456789",
+            "method": "GET"
+          },
+          {
+            "rel": "descendants",
+            "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;root=WATCHES_001&amp;hash=123456789",
+            "method": "GET"
+          },
+          {
+            "rel": "parent",
+            "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;root=__root&amp;hash=123456789",
+            "method": "GET"
+          }
+        ]
+      }
+    }
+  ],
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;root=__root&amp;depth=1&amp;hash=123456789",
+        "rel": "self",
+        "method": "GET"
+      }
+    ]
+  }
+}
+</code></pre></div></div><div class="tab-pane" id="content_groups_get_securedby"><h1>Secured by identity-jwt</h1><h3>Headers</h3><ul><li><strong>x-unite-access-token</strong>: <em>required (string)</em><p>IdentityToken as signed by central Authentication Authority (Auth0?)</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+</code></pre></div></li></ul></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_content_groups__groupid_"><span class="parent">/content/groups</span>/{groupId}</a> <span class="methods"><a href="#content_groups__groupid__get"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span></a></span></h4></div><div id="panel_content_groups__groupid_" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>Shows information about a specific group.</p></div><div class="list-group"><div onclick="window.location.href = '#content_groups__groupid__get'" class="list-group-item"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span><div class="method_description"></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="content_groups__groupid__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span> <span class="parent">/content/groups</span>/{groupId}</h4></div><div class="modal-body"><div class="alert alert-warning"><span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by <b>identity-jwt</b><p>expects an identity token in the header</p></div><ul class="nav nav-tabs"><li class="active"><a href="#content_groups__groupid__get_request" data-toggle="tab">Request</a></li><li><a href="#content_groups__groupid__get_response" data-toggle="tab">Response</a></li><li><a href="#content_groups__groupid__get_securedby" data-toggle="tab">Security</a></li></ul><div class="tab-content"><div class="tab-pane active" id="content_groups__groupid__get_request"><h3>URI Parameters</h3><ul><li><strong>groupId</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>businessShopId</strong>: <em>required (string)</em></li><li><strong>hash</strong>: <em>(string)</em><p>used to mark versions of content, so that results can be marked immutable</p></li></ul></div><div class="tab-pane" id="content_groups__groupid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Headers</h3><ul><li><strong>Cache-Control</strong>: <em>required (string - default: private, max-age=31536000)</em><p>Activates caching and defines cache behavior through cache response directives. Usually defines public or private (cacheable by proxy or not) and max-age for resource. See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html</a> for more information.</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>private, max-age=31536000</code></pre></div></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/vnd.mercateo.content.v1+json</p><p><strong>Type</strong>: Group</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "_status": {
+    "timeMs": 35
+  },
+  "id": "CLOTHING_MALE",
+  "name": "Herren-Kleidung",
+  "description": "Für den Mann von Welt",
+  "parentId": "CLOTHING_001",
+  "order": 1,
+  "mimeInfo": [
+    {
+      "mimeType": "image/png",
+      "href": "https://cdn.def-shop.com/original/bangastic-jogginghose-olive-304903.jpg",
+      "description": "Fiese Hose in grün",
+      "purpose": "product_img"
+    }
+  ],
+  "keyword": [
+    "hose",
+    "vintage",
+    "herren",
+    "männer"
+  ],
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/groups/CLOTHING_001?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;hash=123456789",
+        "rel": "self",
+        "method": "GET"
+      },
+      {
+        "rel": "descendants",
+        "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;root=CLOTHING_MALE&amp;hash=123456789",
+        "method": "GET"
+      },
+      {
+        "rel": "parent",
+        "href": "/content/groups/CLOTHING_001?appId=d53a954f-381e-46da-8a33-0c917a1cef10&amp;hash=123456789",
+        "method": "GET"
+      }
+    ]
+  }
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2></div><div class="tab-pane" id="content_groups__groupid__get_securedby"><h1>Secured by identity-jwt</h1><h3>Headers</h3><ul><li><strong>x-unite-access-token</strong>: <em>required (string)</em><p>IdentityToken as signed by central Authentication Authority (Auth0?)</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+</code></pre></div></li></ul></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="content_return_policies__policyid_" class="panel-title">/content/return-policies/{policyId}</h3></div><div class="panel-body"><div class="top-resource-description"><p>Return policies are referenced by articles.</p><p>Response might contain following rels:</p><ul><li>self</li></ul></div><div class="panel-group"><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_content_return_policies__policyid_"><span class="parent"></span>/content/return-policies/{policyId}</a> <span class="methods"><a href="#content_return_policies__policyid__get"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span></a></span></h4></div><div id="panel_content_return_policies__policyid_" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#content_return_policies__policyid__get'" class="list-group-item"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span><div class="method_description"></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="content_return_policies__policyid__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span> <span class="parent"></span>/content/return-policies/{policyId}</h4></div><div class="modal-body"><div class="alert alert-warning"><span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by <b>identity-jwt</b><p>expects an identity token in the header</p></div><ul class="nav nav-tabs"><li class="active"><a href="#content_return_policies__policyid__get_request" data-toggle="tab">Request</a></li><li><a href="#content_return_policies__policyid__get_response" data-toggle="tab">Response</a></li><li><a href="#content_return_policies__policyid__get_securedby" data-toggle="tab">Security</a></li></ul><div class="tab-content"><div class="tab-pane active" id="content_return_policies__policyid__get_request"><h3>URI Parameters</h3><ul><li><strong>policyId</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>hint</strong>: <em>(one of MSHOP, UNITE)</em><p>a hint for the proxy to figure out, &#39;where&#39; (in MercateoShop or Unite) the return policy can be found</p></li><li><strong>hash</strong>: <em>(string)</em><p>used to mark versions of content, so that results can be marked immutable</p></li></ul></div><div class="tab-pane" id="content_return_policies__policyid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Headers</h3><ul><li><strong>Cache-Control</strong>: <em>required (string - default: private, max-age=31536000)</em><p>Activates caching and defines cache behavior through cache response directives. Usually defines public or private (cacheable by proxy or not) and max-age for resource. See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html</a> for more information.</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>private, max-age=31536000</code></pre></div></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/vnd.mercateo.content.v1+json</p><p><strong>Type</strong>: Response</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "_status": {
+    "timeMs": 35
+  },
+  "id": "3bbe8827-6951-49d8-ace0-a44485aee066",
+  "returnPossible": true,
+  "cancellationPossible": true,
+  "processingFee": {
+    "processingFeeType": "ABSOLUTE",
+    "absoluteAmount": {
+      "amount": {
+        "value": 199,
+        "decimalDigits": 2
+      },
+      "currency": "EUR"
+    }
+  },
+  "shippingCostPayer": "SUPPLIER",
+  "returnWithinDays": 14,
+  "stateOfPackaging": "UNOPENED",
+  "stateOfProduct": "UNUSED",
+  "additionalText": "Die Gewährleistungsfrist laut AGB bleibt unabhängig der angegebenen Rückgaberechte bestehen.",
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/return-policies/3bbe8827-6951-49d8-ace0-a44485aee066?hint=unite",
+        "rel": "return-policy",
+        "method": "GET"
+      }
+    ]
+  }
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2></div><div class="tab-pane" id="content_return_policies__policyid__get_securedby"><h1>Secured by identity-jwt</h1><h3>Headers</h3><ul><li><strong>x-unite-access-token</strong>: <em>required (string)</em><p>IdentityToken as signed by central Authentication Authority (Auth0?)</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+</code></pre></div></li></ul></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="content_shipping_costs__shippingcostsid_" class="panel-title">/content/shipping-costs/{shippingCostsId}</h3></div><div class="panel-body"><div class="top-resource-description"><p>Shipping costs are referenced by articles.</p><p>Response might contain following rels:</p><ul><li>self</li></ul></div><div class="panel-group"><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_content_shipping_costs__shippingcostsid_"><span class="parent"></span>/content/shipping-costs/{shippingCostsId}</a> <span class="methods"><a href="#content_shipping_costs__shippingcostsid__get"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span></a></span></h4></div><div id="panel_content_shipping_costs__shippingcostsid_" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#content_shipping_costs__shippingcostsid__get'" class="list-group-item"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span><div class="method_description"></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="content_shipping_costs__shippingcostsid__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span> <span class="parent"></span>/content/shipping-costs/{shippingCostsId}</h4></div><div class="modal-body"><div class="alert alert-warning"><span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by <b>identity-jwt</b><p>expects an identity token in the header</p></div><ul class="nav nav-tabs"><li class="active"><a href="#content_shipping_costs__shippingcostsid__get_request" data-toggle="tab">Request</a></li><li><a href="#content_shipping_costs__shippingcostsid__get_response" data-toggle="tab">Response</a></li><li><a href="#content_shipping_costs__shippingcostsid__get_securedby" data-toggle="tab">Security</a></li></ul><div class="tab-content"><div class="tab-pane active" id="content_shipping_costs__shippingcostsid__get_request"><h3>URI Parameters</h3><ul><li><strong>shippingCostsId</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>hint</strong>: <em>(one of MSHOP, UNITE)</em><p>a hint for the proxy to figure out, &#39;where&#39; (in MercateoShop or Unite) the shipping costs can be found</p></li><li><strong>hash</strong>: <em>(string)</em><p>used to mark versions of content, so that results can be marked immutable</p></li></ul></div><div class="tab-pane" id="content_shipping_costs__shippingcostsid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Headers</h3><ul><li><strong>Cache-Control</strong>: <em>required (string - default: private, max-age=31536000)</em><p>Activates caching and defines cache behavior through cache response directives. Usually defines public or private (cacheable by proxy or not) and max-age for resource. See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html</a> for more information.</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>private, max-age=31536000</code></pre></div></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/vnd.mercateo.content.v1+json</p><p><strong>Type</strong>: Response</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "_status": {
+    "timeMs": 35
+  },
+  "id": "d146973c-7d8e-416e-bacc-d656a905cf9e",
+  "shippingCosts": [
+    {
+      "shippingCostsType": "TieredShippingCosts",
+      "tiers": [
+        {
+          "threshold": {
+            "amount": {
+              "value": 0,
+              "decimalDigits": 0
+            },
+            "currency": "EUR"
+          },
+          "value": {
+            "amount": {
+              "value": 995,
+              "decimalDigits": 2
+            },
+            "currency": "EUR"
+          }
+        },
+        {
+          "threshold": {
+            "amount": {
+              "value": 100,
+              "decimalDigits": 0
+            },
+            "currency": "EUR"
+          },
+          "value": {
+            "amount": {
+              "value": 495,
+              "decimalDigits": 2
+            },
+            "currency": "EUR"
+          }
+        },
+        {
+          "threshold": {
+            "amount": {
+              "value": 500,
+              "decimalDigits": 0
+            },
+            "currency": "EUR"
+          },
+          "value": {
+            "amount": {
+              "value": 0,
+              "decimalDigits": 0
+            },
+            "currency": "EUR"
+          }
+        }
+      ]
+    }
+  ],
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/shipping-costs/d146973c-7d8e-416e-bacc-d656a905cf9e?hint=unite",
+        "rel": "self",
+        "method": "GET"
+      }
+    ]
+  }
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2></div><div class="tab-pane" id="content_shipping_costs__shippingcostsid__get_securedby"><h1>Secured by identity-jwt</h1><h3>Headers</h3><ul><li><strong>x-unite-access-token</strong>: <em>required (string)</em><p>IdentityToken as signed by central Authentication Authority (Auth0?)</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+</code></pre></div></li></ul></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="content_minimum_order_values__minimumordervalueid_" class="panel-title">/content/minimum-order-values/{minimumOrderValueId}</h3></div><div class="panel-body"><div class="top-resource-description"><p>Minimum order values are referenced by articles.</p><p>Response might contain following rels:</p><ul><li>self</li></ul></div><div class="panel-group"><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_content_minimum_order_values__minimumordervalueid_"><span class="parent"></span>/content/minimum-order-values/{minimumOrderValueId}</a> <span class="methods"><a href="#content_minimum_order_values__minimumordervalueid__get"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span></a></span></h4></div><div id="panel_content_minimum_order_values__minimumordervalueid_" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#content_minimum_order_values__minimumordervalueid__get'" class="list-group-item"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span><div class="method_description"></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="content_minimum_order_values__minimumordervalueid__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get <span class="glyphicon glyphicon-lock" title="Authentication required"></span></span> <span class="parent"></span>/content/minimum-order-values/{minimumOrderValueId}</h4></div><div class="modal-body"><div class="alert alert-warning"><span class="glyphicon glyphicon-lock" title="Authentication required"></span> Secured by <b>identity-jwt</b><p>expects an identity token in the header</p></div><ul class="nav nav-tabs"><li class="active"><a href="#content_minimum_order_values__minimumordervalueid__get_request" data-toggle="tab">Request</a></li><li><a href="#content_minimum_order_values__minimumordervalueid__get_response" data-toggle="tab">Response</a></li><li><a href="#content_minimum_order_values__minimumordervalueid__get_securedby" data-toggle="tab">Security</a></li></ul><div class="tab-content"><div class="tab-pane active" id="content_minimum_order_values__minimumordervalueid__get_request"><h3>URI Parameters</h3><ul><li><strong>minimumOrderValueId</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>hint</strong>: <em>(one of MSHOP, UNITE)</em><p>a hint for the proxy to figure out, &#39;where&#39; (in MercateoShop or Unite) the minimum order value can be found</p></li><li><strong>hash</strong>: <em>(string)</em><p>used to mark versions of content, so that results can be marked immutable</p></li></ul></div><div class="tab-pane" id="content_minimum_order_values__minimumordervalueid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Headers</h3><ul><li><strong>Cache-Control</strong>: <em>required (string - default: private, max-age=31536000)</em><p>Activates caching and defines cache behavior through cache response directives. Usually defines public or private (cacheable by proxy or not) and max-age for resource. See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html</a> for more information.</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>private, max-age=31536000</code></pre></div></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/vnd.mercateo.content.v1+json</p><p><strong>Type</strong>: Response</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "_status": {
+    "timeMs": 35
+  },
+  "id": "12345678-90ab-1111-xe8x-2376hgdfb734",
+  "value": {
+    "amount": {
+      "value": 0,
+      "decimalDigits": 0
+    },
+    "currency": "EUR"
+  },
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/minimum-order-values/12345678-90ab-1111-xe8x-2376hgdfb734?hint=unite",
+        "rel": "self",
+        "method": "GET"
+      }
+    ]
+  }
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2></div><div class="tab-pane" id="content_minimum_order_values__minimumordervalueid__get_securedby"><h1>Secured by identity-jwt</h1><h3>Headers</h3><ul><li><strong>x-unite-access-token</strong>: <em>required (string)</em><p>IdentityToken as signed by central Authentication Authority (Auth0?)</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+</code></pre></div></li></ul></div></div></div></div></div></div></div></div></div></div></div><div class="col-md-3"><div id="sidebar" class="hidden-print affix" role="complementary"><ul class="nav nav-pills nav-stacked"><li><a href="#content">/content</a></li><li><a href="#content_business_shops">/content/business-shops</a></li><li><a href="#content_articles">/content/articles</a></li><li><a href="#content_groups">/content/groups</a></li><li><a href="#content_return_policies__policyid_">/content/return-policies/{policyId}</a></li><li><a href="#content_shipping_costs__shippingcostsid_">/content/shipping-costs/{shippingCostsId}</a></li><li><a href="#content_minimum_order_values__minimumordervalueid_">/content/minimum-order-values/{minimumOrderValueId}</a></li></ul></div></div></div></div></body></html>

@@ -1,0 +1,912 @@
+#%RAML 1.0
+baseUri: https://content.integration.unite.services/content/
+title: CONTENT API (placeholder for html generation timestamp, do not remove)
+version: ${version}
+
+
+annotationTypes:
+  rels: string[]
+
+types:
+
+  Method:
+    enum: ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD']
+
+  Link:
+    type: object
+    properties:
+      href?: string
+      mediaType?: string
+      method?: Method
+      rel: string
+
+  Schema:
+    type: object
+    properties:
+      links: Link[]
+
+  # This type should be used as a union type, that enhances other types by a _schema.
+  WithSchema:
+    type: object
+    properties:
+      _schema: Schema
+
+  LinkCollectionMember:
+    type: WithSchema
+    properties:
+      id: string
+
+  # The values of this enum will be used as a hint for a proxy that needs to differentiate between the MercateoShop and Unite
+  Hint:
+    enum: ['MSHOP', 'UNITE']
+
+# Generic ----------------------
+
+  UUID:
+    type: string
+    pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    # discuss and decide about required usage of v4 UUIDs
+    # pattern: '^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$'
+
+  Status:
+    type: object
+    properties:
+      timeMs: integer
+
+  Response:
+    type: object
+    properties:
+      _status: Status
+      _schema: Schema
+
+  Decimal:
+    type: object
+    description: represents a decimal as an integer and specifies how many digits are separated with a decimal seperator
+    properties:
+      value:
+        type: integer
+        format: int64
+        required: true
+        description: integer part of decimal
+      decimalDigits:
+        type: integer
+        required: false
+        default: 0
+        description: |
+          How many digits are separated with a decimal seperator.
+          Is positive for numbers with decimal places (e.g. 4,25 is represented by (425, 2) and
+          negative for large numbers (e.g. 125.000.000.000 is represented by (125, -9).
+
+  DecimalRange:
+    type: object
+    description: an open/closed numeric interval
+    properties:
+      lowerBound:
+        type: Decimal
+        required: false
+        description: |
+          range's lower bound, might be absent, then signals: left-unbounded
+      upperBound:
+        type: Decimal
+        required: false
+        description: |
+          range's upper bound, might be absent, then signals: right-unbounded
+      includeLower:
+        type: boolean
+        required: false
+        default: true
+        description: signals to include lower bound (left-closed)
+      includeUpper:
+        type: boolean
+        required: false
+        default: true
+        description: signals to include upper bound (right-closed)
+
+# Root -------------------------
+
+  RootResponse:
+    type: Response
+    (rels):
+      - "self"
+      - "articles"
+      - "article-by-id"
+      - "business-shops"
+      # what about 1:n relations?
+      # https://tools.ietf.org/html/draft-luff-json-hyper-schema-00#section-5.2
+
+
+# Bshop -------------------------
+
+  BshopInformation:
+    type: object
+    properties:
+      id: string # pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+      shopName: string
+      logo: Mime
+
+  BshopInformationResponse:
+    type: [Response, BshopInformation]
+    (rels):
+      - "self"
+
+  BshopCollectionResponse:
+    type: Response
+    (rels):
+      - "self"
+      - "next"
+      - "prev"
+      - "first"
+      - "last"
+    properties:
+      members:
+        type: LinkCollectionMember[]
+        (rels):
+          - "self"
+
+# Article ----------------------
+
+  #still volatile
+  ArticleSummary:
+    type: object
+    properties:
+      id:
+        type: string
+        #pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+      description: string
+      manufacturerArticleId: string
+      manufacturerName: string
+      supplierArticleId: string
+      minimumOrderQuantity: integer
+      pricePerMinimumOrderQuantity: PriceEstimated
+      orderUnit: OrderUnit
+      shippingCostsEstimated: MonetaryAmount
+      firstMimeImage?: Mime
+      articleFeatures: ArticleFeatures[]
+      keywords?: string[]
+
+  Article:
+    type: object
+    properties:
+      id:
+        type: string
+        #pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+      description: string
+      manufacturerArticleId: string
+      manufacturerName: string
+      mimeInfo: Mime[] # tinyImage, largeImage, ...
+      articleFeatures: ArticleFeatures[]
+      details: Details
+      blockPricing: Price[]
+      references?: ArticleReference[]
+      orderDetails?: OrderDetails
+
+  ArticleResponse:
+    type: [ Response, Article ]
+    (rels):
+      - "self"
+      - "business-shop"
+      - "return-policy"
+      - "shipping-costs"
+      - "minimum-order-value"
+    properties:
+      groups:
+        type: object
+        properties:
+          members:
+            type: LinkCollectionMember[]
+            (rels):
+              - "self"
+
+  Details:
+    type: object
+    properties:
+      descriptionLong: string
+      supplierArticleId: string
+      internationalArticleId?: InternationalAid[]
+      specialTreatmentClass?: SpecialTreatmentClass
+      keywords?: string[]
+
+  InternationalAid:
+    type: object
+    properties:
+      type: string
+      value: string
+
+  SpecialTreatmentClass:
+    type: object
+    properties:
+      ghs: string[]
+      ghsSignal?: GhsSignal
+
+  GhsSignal:
+    enum: ["DANGER", "WARNING"]
+
+  MonetaryAmount:
+    type: object
+    properties:
+      amount: Decimal
+      currency: Currency
+
+  Price:
+    type: MonetaryAmount
+    properties:
+      priceType: PriceType
+      tax: Decimal
+      lowerBound:
+        type: integer
+        required: true
+
+  PriceEstimated:
+    type: MonetaryAmount
+    properties:
+      priceType: PriceType
+      tax: Decimal
+
+
+  PriceType:
+    enum: ['NET_CUSTOMER']
+
+  Currency:
+    type: string
+
+  ArticleReference:
+    type: object
+    properties:
+      articleReferenceType: ArticleReferenceType
+      refId: UUID
+
+  ArticleReferenceType:
+    enum: ["ACCESSORIES", "BASE_PRODUCT", "CONSISTS_OF", "DIFF_ORDERUNIT", "FOLLOWUP", "MANDATORY", "SIMILAR", "SELECT", "SPAREPART", "OTHERS"]
+
+  #BMEcat def says, that there are two use cases: 1) simple key-value feature 2) "Kennzeichnung nach GHS"; the usage of value(s) depends on supporting both
+  ArticleFeatures:
+    type: object
+    properties:
+      features?: Feature[]
+      reference?: ClassificationSystemReference
+
+  ClassificationSystemReference:
+    type: object
+    properties:
+      systemName: string
+      groupId: string
+
+  Feature:
+    type: object
+    properties:
+      name: string
+      values: string[]
+      unit?: string
+      order?: integer
+
+  OrderDetails:
+    type: object
+    properties:
+      orderUnit: OrderUnit
+      contentUnit?: ContentUnit
+      numberOfContentUnitsPerOrderUnit?: Decimal
+      minimumOrderQuantity: integer
+      orderQuantityInterval: integer
+      priceQuantity: integer
+      deliveryTime?: integer
+
+
+  IsoUnit:
+    enum: !include constants/iso-units.raml
+
+  OrderUnit:
+    type: IsoUnit
+
+  ContentUnit:
+    type: IsoUnit
+
+# Search ----------------------
+
+  Expression:
+    type: object
+    description: generic expression
+    discriminator: type
+    properties:
+      type:
+        type: string
+        required: true
+        description: discriminator 'type' is used to discriminate the concrete type. By default, the value of discriminatorValue is the name of the type.
+
+  And:
+    type: Expression
+    description: logical 'AND' conjunction of all given operands. All operands must have a different 'field'/'systemName' to be matched.
+    discriminatorValue: And
+    properties:
+      operands: Expression[]
+
+  Or:
+    type: Expression
+    description: logical 'OR' conjunction of all given operands. All operands must have the same 'field'/'systemName' to be matched.
+    discriminatorValue: Or
+    properties:
+      operands: Expression[]
+
+  Match:
+    type: Expression
+    description: generic match
+    discriminatorValue: Match
+    properties:
+      field:
+        type: string
+        required: true
+        description: field for match expression
+
+  ExactStringMatch:
+    type: Match
+    description: for exact string matching
+    discriminatorValue: ExactStringMatch
+    properties:
+        value:
+          type: string
+          required: true
+          description: string value to be matched exactly
+
+  ExactDecimalMatch:
+    type: Match
+    description: for exact numeric matching using decimals
+    discriminatorValue: ExactDecimalMatch
+    properties:
+      value:
+        type: Decimal
+        required: true
+        description: decimal value to be matched exactly
+
+  DecimalRangeMatch:
+    type: [ DecimalRange, Match]
+    description: for numeric range matches using decimals
+    discriminatorValue: DecimalRangeMatch
+
+  BooleanMatch:
+    type: Match
+    description: for boolean matching
+    discriminatorValue: BooleanMatch
+    properties:
+      value:
+        type: boolean
+        required: true
+        description: boolean value to be matched
+        
+  ExactReferenceFeatureMatch:
+    type: Expression
+    description: for exact ReferenceFeature matching
+    discriminatorValue: ExactReferenceFeatureMatch
+    properties:
+      systemName:
+        type: string
+        required: true
+        description: ReferenceFeature system name
+      group:
+        type: string
+        required: true
+        description: ReferenceFeature id to be matched exactly
+
+  FilterQuery:
+    type: object
+    properties:
+      expression: Expression
+
+  BucketType:
+    enum: ['RANGE', 'STRING']
+
+  Hit:
+    type: object
+    properties:
+      article: ArticleSummary
+      score: number
+
+  HitWithSchema:
+    type: [Hit, WithSchema]
+
+  Bucket:
+    type: object
+    properties:
+      bucketType: BucketType
+      range?: DecimalRange
+      value?: string
+      count: number
+
+  Facet:
+    type: object
+    properties:
+      field: string
+      buckets: Bucket[]
+
+  SearchResponse:
+    type: Response
+    (rels):
+      - "self"
+      - "next"
+      - "prev"
+      - "first"
+      - "last"
+    properties:
+      total: integer
+      offset: integer
+      limit: integer
+      members:
+        type: HitWithSchema[]
+        (rels):
+          - "business-shop"
+          - "details"
+      facets?: Facet[]
+
+# Group --------------------
+
+  Mime:
+    type: object
+    properties:
+      mimeType: string
+      href: string
+      description?: string
+      purpose?: string
+      alt?: string
+
+  Group:
+    type: object
+    properties:
+      id: string
+      name: string
+      description: string
+      mimeInfo: Mime[]
+      parentId: string
+      order: integer
+      keyword: string[]
+
+  GroupWithSchema:
+    type: [Group, WithSchema]
+
+  GroupsResponse:
+    type: Response
+    (rels):
+      - "self"
+      - "next"
+      - "prev"
+      - "first"
+      - "last"
+    properties:
+      total: integer
+      root: string
+      depth: integer
+      members: GroupWithSchema[]
+
+  GroupResponse:
+    type: [Group, Response]
+    (rels):
+      - "self"
+      - "descendants"
+      - "parent"
+
+# Return policies ----------------------
+
+  ReturnPolicyResponse:
+    type: [ Response, ReturnPolicy ]
+    (rels):
+      - "self"
+
+  ReturnPolicy:
+    type: object
+    properties:
+      id: string
+      returnPossible: boolean
+      cancellationPossible: boolean
+      processingFee?: ProcessingFee
+      shippingCostPayer?: ShippingCostPayer
+      returnWithinDays?: integer
+      stateOfPackaging?: StateOfPackaging
+      stateOfProduct?: StateOfProduct
+      additionalText?: string
+
+  ProcessingFee:
+    type: object
+    description: |
+      Fees for processing the return. The Type of the processing fee is AbsoluteProcessingFee,
+      RelativeProcessingFee or OnRequestProcessingFee.
+      * "Absolute" means that there is a fixed fee for handling the return, e.g. always EUR 5.00.
+      * "Relative" means that a certain percentage of the purchase value is billed for handling the
+       return. There may be a minimum absolute value defined, e.g. 5% of the purchase value, but at
+       least EUR 10.
+      * "On request" means that the supplier will decide the return fees on request.
+    discriminator: processingFeeType
+    properties:
+      processingFeeType: string
+
+  RelativeProcessingFee:
+    type: ProcessingFee
+    discriminatorValue: RELATIVE
+    properties:
+      relativeAmount: Decimal
+      minimumAmount?: MonetaryAmount
+      
+  AbsoluteProcessingFee:
+    type: ProcessingFee
+    discriminatorValue: ABSOLUTE
+    properties:
+      absoluteAmount: MonetaryAmount
+      
+  OnRequestProcessingFee:
+    type: ProcessingFee
+    discriminatorValue: ON_REQUEST
+
+  ShippingCostPayer:
+    enum: ["CUSTOMER", "SUPPLIER"]
+
+  StateOfPackaging:
+    description: |
+      The original packaging must be at least in the given state in order to be eligible for returns.
+    enum: ["UNOPENED", "OPENED_ORIGINAL_PACKAGING_OK", "ORIGINAL_PACKAGING_DAMAGED", "NO_ORIGINAL_PACKAGING"]
+
+  StateOfProduct:
+    description: |
+      The state of the product must be at least in the given state in order to be eligible for returns.
+    enum: ["UNUSED", "USED", "BROKEN"]
+
+# Shipping Costs ----------------------
+
+  ShippingCostsResponse:
+    type: [ Response, ShippingCostsInformation ]
+    (rels):
+      - "self"
+      
+  ShippingCostsInformation:
+    type: object
+    properties:
+      id: string
+      shippingCosts: ShippingCosts[]
+      
+  ShippingCosts:
+    type: object
+    discriminator: shippingCostsType
+    properties:
+      shippingCostsType: string
+  
+  TieredShippingCosts:
+    type: ShippingCosts
+    discriminatorValue: TieredShippingCosts
+    properties:
+      tiers: ShippingCostsTier[]
+    
+  ShippingCostsTier:
+    type: object
+    properties:
+      threshold: MonetaryAmount
+      value: MonetaryAmount
+
+# Minimum Order Value ----------------------
+
+  MinimumOrderValueResponse:
+    type: [ Response, MinimumOrderValue ]
+    (rels):
+      - "self"
+  
+  MinimumOrderValue:
+    type: object
+    properties:
+      id: string
+      value: MonetaryAmount  
+
+traits:
+  cacheable:
+    usage: |
+      Apply this trait to any GET method that supports caching control.
+    queryParameters:
+      hash:
+        type: string
+        required: false
+        description: used to mark versions of content, so that results can be marked immutable
+    responses:
+      200:
+        headers:
+          Cache-Control:
+            description: |
+              Activates caching and defines cache behavior through cache response directives.
+              Usually defines public or private (cacheable by proxy or not) and max-age for resource.
+              See http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html for more information.
+            type: string
+            example: private, max-age=31536000
+            default: 'private, max-age=31536000'
+
+securitySchemes:
+  identity-jwt: !include security/jwt-identity.raml
+
+/content:
+  securedBy: [identity-jwt]
+  description: |
+    Single entry point for accessing the Content API.
+    Resource is protected by an Identity Token, which we (for now) assume contains
+    * TenantId
+    * CompanyId
+    * EmployeeId
+
+    Response might contain following rels:
+    * self
+    * articles
+    * article-by-id
+    * business-shops
+
+  get:
+    responses:
+      200:
+        body:
+          application/vnd.mercateo.content.v1+json:
+            type: RootResponse
+            example: !include example/root.json
+
+/content/business-shops:
+  is: [ cacheable ]
+  securedBy: [identity-jwt]
+  description: |
+    Returns a list of all available BShops with a link to the detailed meta information.
+  get:
+    queryParameters:
+      businessShopId:
+        # should be UUID, but confuses the mock server
+        # pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        type: string[]
+        required: false
+    responses:
+      200:
+        body:
+          application/vnd.mercateo.content.v1+json:
+            type: BshopCollectionResponse
+            example: !include example/bshops.json
+  /{businessShopId}:
+    is: [ cacheable ]
+    securedBy: [identity-jwt]
+    description: |
+      Delivers information about the BusinessShop specified via {businessShopId}-parameter.
+    get:
+      responses:
+        200:
+          body:
+            application/vnd.mercateo.content.v1+json:
+              type: BshopInformationResponse
+              example: !include example/bshop.json
+
+
+/content/articles:
+  description: |
+      Retrieves all available articles within the BusinessShop. Top-selling articles will appear first by default.
+      To search and filter for specific articles, use query parameters.
+
+      Response:
+      a collection of articles matching the specified query paramters
+
+      Response might contain following rels:
+      * self
+      * next
+      * prev
+      * first
+      * last
+  securedBy: [identity-jwt]
+  get:
+    queryParameters:
+      businessShopId:
+        # should be UUID, but confuses the mock server
+        # pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        type: string[]
+        # to use a string array as parameter type there are two possible notations:
+        # 1. something like ?businessShopId=["{UUID}","{UUID}"] -> although api-mock-service supports it, we will NOT implement this kind of usage
+        # 2. something like ?businessShopId={UUID}&businessShopId={UUID}&... -> this is the way to do it
+        required: false
+      q:
+        type: string
+        description: |
+          query string
+          If this parameter is not present but fq is a filter for UNSPSC-7 then a search for the given UNSPSC group is triggered. This search is not guaranteed to find all matching products.
+        required: false
+      fq:
+        # code generation breaks with 'GenerationException: query parameter is composite' when using actual object type for query parameter.
+        # RAML 1.0 does support such composite query parameters:
+        # https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md#query-parameters-in-a-query-string
+        type: string # actually 'type: FilterQuery' but breaks jaxrs code generation
+        description: filter expression
+        required: false
+        examples:
+          # for warnings a la: "none of the subtypes declare discriminatorValue" - see https://github.com/mulesoft/api-designer/issues/476
+          # in prefix notation: ( OR manufacturer=="HP" manufacturer=="Dell" manufacturer=="Lenovo" )
+          fq2: !include example/fq2.json
+          # in prefix notation: ( AND manufacturer=="HP" price=[100,200] UNSPSC-7=="14111506")
+          fq3: !include example/fq3.json
+      limit:
+        type: integer
+        required: false
+        description: max number of results returned
+        default: 20
+      offset:
+        type: integer
+        required: false
+        description: number of hits to skip (used for paging)
+        default: 0
+      sort:
+        type: string
+        required: false
+        description: comma-separated list of sort directions, indicated by '+' or '-', and field names
+        example: +description,-pricePerMinimumOrderQuantity
+    responses:
+      200:
+        body:
+          application/vnd.mercateo.content.v1+json:
+            type: SearchResponse
+            example: !include example/articles.json
+
+  /{articleId}:
+    is: [ cacheable ]
+    description: |
+      Retrieves details for the specified article referenced by the articleId.
+
+      Response:
+      a single article with all its details
+
+      Response might contain following rels:
+      * self
+      * business-shop
+      * return-policy
+      * shipping-costs
+      * minimum-order-value
+    # 'addToBasket' may be task for the client to guarantee loose coupling
+    uriParameters:
+      articleId:
+        type: string
+        #pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    securedBy: [identity-jwt]
+    get:
+      queryParameters:
+        hint:
+          type: Hint
+          required: false
+          description: a hint for the proxy to figure out, 'where' (in MercateoShop or Unite) the article can be found
+      responses:
+        200:
+          body:
+            application/vnd.mercateo.content.v1+json:
+              type: ArticleResponse
+              example: !include example/article.json
+
+        404:
+
+/content/groups:
+  is: [ cacheable ]
+  securedBy: [identity-jwt]
+  description: |
+    Retrieves group lists or subtrees as defined in content
+
+    Response:
+    defined groups of the content
+
+    Response might contain following rels:
+    * self
+    * next
+    * prev
+    * first
+    * last
+  get:
+    queryParameters:
+      businessShopId:
+        # should be UUID, but confuses the mock server
+        # pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        type: string
+        required: true
+      root:
+        type: string
+        description: optional root node to start iterating from. if left empty, answer will contain top-level nodes. the root node will NOT be included in the response.
+        required: false
+        default: '__root'
+      depth:
+        type: integer
+        description: number of levels to descend. Defaults to 1, so that you get only the direct children for a given root node (or the top-level ones, if no root is given)
+        required: false
+        default: 1
+    responses:
+      200:
+        body:
+          application/vnd.mercateo.content.v1+json:
+            type: GroupsResponse
+            example: !include example/groups.json
+
+  /{groupId}:
+    is: [ cacheable ]
+    uriParameters:
+      groupId:
+        # should be UUID, but confuses the mock server
+        # pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        type: string
+    securedBy: [identity-jwt]
+    description: |
+      Shows information about a specific group.
+    get:
+      queryParameters:
+        businessShopId:
+          # should be UUID, but confuses the mock server
+          # pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+          type: string
+          required: true
+      responses:
+        200:
+          body:
+            application/vnd.mercateo.content.v1+json:
+              type: GroupResponse
+              example: !include example/group.json
+        404:
+
+/content/return-policies/{policyId}:
+  is: [ cacheable ]
+  securedBy: [ identity-jwt ]
+  description: |
+    Return policies are referenced by articles.
+
+    Response might contain following rels:
+    * self
+  uriParameters:
+    policyId:
+      type: string
+      required: true
+  get:
+    queryParameters:
+      hint:
+        type: Hint
+        required: false
+        description: a hint for the proxy to figure out, 'where' (in MercateoShop or Unite) the return policy can be found
+    responses:
+      200:
+        body:
+          application/vnd.mercateo.content.v1+json:
+            type: ReturnPolicyResponse
+            example: !include example/return-policy.json
+      404:
+
+/content/shipping-costs/{shippingCostsId}:
+  is: [ cacheable ]
+  securedBy: [ identity-jwt ]
+  description: |
+    Shipping costs are referenced by articles.
+
+    Response might contain following rels:
+    * self
+  uriParameters:
+    shippingCostsId:
+      type: string
+      required: true
+  get:
+    queryParameters:
+      hint:
+        type: Hint
+        required: false
+        description: a hint for the proxy to figure out, 'where' (in MercateoShop or Unite) the shipping costs can be found
+    responses:
+      200:
+        body:
+          application/vnd.mercateo.content.v1+json:
+            type: ShippingCostsResponse
+            example: !include example/shipping-costs.json
+      404:
+      
+/content/minimum-order-values/{minimumOrderValueId}:
+  is: [ cacheable ]
+  securedBy: [ identity-jwt ]
+  description: |
+    Minimum order values are referenced by articles.
+
+    Response might contain following rels:
+    * self
+  uriParameters:
+    minimumOrderValueId:
+      type: string
+      required: true
+  get:
+    queryParameters:
+      hint:
+        type: Hint
+        required: false
+        description: a hint for the proxy to figure out, 'where' (in MercateoShop or Unite) the minimum order value can be found
+    responses:
+      200:
+        body:
+          application/vnd.mercateo.content.v1+json:
+            type: MinimumOrderValueResponse
+            example: !include example/minimum-order-value.json
+      404:
