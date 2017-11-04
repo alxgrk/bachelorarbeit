@@ -5,7 +5,6 @@ import static org.springframework.http.HttpMethod.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alxgrk.level3.error.AlreadyExistsError;
 import com.alxgrk.level3.hateoas.mapping.AccountMapper;
 import com.alxgrk.level3.hateoas.mediatype.MediaTypes;
 import com.alxgrk.level3.hateoas.mediatype.json.LinkWithMethod;
@@ -70,7 +68,9 @@ public class AccountController implements CollectionController<AccountRto, Accou
 
         return new ResourcesWithLinks<>(accountResources, this)
                 .addSelfLink()
-                .addCreateLink()
+                // removed link because non-admin user must not create new
+                // accounts
+                // .addCreateLink()
                 .create();
     }
 
@@ -81,28 +81,9 @@ public class AccountController implements CollectionController<AccountRto, Accou
     @Override
     @RequestMapping(method = RequestMethod.POST, consumes = MediaTypes.ACCOUNT_TYPE)
     public ResponseEntity<?> addOne(@RequestBody AccountRto input) {
-        Optional<Account> accountOptional = repository.findByUsername(input.getUsername());
-
-        if (accountOptional.isPresent()) {
-            Account account = accountOptional.get();
-            Link selfLink = new AccountResource(account)
-                    .addSelfLink()
-                    .getLink(Link.REL_SELF);
-
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new AlreadyExistsError(account, selfLink));
-        } else {
-            Account account = new Account(input.getUsername(), input.getPassword());
-            mapper.updateAccountFromAccountRto(input, account);
-
-            repository.save(account);
-
-            Link forOneAccount = new AccountResource(account)
-                    .addSelfLink()
-                    .getLink(Link.REL_SELF);
-
-            return ResponseEntity.created(URI.create(forOneAccount.getHref())).build();
-        }
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body("Only administrators are allowed to create new accounts.");
     }
 
     @Override

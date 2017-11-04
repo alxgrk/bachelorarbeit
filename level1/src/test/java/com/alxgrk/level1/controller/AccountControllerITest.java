@@ -147,7 +147,7 @@ public class AccountControllerITest {
                         + "     \"username\": \"test\","
                         + "     \"password\": \"password\""
                         + "}"))
-                .andExpect(status().isCreated());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -160,7 +160,7 @@ public class AccountControllerITest {
                         + "     \"username\": \"" + userNameOne + "\","
                         + "     \"password\": \"password\""
                         + "}"))
-                .andExpect(status().isConflict());
+                .andExpect(status().isForbidden());
     }
 
     @Test

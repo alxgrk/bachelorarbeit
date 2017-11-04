@@ -2,7 +2,6 @@ package com.alxgrk.level2.controller;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alxgrk.level2.error.AlreadyExistsError;
 import com.alxgrk.level2.models.Account;
 import com.alxgrk.level2.models.wrapper.ShortenedAccount;
 import com.alxgrk.level2.repos.AccountRepository;
@@ -65,22 +63,9 @@ public class AccountController implements CollectionController<AccountRto> {
     @Override
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> addOne(@RequestBody AccountRto input) {
-        Optional<Account> accountOptional = repository.findByUsername(input.getUsername());
-
-        if (accountOptional.isPresent()) {
-            Account account = accountOptional.get();
-
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new AlreadyExistsError(account));
-        } else {
-            Account account = new Account(input.getUsername(), input.getPassword());
-            mapper.updateAccountFromAccountRto(input, account);
-
-            repository.save(account);
-
-            return ResponseEntity.created(URI.create("http://localhost:8080/accounts/" + account
-                    .getId())).build();
-        }
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body("Only administrators are allowed to create new accounts.");
     }
 
     @Override
