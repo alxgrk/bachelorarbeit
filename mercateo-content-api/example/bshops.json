@@ -1,0 +1,40 @@
+{
+  "_status": {
+    "timeMs": 35
+  },
+  "members": [
+    {
+      "id": "d53a954f-381e-46da-8a33-0c917a1cef10",
+      "_schema": {
+        "links": [
+          {
+            "href": "/content/business-shops/d53a954f-381e-46da-8a33-0c917a1cef10",
+            "rel": "self",
+            "method": "GET"
+          }
+        ]
+      }
+    },
+    {
+      "id": "12c70a92-1a24-4cd4-aa6c-314afff92ce9",
+      "_schema": {
+        "links": [
+          {
+            "href": "/content/business-shops/12c70a92-1a24-4cd4-aa6c-314afff92ce9",
+            "rel": "self",
+            "method": "GET"
+          }
+        ]
+      }
+    }
+  ],
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/business-shops",
+        "rel": "self",
+        "method": "GET"
+      }
+    ]
+  }
+}

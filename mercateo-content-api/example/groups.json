@@ -1,0 +1,97 @@
+{
+  "_status": {
+    "timeMs": 35
+  },
+  "total": 2,
+  "root": "__root",
+  "depth": 1,
+  "members": [
+    {
+      "id": "CLOTHING_001",
+      "name": "Kleidung",
+      "description": "",
+      "parentId": "__root",
+      "order": 1,
+      "mimeInfo": [
+        {
+          "mimeType": "image/png",
+          "href": "http://www.fairnet-medien.de/files/bilder/eCommerce-Begriffe/BMEcat.png",
+          "description": "Tolles Logo",
+          "purpose": "fullsize_logo"
+        }
+      ],
+      "keyword": [
+        "kleidung",
+        "pollover",
+        "tshirt"
+      ],
+      "_schema": {
+        "links": [
+          {
+            "rel": "self",
+            "href": "/content/groups/CLOTHING_001?appId=d53a954f-381e-46da-8a33-0c917a1cef10&hash=123456789",
+            "method": "GET"
+          },
+          {
+            "rel": "descendants",
+            "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&root=CLOTHING_001&hash=123456789",
+            "method": "GET"
+          },
+          {
+            "rel": "parent",
+            "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&root=__root&hash=123456789",
+            "method": "GET"
+          }
+        ]
+      }
+    },
+    {
+      "id": "WATCHES_001",
+      "name": "Uhren",
+      "description": "",
+      "parentId": "__root",
+      "order": 1,
+      "mimeInfo": [
+        {
+          "mimeType": "image/png",
+          "href": "https://cdn.def-shop.com/original/bangastic-jogginghose-olive-304903.jpg",
+          "description": "Fiese Hose in grün",
+          "purpose": "product_img"
+        }
+      ],
+      "keyword": [
+        "uhr",
+        "zeit",
+        "accessoire"
+      ],
+      "_schema": {
+        "links": [
+          {
+            "rel": "self",
+            "href": "/content/groups/WATCHES_001?appId=d53a954f-381e-46da-8a33-0c917a1cef10&hash=123456789",
+            "method": "GET"
+          },
+          {
+            "rel": "descendants",
+            "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&root=WATCHES_001&hash=123456789",
+            "method": "GET"
+          },
+          {
+            "rel": "parent",
+            "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&root=__root&hash=123456789",
+            "method": "GET"
+          }
+        ]
+      }
+    }
+  ],
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&root=__root&depth=1&hash=123456789",
+        "rel": "self",
+        "method": "GET"
+      }
+    ]
+  }
+}
