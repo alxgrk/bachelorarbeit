@@ -145,7 +145,7 @@ public class JourneyTests {
         mockMvc.perform(get(entryPoint))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaTypes.ROOT_TYPE + ";charset=UTF-8"))
-                .andExpect(jsonPath("$._links[3].rel")
+                .andExpect(jsonPath("$._links[2].rel")
                         .value(attachAndDetachResourceToUserJourney.get(0)));
 
         mockMvc.perform(get(firstHref))

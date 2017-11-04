@@ -3,10 +3,7 @@ package com.alxgrk.level2.controller;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,17 +13,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alxgrk.level2.error.AlreadyExistsError;
-import com.alxgrk.level2.models.Account;
 import com.alxgrk.level2.models.Organization;
 import com.alxgrk.level2.repos.AccountRepository;
 import com.alxgrk.level2.repos.OrganizationRepository;
-import com.alxgrk.level2.rest.mapping.AccountMapper;
 import com.alxgrk.level2.rest.mapping.OrganizationMapper;
-import com.alxgrk.level2.rest.rto.AccountRto;
 import com.alxgrk.level2.rest.rto.OrganizationRto;
 import com.alxgrk.level2.util.OrganizationValidator;
 
@@ -127,61 +120,67 @@ public class OrganizationController implements CollectionController<Organization
     // ABOUT ORGANIZATION'S MEMBERS
     // ----------------------------
 
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "/{orgId}/accounts")
-    public Collection<AccountRto> getAllMembers(@PathVariable Long orgId) {
-        Organization organization = validator.validateOrganization(orgId);
+    // not necessary anymore
 
-        return organization.getMembers()
-                .stream()
-                .map(a -> AccountMapper.INSTANCE.accountToAccountRto(a))
-                .collect(Collectors.toList());
-    }
-
-    @RequestMapping(
-            method = RequestMethod.POST,
-            value = "/{orgId}/accounts")
-    @Transactional
-    public ResponseEntity<?> attachMemberToOrganization(@PathVariable Long orgId,
-            @RequestParam("username") String username) {
-        Organization organization = validator.validateOrganization(orgId);
-
-        Optional<Account> accountOptional = accountRepository.findByUsername(username);
-
-        if (!accountOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            Account account = accountOptional.get();
-            account.setOrganization(organization);
-
-            Set<Account> members = organization.getMembers();
-            members.add(account);
-            organization.setMembers(members);
-
-            return ResponseEntity.created(URI.create("http://localhost:8080/orgs/" + organization
-                    .getId() + "/accounts")).build();
-        }
-    }
-
-    @RequestMapping(
-            method = RequestMethod.DELETE,
-            value = "/{orgId}/accounts/{accountId}")
-    @Transactional
-    public ResponseEntity<?> detachMemberFromOrganization(@PathVariable Long orgId,
-            @PathVariable Long accountId) {
-        Organization organization = validator.validateOrganization(orgId);
-
-        Account account = validator.validateAccount(accountId);
-        account.setOrganization(null);
-
-        Set<Account> members = organization.getMembers();
-        members.remove(account);
-        organization.setMembers(members);
-
-        return ResponseEntity.noContent()
-                .location(URI.create("http://localhost:8080/orgs/" + organization
-                        .getId() + "/accounts"))
-                .build();
-    }
+    // @RequestMapping(
+    // method = RequestMethod.GET,
+    // value = "/{orgId}/accounts")
+    // public Collection<AccountRto> getAllMembers(@PathVariable Long orgId) {
+    // Organization organization = validator.validateOrganization(orgId);
+    //
+    // return organization.getMembers()
+    // .stream()
+    // .map(a -> AccountMapper.INSTANCE.accountToAccountRto(a))
+    // .collect(Collectors.toList());
+    // }
+    //
+    // @RequestMapping(
+    // method = RequestMethod.POST,
+    // value = "/{orgId}/accounts")
+    // @Transactional
+    // public ResponseEntity<?> attachMemberToOrganization(@PathVariable Long
+    // orgId,
+    // @RequestParam("username") String username) {
+    // Organization organization = validator.validateOrganization(orgId);
+    //
+    // Optional<Account> accountOptional =
+    // accountRepository.findByUsername(username);
+    //
+    // if (!accountOptional.isPresent()) {
+    // return ResponseEntity.notFound().build();
+    // } else {
+    // Account account = accountOptional.get();
+    // account.setOrganization(organization);
+    //
+    // Set<Account> members = organization.getMembers();
+    // members.add(account);
+    // organization.setMembers(members);
+    //
+    // return ResponseEntity.created(URI.create("http://localhost:8080/orgs/" +
+    // organization
+    // .getId() + "/accounts")).build();
+    // }
+    // }
+    //
+    // @RequestMapping(
+    // method = RequestMethod.DELETE,
+    // value = "/{orgId}/accounts/{accountId}")
+    // @Transactional
+    // public ResponseEntity<?> detachMemberFromOrganization(@PathVariable Long
+    // orgId,
+    // @PathVariable Long accountId) {
+    // Organization organization = validator.validateOrganization(orgId);
+    //
+    // Account account = validator.validateAccount(accountId);
+    // account.setOrganization(null);
+    //
+    // Set<Account> members = organization.getMembers();
+    // members.remove(account);
+    // organization.setMembers(members);
+    //
+    // return ResponseEntity.noContent()
+    // .location(URI.create("http://localhost:8080/orgs/" + organization
+    // .getId() + "/accounts"))
+    // .build();
+    // }
 }

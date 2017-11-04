@@ -10,6 +10,7 @@ import java.util.Arrays;
 import javax.transaction.Transactional;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,6 +179,7 @@ public class OrganizationControllerITest {
     }
 
     @Test
+    @Ignore
     @Transactional
     public void testOrganizationMembersFound() throws Exception {
         mockMvc.perform(get("/orgs/" + idOne + "/accounts"))
@@ -190,6 +192,7 @@ public class OrganizationControllerITest {
     }
 
     @Test
+    @Ignore
     @Transactional
     public void testOrganizationMemberAttached() throws Exception {
         mockMvc.perform(post("/orgs/" + idOne + "/accounts").param("username", username))
@@ -197,6 +200,7 @@ public class OrganizationControllerITest {
     }
 
     @Test
+    @Ignore
     @Transactional
     public void testOrganizationMemberAttachNotExisting() throws Exception {
         mockMvc.perform(post("/orgs/" + idOne + "/accounts").param("username", "agdjiojdft"))
@@ -204,6 +208,7 @@ public class OrganizationControllerITest {
     }
 
     @Test
+    @Ignore
     @Transactional
     public void testOrganizationMemberDetached() throws Exception {
         mockMvc.perform(delete("/orgs/" + idOne + "/accounts/" + accountId))

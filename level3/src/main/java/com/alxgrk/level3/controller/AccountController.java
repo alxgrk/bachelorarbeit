@@ -40,7 +40,7 @@ import lombok.RequiredArgsConstructor;
 
 @Api(tags = "Accounts", description = "managing accounts")
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/orgs/1/accounts") // quick fix to make links work
 @RequiredArgsConstructor
 public class AccountController implements CollectionController<AccountRto, AccountResource> {
 

@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 
 @Api(tags = "Accounts", description = "managing accounts")
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/orgs/{orgId}/accounts")
 @RequiredArgsConstructor
 public class AccountController implements CollectionController<AccountRto> {
 

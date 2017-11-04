@@ -11,6 +11,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.core.Relation;
 import org.springframework.http.HttpMethod;
 
+import com.alxgrk.level3.controller.AccountController;
 import com.alxgrk.level3.controller.OrganizationController;
 import com.alxgrk.level3.controller.ResourceController;
 import com.alxgrk.level3.hateoas.mapping.OrganizationMapper;
@@ -75,8 +76,8 @@ public class OrganizationResource extends ResourceSupportWithMethods {
 
     public OrganizationResource addMembersLink() {
 
-        Link membersLink = linkTo(methodOn(OrganizationController.class)
-                .getAllMembers(organization.getId())).withRel(Rels.MEMBERS);
+        Link membersLink = linkTo(methodOn(AccountController.class)
+                .getAll()).withRel(Rels.MEMBERS);
         add(membersLink, HttpMethod.GET);
 
         return this;
