@@ -1,0 +1,183 @@
+{
+  "_status": {
+    "timeMs": 35
+  },
+  "total": 2,
+  "offset": 0,
+  "limit": 20,
+  "members": [
+    {
+      "article": {
+        "id": "7d4c0b4-ed4d-4e68-bfe8-8aa09912f4c4",
+        "description": "Pelikan Lasertoner 621764 HP C4096A sw",
+        "manufacturerArticleId": "123456789",
+        "supplierArticleId": "123",
+        "manufacturerName": "Pelikan",
+        "orderUnit": "4G",
+        "minimumOrderQuantity": 1,
+        "pricePerMinimumOrderQuantity": {
+          "priceType": "NET_CUSTOMER",
+          "amount": {
+            "value": 4784,
+            "decimalDigits": 2
+          },
+          "currency": "EUR",
+          "tax": {
+            "value": 1900,
+            "decimalDigits": 2
+          }
+        },
+        "shippingCostsEstimated": {
+          "amount": {
+            "value": 320,
+            "decimalDigits": 2
+          },
+          "currency": "EUR"
+        },
+        "firstMimeImage": {
+          "description": "tinyImage",
+          "purpose": "tinyImage",
+          "href": "http://images.com/foo-tiny.jpg",
+          "mimeType": "image/jpeg"
+        },
+        "articleFeatures": [
+          {
+            "reference": {
+              "systemName": "ECLASS-4.1",
+              "groupId": "24-29-11-01"
+            }
+          },
+          {
+            "reference": {
+              "systemName": "ETIM-6.0",
+              "groupId": "EC000001"
+            }
+          },
+          {
+            "reference": {
+              "systemName": "UNSPSC-6.0801",
+              "groupId": "31230000"
+            }
+          }
+        ],
+        "keywords": [
+          "toner",
+          "laser",
+          "laster toner"
+        ]
+      },
+      "score": 31,
+      "_schema": {
+        "links": [
+          {
+            "rel": "details",
+            "href": "/content/articles/7d4c0b4-ed4d-4e68-bfe8-8aa09912f4c4?hash=123456789",
+            "method": "GET"
+          },
+          {
+            "href": "/content/bshops/d53a954f-381e-46da-8a33-0c917a1cef10?hash=123456789",
+            "rel": "bshop",
+            "method": "GET"
+          }
+        ]
+      }
+    },
+    {
+      "article": {
+        "id": "b1c3f8f3-4cc1-494d-975c-1611e438f6b6",
+        "description": "Pelikan Lasertoner 621122 HP C4129X sw",
+        "manufacturerArticleId": "123456789",
+        "supplierArticleId": "123",
+        "manufacturerName": "Pelikan",
+        "orderUnit": "4G",
+        "minimumOrderQuantity": 2,
+        "pricePerMinimumOrderQuantity": {
+          "priceType": "NET_CUSTOMER",
+          "amount": {
+            "value": 2706,
+            "decimalDigits": 2
+          },
+          "currency": "EUR",
+          "tax": {
+            "value": 1900,
+            "decimalDigits": 2
+          }
+        },
+        "shippingCostsEstimated": {
+          "amount": {
+            "value": 320,
+            "decimalDigits": 2
+          },
+          "currency": "EUR"
+        },
+        "firstMimeImage": {
+          "description": "tinyImage",
+          "purpose": "tinyImage",
+          "href": "http://images.com/foo-tiny.jpg",
+          "mimeType": "image/jpeg"
+        },
+        "articleFeatures": [
+          {
+            "reference": {
+              "systemName": "ECLASS-4.1",
+              "groupId": "24-29-11-01"
+            }
+          }
+        ],
+        "keywords": []
+      },
+      "score": 31,
+      "_schema": {
+        "links": [
+          {
+            "rel": "details",
+            "href": "/content/articles/b1c3f8f3-4cc1-494d-975c-1611e438f6b6?hash=123456789",
+            "method": "GET"
+          },
+          {
+            "href": "/content/bshops/d53a954f-381e-46da-8a33-0c917a1cef10?hash=123456789",
+            "rel": "bshop",
+            "method": "GET"
+          }
+        ]
+      }
+    }
+  ],
+  "facets": [
+    {
+      "field": "price",
+      "buckets": [
+        {
+          "bucketType": "RANGE",
+          "range": {
+            "upperBound": {
+              "value": 30
+            },
+            "includeUpper": true,
+            "includeLower": false
+          },
+          "count": 1
+        }
+      ]
+    },
+    {
+      "field": "mname",
+      "buckets": [
+        {
+          "bucketType": "STRING",
+          "value": "HP",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/articles?appId=d53a954f-381e-46da-8a33-0c917a1cef10&appId=b1c3f8f3-4cc1-494d-975c-1611e438f6b6",
+        "rel": "self",
+        "method": "GET"
+      }
+    ]
+  }
+}

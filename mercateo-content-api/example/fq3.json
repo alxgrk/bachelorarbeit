@@ -1,0 +1,27 @@
+{
+  "expression": {
+    "type": "And",
+    "operands": [
+      {
+        "type": "ExactStringMatch",
+        "field": "manufacturer",
+        "value": "HP"
+      },
+      {
+        "type": "DecimalRangeMatch",
+        "field": "price",
+        "lowerBound": {
+          "value": 100
+        },
+        "upperBound": {
+          "value": 200
+        }
+      },
+      {
+        "type": "ExactReferenceFeatureMatch",
+        "systemName": "UNSPSC-7",
+        "group": "14111506"
+      }
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <version>1.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <artifactId>content-api-raml</artifactId>
+
+    <scm>
+        <tag>content-api-raml-0.0.32</tag>
+    </scm>
+
+    <properties>
+        <maven.site.skip>true</maven.site.skip>
+        <maven.site.deploy.skip>true</maven.site.deploy.skip>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>.</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.raml</include>
+                    <include>**/*.json</include>
+                </includes>
+                <excludes>
+                    <exclude>mock-api/**</exclude>
+                    <exclude>jsonSchema/**</exclude>
+                    <exclude>target/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>resource</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.4.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.scm</groupId>
+                        <artifactId>maven-scm-provider-gitexe</artifactId>
+                        <version>1.8.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+</project>

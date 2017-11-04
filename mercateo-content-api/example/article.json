@@ -1,0 +1,147 @@
+{
+  "_status": {
+    "timeMs": 35
+  },
+  "id": "801e3cb6-160a-4f55-91be-6c85896cc8c5",
+  "manufacturerArticleId": "99",
+  "manufacturerName": "Hersteller A",
+  "description": "V-Deichsel,f. Rollbox,L 600mm,Ring Ø 35mm",
+  "mimeInfo": [
+    {
+      "description": "tinyImage",
+      "purpose": "tinyImage",
+      "href": "http://images.com/foo-tiny.jpg",
+      "mimeType": "image/jpeg"
+    },
+    {
+      "description": "largeImage",
+      "purpose": "largeImage",
+      "href": "http://images.com/foo-large.jpg",
+      "mimeType": "image/jpeg"
+    }
+  ],
+  "details": {
+    "descriptionLong": "Eine wirklich schöne Deichsel.",
+    "supplierArticleId": "123",
+    "internationalArticleId": [
+      {
+        "type": "ean",
+        "value": "123456789"
+      }
+    ]
+  },
+  "blockPricing": [
+    {
+      "priceType": "NET_CUSTOMER",
+      "amount": {
+        "value": 100,
+        "decimalDigits": 2
+      },
+      "currency": "EUR",
+      "tax": {
+        "value": 1900,
+        "decimalDigits": 2
+      },
+      "lowerBound": 1
+    }
+  ],
+  "orderDetails": {
+    "orderUnit": "PK",
+    "contentUnit": "C62",
+    "numberOfContentUnitsPerOrderUnit": {
+      "value": 500,
+      "decimalDigits": 0
+    },
+    "minimumOrderQuantity": 5,
+    "orderQuantityInterval": 5,
+    "priceQuantity": 100,
+    "deliveryTime": 2
+  },
+  "references": [
+    {
+      "articleReferenceType": "SIMILAR",
+      "refId": "96c51d95-ac5f-43cf-a793-284c88f78289"
+    }
+  ],
+  "articleFeatures": [
+    {
+      "reference": {
+        "systemName": "ECLASS-5.1.4",
+        "groupId": "29-33-24-12"
+      },
+      "features": [
+        {
+          "name": "Gefahrenhinweise",
+          "values": [
+            "H225 Flüssigkeit und Dampf leicht entzündbar.",
+            "H319 Verursacht schwere Augenreizung."
+          ]
+        },
+        {
+          "name": "Breite",
+          "values": [
+            "15"
+          ],
+          "unit": "cm"
+        }
+      ]
+    }
+  ],
+  "groups": {
+    "members": [
+      {
+        "id": "BOXES_STORAGE",
+        "_schema": {
+          "links": [
+            {
+              "href": "/content/groups/BOXES_STORAGE?appId=d53a954f-381e-46da-8a33-0c917a1cef10&hash=123456789",
+              "rel": "self",
+              "method": "GET"
+            }
+          ]
+        }
+      },
+      {
+        "id": "BOXES_TRANSPORT",
+        "_schema": {
+          "links": [
+            {
+              "href": "/content/groups/BOXES_TRANSPORT?appId=d53a954f-381e-46da-8a33-0c917a1cef10&hash=123456789",
+              "rel": "self",
+              "method": "GET"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/articles/801e3cb6-160a-4f55-91be-6c85896cc8c5?hash=123456789",
+        "rel": "self",
+        "method": "GET"
+      },
+      {
+        "href": "/content/business-shops/d53a954f-381e-46da-8a33-0c917a1cef10?hash=123456789",
+        "rel": "business-shop",
+        "method": "GET"
+      },
+      {
+        "href": "/content/return-policies/3bbe8827-6951-49d8-ace0-a44485aee066?hint=unite",
+        "rel": "return-policy",
+        "method": "GET"
+      },
+      {
+        "href": "/content/shipping-costs/d146973c-7d8e-416e-bacc-d656a905cf9e?hint=unite",
+        "rel": "shipping-costs",
+        "method": "GET"
+      },
+      {
+        "href": "/content/minimum-order-values/d146973c-7d8e-416e-bacc-d656a905cf9e?hint=unite",
+        "rel": "minimum-order-value",
+        "method": "GET"
+      }
+    ]
+  }
+}

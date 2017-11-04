@@ -1,0 +1,43 @@
+{
+  "_status": {
+    "timeMs": 35
+  },
+  "id": "CLOTHING_MALE",
+  "name": "Herren-Kleidung",
+  "description": "Für den Mann von Welt",
+  "parentId": "CLOTHING_001",
+  "order": 1,
+  "mimeInfo": [
+    {
+      "mimeType": "image/png",
+      "href": "https://cdn.def-shop.com/original/bangastic-jogginghose-olive-304903.jpg",
+      "description": "Fiese Hose in grün",
+      "purpose": "product_img"
+    }
+  ],
+  "keyword": [
+    "hose",
+    "vintage",
+    "herren",
+    "männer"
+  ],
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/groups/CLOTHING_001?appId=d53a954f-381e-46da-8a33-0c917a1cef10&hash=123456789",
+        "rel": "self",
+        "method": "GET"
+      },
+      {
+        "rel": "descendants",
+        "href": "/content/groups?appId=d53a954f-381e-46da-8a33-0c917a1cef10&root=CLOTHING_MALE&hash=123456789",
+        "method": "GET"
+      },
+      {
+        "rel": "parent",
+        "href": "/content/groups/CLOTHING_001?appId=d53a954f-381e-46da-8a33-0c917a1cef10&hash=123456789",
+        "method": "GET"
+      }
+    ]
+  }
+}

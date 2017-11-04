@@ -1,0 +1,22 @@
+{
+  "expression": {
+    "type": "Or",
+    "operands": [
+      {
+        "type": "ExactStringMatch",
+        "field": "manufacturer",
+        "value": "HP"
+      },
+      {
+        "type": "ExactStringMatch",
+        "field": "manufacturer",
+        "value": "Dell"
+      },
+      {
+        "type": "ExactStringMatch",
+        "field": "manufacturer",
+        "value": "Lenovo"
+      }
+    ]
+  }
+}

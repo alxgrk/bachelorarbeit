@@ -1,0 +1,18 @@
+#%RAML 1.0 security-jwt-identity
+type: x-unite-access-token
+description: expects an identity token in the header
+describedBy:
+  headers:
+    x-unite-access-token:
+      type: string
+      description: |
+        IdentityToken as signed by central Authentication Authority (Auth0?)
+      example: |
+         eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+  responses:
+    401:
+      description: |
+        Bad or expired token.
+    403:
+      description: |
+        Access denied

@@ -1,0 +1,32 @@
+{
+  "_status": {
+    "timeMs": 35
+  },
+  "id": "3bbe8827-6951-49d8-ace0-a44485aee066",
+  "returnPossible": true,
+  "cancellationPossible": true,
+  "processingFee": {
+    "processingFeeType": "ABSOLUTE",
+    "absoluteAmount": {
+      "amount": {
+        "value": 199,
+        "decimalDigits": 2
+      },
+      "currency": "EUR"
+    }
+  },
+  "shippingCostPayer": "SUPPLIER",
+  "returnWithinDays": 14,
+  "stateOfPackaging": "UNOPENED",
+  "stateOfProduct": "UNUSED",
+  "additionalText": "Die Gewährleistungsfrist laut AGB bleibt unabhängig der angegebenen Rückgaberechte bestehen.",
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/return-policies/3bbe8827-6951-49d8-ace0-a44485aee066?hint=unite",
+        "rel": "return-policy",
+        "method": "GET"
+      }
+    ]
+  }
+}

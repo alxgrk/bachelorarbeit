@@ -1,0 +1,22 @@
+{
+  "_status": {
+    "timeMs": 35
+  },
+  "id": "12345678-90ab-1111-xe8x-2376hgdfb734",
+  "value": {
+    "amount": {
+      "value": 0,
+      "decimalDigits": 0
+    },
+    "currency": "EUR"
+  },
+  "_schema": {
+    "links": [
+      {
+        "href": "/content/minimum-order-values/12345678-90ab-1111-xe8x-2376hgdfb734?hint=unite",
+        "rel": "self",
+        "method": "GET"
+      }
+    ]
+  }
+}
