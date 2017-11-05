@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -105,6 +106,17 @@ public class ResourcesFragment extends Fragment {
         super.onDetach();
         mListener.onFragmentInteraction(this, Lists.newArrayList());
         mListener = null;
+    }
+
+    <T extends Fragment> void switchTo(T fragment) {
+        progressBar.setVisibility(View.VISIBLE);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .add(R.id.main_fragment_layout, fragment)
+                .addToBackStack(null)
+                .hide(this)
+                .commit();
     }
 
     /**

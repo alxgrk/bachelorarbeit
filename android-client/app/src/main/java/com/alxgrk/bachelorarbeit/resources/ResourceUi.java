@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.alxgrk.bachelorarbeit.R;
+import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
 import com.alxgrk.bachelorarbeit.view.BookingView;
@@ -61,12 +62,15 @@ class ResourceUi {
                 bookingView.setBooked(res.getBookedTimeslots());
             }
 
-            Collection<Link> membersLink = Collections2.filter(res.getLinks(),
-                    l -> PossibleRelation.ADMINISTRATORS.toString().equalsIgnoreCase(l.getRel()));
+            List<Link> membersLink = Lists.newArrayList(Collections2.filter(res.getLinks(),
+                    l -> PossibleRelation.ADMINISTRATORS.toString().equalsIgnoreCase(l.getRel())));
             if (1 == membersLink.size()) {
                 Button btnRes = result.findViewById(R.id.btn_admins);
                 btnRes.setVisibility(View.VISIBLE);
                 btnRes.setText(PossibleRelation.ADMINISTRATORS.toString());
+                btnRes.setOnClickListener(v -> {
+                    fragment.switchTo(AccountsFragment.newInstance(membersLink.get(0).getHref()));
+                });
             }
 
             return result;

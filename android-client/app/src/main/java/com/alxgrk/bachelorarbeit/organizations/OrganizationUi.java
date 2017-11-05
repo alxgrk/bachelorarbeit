@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.alxgrk.bachelorarbeit.R;
+import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
 import com.google.common.base.Function;
@@ -53,12 +54,15 @@ class OrganizationUi {
             TextView tvName = result.findViewById(R.id.tv_name);
             tvName.setText(org.getName());
 
-            Collection<Link> membersLink = Collections2.filter(org.getLinks(),
-                    l -> PossibleRelation.MEMBERS.toString().equalsIgnoreCase(l.getRel()));
+            List<Link> membersLink = Lists.newArrayList(Collections2.filter(org.getLinks(),
+                    l -> PossibleRelation.MEMBERS.toString().equalsIgnoreCase(l.getRel())));
             if (1 == membersLink.size()) {
                 Button btnOrg = result.findViewById(R.id.btn_members);
                 btnOrg.setVisibility(View.VISIBLE);
                 btnOrg.setText(PossibleRelation.MEMBERS.toString());
+                btnOrg.setOnClickListener(v -> {
+                    fragment.switchTo(AccountsFragment.newInstance(membersLink.get(0).getHref()));
+                });
             }
 
             return result;
@@ -93,10 +97,6 @@ class OrganizationUi {
             }
         };
         uiButtons = Lists.newArrayList(Collections2.transform(filtered, buttonCreationFunction));
-    }
-
-    private Button createFollowButton(OrganizationButton rb, View.OnClickListener onClick) {
-        return createButtonWith(rb.getDisplayText(), onClick);
     }
 
     private Button createButtonWith(String displayText, View.OnClickListener onClick) {

@@ -9,6 +9,9 @@ import android.widget.TextView;
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
+import com.alxgrk.bachelorarbeit.organizations.Organization;
+import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
+import com.alxgrk.bachelorarbeit.resources.ResourcesFragment;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -59,20 +62,26 @@ class AccountUi {
             TextView tvUsername = result.findViewById(R.id.tv_username);
             tvUsername.setText(acc.getUsername());
 
-            Collection<Link> orgLink = Collections2.filter(acc.getLinks(),
-                    l -> PossibleRelation.ORGANIZATION.toString().equalsIgnoreCase(l.getRel()));
+            List<Link> orgLink = Lists.newArrayList(Collections2.filter(acc.getLinks(),
+                    l -> PossibleRelation.ORGANIZATION.toString().equalsIgnoreCase(l.getRel())));
             if (1 == orgLink.size()) {
                 Button btnOrg = result.findViewById(R.id.btn_org);
                 btnOrg.setVisibility(View.VISIBLE);
                 btnOrg.setText(PossibleRelation.ORGANIZATION.toString());
+                btnOrg.setOnClickListener(v -> {
+                    fragment.switchTo(OrganizationsFragment.newInstance(orgLink.get(0).getHref()));
+                });
             }
 
-            Collection<Link> resourcesLink = Collections2.filter(acc.getLinks(),
-                    l -> PossibleRelation.RESOURCES.toString().equalsIgnoreCase(l.getRel()));
+            List<Link> resourcesLink = Lists.newArrayList(Collections2.filter(acc.getLinks(),
+                    l -> PossibleRelation.RESOURCES.toString().equalsIgnoreCase(l.getRel())));
             if (1 == resourcesLink.size()) {
                 Button btnRes = result.findViewById(R.id.btn_resources);
                 btnRes.setVisibility(View.VISIBLE);
                 btnRes.setText(PossibleRelation.RESOURCES.toString());
+                btnRes.setOnClickListener(v -> {
+                    fragment.switchTo(ResourcesFragment.newInstance(resourcesLink.get(0).getHref()));
+                });
             }
 
             return result;
