@@ -19,6 +19,7 @@ import com.alxgrk.bachelorarbeit.SettingsActivity;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -91,6 +92,15 @@ public class RootFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if(null != mListener) {
+            mListener.onFragmentInteraction(this, Lists.newArrayList(), !hidden);
+        }
+    }
+
     <T extends Fragment> void switchTo(T fragment) {
         progressBar.setVisibility(View.VISIBLE);
 
@@ -103,7 +113,11 @@ public class RootFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(RootFragment rootFragment, List<Link> links);
+        default void onFragmentInteraction(RootFragment rootFragment, List<Link> links) {
+            onFragmentInteraction(rootFragment, links, true);
+        }
+
+        void onFragmentInteraction(RootFragment rootFragment, List<Link> links, boolean visible);
     }
 
     class RootAsyncTask extends AbstractAsyncTask<Root> {

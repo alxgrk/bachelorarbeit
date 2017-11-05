@@ -23,7 +23,9 @@ import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
+import com.alxgrk.bachelorarbeit.organizations.Organization;
 import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
+import com.alxgrk.bachelorarbeit.resources.Resource;
 import com.alxgrk.bachelorarbeit.resources.ResourcesFragment;
 import com.alxgrk.bachelorarbeit.root.RootFragment;
 import com.alxgrk.bachelorarbeit.shared.CreationFragment;
@@ -37,7 +39,8 @@ public class MainActivity extends AppCompatActivity
         RootFragment.OnFragmentInteractionListener,
         AccountsFragment.OnFragmentInteractionListener,
         OrganizationsFragment.OnFragmentInteractionListener,
-        ResourcesFragment.OnFragmentInteractionListener {
+        ResourcesFragment.OnFragmentInteractionListener,
+        CreationFragment.OnFragmentInteractionListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -137,12 +140,24 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(RootFragment rootFragment, List<Link> links) {
-        // yet nothing to do
+    public void onFragmentInteraction(RootFragment rootFragment, List<Link> links, boolean visible) {
+        List<Link> createLink = Lists.newArrayList(Collections2.filter(links, l ->
+                PossibleRelation.CREATE.toString().equalsIgnoreCase(l.getRel())));
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        if (1 == createLink.size() && visible) {
+            fab.setVisibility(View.VISIBLE);
+            fab.setOnClickListener(view -> {
+                // not doing anything yet
+            });
+        } else {
+            fab.setVisibility(View.GONE);
+            fab.setOnClickListener(null);
+        }
     }
 
     @Override
-    public void onFragmentInteraction(AccountsFragment accountsFragment, List<Link> links) {
+    public void onFragmentInteraction(final AccountsFragment accountsFragment, List<Link> links) {
         List<Link> createLink = Lists.newArrayList(Collections2.filter(links, l ->
                 PossibleRelation.CREATE.toString().equalsIgnoreCase(l.getRel())));
 
@@ -158,12 +173,40 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(OrganizationsFragment organizationsFragment) {
+    public void onFragmentInteraction(final OrganizationsFragment organizationsFragment, List<Link> links) {
+        List<Link> createLink = Lists.newArrayList(Collections2.filter(links, l ->
+                PossibleRelation.CREATE.toString().equalsIgnoreCase(l.getRel())));
 
+        if (1 == createLink.size()) {
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setVisibility(View.VISIBLE);
+            fab.setOnClickListener(view -> {
+                CreationFragment fragment = CreationFragment.newInstance(createLink.get(0),
+                        HateoasMediaType.ORGANIZATION_TYPE, Organization.class, R.layout.add_screen_org);
+                transition(organizationsFragment, fragment);
+            });
+        }
     }
 
     @Override
-    public void onFragmentInteraction(ResourcesFragment resourcesFragment) {
+    public void onFragmentInteraction(final ResourcesFragment resourcesFragment, List<Link> links) {
+        List<Link> createLink = Lists.newArrayList(Collections2.filter(links, l ->
+                PossibleRelation.CREATE.toString().equalsIgnoreCase(l.getRel())));
 
+        if (1 == createLink.size()) {
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setVisibility(View.VISIBLE);
+            fab.setOnClickListener(view -> {
+                CreationFragment fragment = CreationFragment.newInstance(createLink.get(0),
+                        HateoasMediaType.RESOURCE_TYPE, Resource.class, R.layout.add_screen_resource);
+                transition(resourcesFragment, fragment);
+            });
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(CreationFragment creationFragment, boolean visible) {
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 }

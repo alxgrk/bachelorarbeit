@@ -12,10 +12,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -23,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -100,6 +103,7 @@ public class OrganizationsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener.onFragmentInteraction(this, Lists.newArrayList());
         mListener = null;
     }
 
@@ -114,7 +118,7 @@ public class OrganizationsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(OrganizationsFragment rootFragment);
+        void onFragmentInteraction(OrganizationsFragment rootFragment, List<Link> links);
     }
 
     class OrganizationsAsyncTask extends AbstractAsyncTask<OrganizationCollection> {
@@ -156,7 +160,7 @@ public class OrganizationsFragment extends Fragment {
             progressBar.setVisibility(View.GONE);
 
             if (mListener != null)
-                mListener.onFragmentInteraction(OrganizationsFragment.this);
+                mListener.onFragmentInteraction(OrganizationsFragment.this, orgs.getLinks());
         }
     }
 }

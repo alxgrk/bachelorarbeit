@@ -1,11 +1,12 @@
 package com.alxgrk.bachelorarbeit.shared;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,12 @@ import com.alxgrk.bachelorarbeit.accounts.Account;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.organizations.Organization;
 import com.alxgrk.bachelorarbeit.resources.Resource;
+import com.alxgrk.bachelorarbeit.resources.Timeslot;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.google.common.collect.Lists;
+import com.sleepbot.datetimepicker.time.RadialPickerLayout;
+import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,10 +38,11 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 import lombok.RequiredArgsConstructor;
 
-public class CreationFragment extends Fragment {
+public class CreationFragment extends Fragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     private static final String TAG = CreationFragment.class.getSimpleName();
 
@@ -47,6 +53,14 @@ public class CreationFragment extends Fragment {
     private static final String MEDIA_TYPE_ARG = "MEDIA_TYPE";
 
     private static final String INPUT_CLASS_ARG = "INPUT_CLASS";
+
+    private static final String DATEPICKER = "datepicker";
+
+    private static final String TIMEPICKER = "timepicker";
+
+    private OnFragmentInteractionListener mListener;
+
+    private Pair<Calendar, Calendar> availableFromTo = new Pair<>(null, null);
 
     public CreationFragment() {
         // Required empty public constructor
@@ -75,6 +89,8 @@ public class CreationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (getArguments() != null) {
+            mListener.onFragmentInteraction(this, true);
+
             LinearLayout creationContainer = (LinearLayout) inflater.inflate(
                     R.layout.fragment_root, container, false);
             ConstraintLayout creationLayout = (ConstraintLayout) inflater.inflate(
@@ -86,9 +102,9 @@ public class CreationFragment extends Fragment {
             if (inputClass == Account.class) {
                 setupAccountCreation(creationLayout, inputClass, linkForCreation, mediaType);
             } else if (inputClass == Organization.class) {
-                // TODO
+                setupOrganizationCreation(creationLayout, inputClass, linkForCreation, mediaType);
             } else if (inputClass == Resource.class) {
-                // TODO
+                setupResourceCreation(creationLayout, inputClass, linkForCreation, mediaType, savedInstanceState);
             }
 
             if (null != creationLayout.getParent())
@@ -99,6 +115,63 @@ public class CreationFragment extends Fragment {
 
         return container;
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener.onFragmentInteraction(this, false);
+        mListener = null;
+    }
+
+    @Override
+    public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+        final Calendar calendar = Calendar.getInstance();
+
+        calendar.set(year, month, day);
+        if (null == availableFromTo.first)
+            availableFromTo = new Pair<>(calendar, null);
+        else
+            availableFromTo = new Pair<>(availableFromTo.first, calendar);
+
+        final TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(this,
+                calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true, false);
+
+        timePickerDialog.setCloseOnSingleTapMinute(true);
+        timePickerDialog.show(getFragmentManager(), TIMEPICKER);
+    }
+
+    @Override
+    public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute) {
+        if (null == availableFromTo.second) {
+            availableFromTo.first.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            availableFromTo.first.set(Calendar.MINUTE, minute);
+        } else {
+            availableFromTo.second.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            availableFromTo.second.set(Calendar.MINUTE, minute);
+        }
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
+    public interface OnFragmentInteractionListener {
+        void onFragmentInteraction(CreationFragment creationFragment, boolean visible);
+    }
+
 
     private void setupAccountCreation(ViewGroup creationLayout, Class<?> inputClass,
                                       String linkForCreation, String mediaType) {
@@ -127,43 +200,57 @@ public class CreationFragment extends Fragment {
 
     private void setupOrganizationCreation(ConstraintLayout creationLayout, Class<?> inputClass,
                                            String linkForCreation, String mediaType) {
-        EditText etSurname = creationLayout.findViewById(R.id.et_account_surname);
-        EditText etName = creationLayout.findViewById(R.id.et_account_name);
-        EditText etUsername = creationLayout.findViewById(R.id.et_account_username);
-        EditText etPassword = creationLayout.findViewById(R.id.et_account_password);
+        EditText etName = creationLayout.findViewById(R.id.et_org_name);
 
-        Button btnCreate = creationLayout.findViewById(R.id.btn_account_create);
+        Button btnCreate = creationLayout.findViewById(R.id.btn_org_create);
         btnCreate.setOnClickListener(v -> {
-            Account input = new Account();
+            Organization input = new Organization();
             input.setName(etName.getText().toString());
-            input.setSurname(etSurname.getText().toString());
-            input.setUsername(etUsername.getText().toString());
-            input.setPassword(etPassword.getText().toString());
             new CreationAsyncTask(this, linkForCreation, mediaType, inputClass)
                     .execute(input);
-
-            goBack();
         });
     }
 
     private void setupResourceCreation(ConstraintLayout creationLayout, Class<?> inputClass,
-                                       String linkForCreation, String mediaType) {
-        EditText etSurname = creationLayout.findViewById(R.id.et_account_surname);
-        EditText etName = creationLayout.findViewById(R.id.et_account_name);
-        EditText etUsername = creationLayout.findViewById(R.id.et_account_username);
-        EditText etPassword = creationLayout.findViewById(R.id.et_account_password);
+                                       String linkForCreation, String mediaType, Bundle savedInstanceState) {
+        EditText etName = creationLayout.findViewById(R.id.et_res_name);
 
-        Button btnCreate = creationLayout.findViewById(R.id.btn_account_create);
+        final Calendar calendar = Calendar.getInstance();
+        final DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(this,
+                calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), false);
+
+        View.OnClickListener onClick = v -> {
+            datePickerDialog.setYearRange(1985, 2028);
+            datePickerDialog.setCloseOnSingleTapDay(true);
+            datePickerDialog.show(getFragmentManager(), DATEPICKER);
+        };
+        creationLayout.findViewById(R.id.tv_res_avail_from).setOnClickListener(onClick);
+        creationLayout.findViewById(R.id.tv_res_avail_to).setOnClickListener(onClick);
+
+        if (savedInstanceState != null) {
+            DatePickerDialog dpd = (DatePickerDialog) getFragmentManager().findFragmentByTag(DATEPICKER);
+            if (dpd != null) {
+                dpd.setOnDateSetListener(this);
+            }
+
+            TimePickerDialog tpd = (TimePickerDialog) getFragmentManager().findFragmentByTag(TIMEPICKER);
+            if (tpd != null) {
+                tpd.setOnTimeSetListener(this);
+            }
+        }
+
+        Button btnCreate = creationLayout.findViewById(R.id.btn_res_create);
         btnCreate.setOnClickListener(v -> {
-            Account input = new Account();
+            Timeslot available = new Timeslot();
+            available.setBeginning(availableFromTo.first);
+            available.setEnding(availableFromTo.second);
+
+            Resource input = new Resource();
             input.setName(etName.getText().toString());
-            input.setSurname(etSurname.getText().toString());
-            input.setUsername(etUsername.getText().toString());
-            input.setPassword(etPassword.getText().toString());
+            input.setAvailableTimeslots(Lists.newArrayList(available));
+            input.setBookedTimeslots(Lists.newArrayList());
             new CreationAsyncTask(this, linkForCreation, mediaType, inputClass)
                     .execute(input);
-
-            goBack();
         });
     }
 
@@ -221,12 +308,16 @@ public class CreationFragment extends Fragment {
                 return;
             }
 
-            if (response.getStatusCode().value() < 400)
-                Toast.makeText(fragment.getContext(), "Successfully created.", Toast.LENGTH_SHORT)
-                        .show();
-            else
-                Toast.makeText(fragment.getContext(), "Could not be created.", Toast.LENGTH_SHORT)
-                        .show();
+            Context context = fragment.getContext();
+            if (response.getStatusCode().value() < 400) {
+                String msg = "Successfully created.";
+                Log.d(TAG, msg);
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            } else {
+                String msg = "Could not be created.";
+                Log.e(TAG, msg + " Error code = " + response.getStatusCode());
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            }
 
             goBack();
         }

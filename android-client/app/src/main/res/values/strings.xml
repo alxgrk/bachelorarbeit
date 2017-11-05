@@ -24,10 +24,14 @@
 
     <!-- Creation, Updating, Deletion -->
     <string name="new_account_title">New Account</string>
+    <string name="new_org_title">New Organization</string>
+    <string name="new_res_title">New Resource</string>
     <string name="surname">surname</string>
     <string name="name">name</string>
     <string name="username">username</string>
     <string name="password">password</string>
     <string name="btn_create">create</string>
+    <string name="available_from">available from</string>
+    <string name="available_to">available to</string>
 
 </resources>

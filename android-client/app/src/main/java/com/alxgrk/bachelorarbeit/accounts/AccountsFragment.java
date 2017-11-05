@@ -17,6 +17,7 @@ import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -104,6 +105,7 @@ public class AccountsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener.onFragmentInteraction(this, Lists.newArrayList());
         mListener = null;
     }
 
