@@ -10,14 +10,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
+import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.shared.AbstractFragment;
+import com.google.common.collect.Lists;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 public class ResourcesFragment extends AbstractFragment {
 
@@ -35,6 +39,15 @@ public class ResourcesFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, new ResourcesAsyncTask());
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if (null != mListener) {
+            mListener.onFragmentInteraction(this, getSavedLinks(), !hidden);
+        }
     }
 
     class ResourcesAsyncTask extends AbstractAsyncTask<ResourceCollection> {
@@ -55,7 +68,8 @@ public class ResourcesFragment extends AbstractFragment {
 
         @Override
         protected void doAfter(ResourceCollection resources) {
-            ResourcesUi resourcesUi = new ResourcesUi(ResourcesFragment.this, resources.getLinks(),
+            setSavedLinks(resources.getLinks());
+            ResourcesUi resourcesUi = new ResourcesUi(ResourcesFragment.this, getSavedLinks(),
                     resources.getMembers());
 
             for (ConstraintLayout resEntry : resourcesUi.getUiResEntries()) {
@@ -68,7 +82,7 @@ public class ResourcesFragment extends AbstractFragment {
             progressBar.setVisibility(View.GONE);
 
             if (mListener != null)
-                mListener.onFragmentInteraction(ResourcesFragment.this, resources.getLinks(), true);
+                mListener.onFragmentInteraction(ResourcesFragment.this, getSavedLinks(), true);
         }
     }
 }

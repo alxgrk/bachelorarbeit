@@ -6,10 +6,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.alxgrk.bachelorarbeit.R;
+import com.alxgrk.bachelorarbeit.accounts.AccountFragment;
 import com.alxgrk.bachelorarbeit.accounts.collection.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
 import com.alxgrk.bachelorarbeit.resources.Resource;
+import com.alxgrk.bachelorarbeit.resources.ResourceFragment;
 import com.alxgrk.bachelorarbeit.shared.SharedUi;
 import com.alxgrk.bachelorarbeit.view.BookingView;
 import com.google.common.base.Function;
@@ -54,6 +56,15 @@ class ResourcesUi {
                 bookingView.setVisibility(View.VISIBLE);
                 bookingView.setAvailables(res.getAvailableTimeslots());
                 bookingView.setBooked(res.getBookedTimeslots());
+            }
+
+            List<Link> selfLink = Lists.newArrayList(Collections2.filter(res.getLinks(),
+                    l -> PossibleRelation.SELF.toString().equalsIgnoreCase(l.getRel())));
+            if (1 == selfLink.size()) {
+                ConstraintLayout entryLayout = result.findViewById(R.id.entry_res);
+                entryLayout.setOnClickListener(v -> {
+                    sharedUi.getFragment().switchTo(ResourceFragment.newInstance(selfLink.get(0).getHref()));
+                });
             }
 
             List<Link> membersLink = Lists.newArrayList(Collections2.filter(res.getLinks(),

@@ -6,10 +6,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.alxgrk.bachelorarbeit.R;
+import com.alxgrk.bachelorarbeit.accounts.AccountFragment;
 import com.alxgrk.bachelorarbeit.accounts.collection.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
 import com.alxgrk.bachelorarbeit.organizations.Organization;
+import com.alxgrk.bachelorarbeit.organizations.OrganizationFragment;
 import com.alxgrk.bachelorarbeit.shared.SharedUi;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -48,6 +50,15 @@ class OrganizationsUi {
 
             TextView tvName = result.findViewById(R.id.tv_name);
             tvName.setText(org.getName());
+
+            List<Link> selfLink = Lists.newArrayList(Collections2.filter(org.getLinks(),
+                    l -> PossibleRelation.SELF.toString().equalsIgnoreCase(l.getRel())));
+            if (1 == selfLink.size()) {
+                ConstraintLayout entryLayout = result.findViewById(R.id.entry_org);
+                entryLayout.setOnClickListener(v -> {
+                    sharedUi.getFragment().switchTo(OrganizationFragment.newInstance(selfLink.get(0).getHref()));
+                });
+            }
 
             List<Link> membersLink = Lists.newArrayList(Collections2.filter(org.getLinks(),
                     l -> PossibleRelation.MEMBERS.toString().equalsIgnoreCase(l.getRel())));

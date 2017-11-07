@@ -12,6 +12,7 @@ import android.widget.Button;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.shared.AbstractFragment;
+import com.google.common.collect.Lists;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -37,6 +38,15 @@ public class AccountsFragment extends AbstractFragment {
         return super.onCreateView(inflater, container, new AccountsAsyncTask());
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if (null != mListener) {
+            mListener.onFragmentInteraction(this, getSavedLinks(), !hidden);
+        }
+    }
+
     class AccountsAsyncTask extends AbstractAsyncTask<AccountCollection> {
 
         @Override
@@ -55,7 +65,9 @@ public class AccountsFragment extends AbstractFragment {
 
         @Override
         protected void doAfter(AccountCollection accounts) {
-            AccountsUi accountsUi = new AccountsUi(AccountsFragment.this, accounts.getLinks(), accounts.getMembers());
+            setSavedLinks(accounts.getLinks());
+            AccountsUi accountsUi = new AccountsUi(AccountsFragment.this, getSavedLinks(),
+                    accounts.getMembers());
 
             for (ConstraintLayout accountEntry : accountsUi.getUiAccountEntries()) {
                 container.addView(accountEntry);
@@ -67,7 +79,7 @@ public class AccountsFragment extends AbstractFragment {
             progressBar.setVisibility(View.GONE);
 
             if (mListener != null)
-                mListener.onFragmentInteraction(AccountsFragment.this, accounts.getLinks(), true);
+                mListener.onFragmentInteraction(AccountsFragment.this, getSavedLinks(), true);
         }
     }
 }

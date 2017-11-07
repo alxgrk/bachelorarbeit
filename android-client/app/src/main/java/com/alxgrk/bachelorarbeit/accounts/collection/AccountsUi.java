@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.accounts.Account;
+import com.alxgrk.bachelorarbeit.accounts.AccountFragment;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
 import com.alxgrk.bachelorarbeit.organizations.OrganizationFragment;
@@ -54,6 +55,15 @@ class AccountsUi {
 
             TextView tvUsername = result.findViewById(R.id.tv_username);
             tvUsername.setText(acc.getUsername());
+
+            List<Link> selfLink = Lists.newArrayList(Collections2.filter(acc.getLinks(),
+                    l -> PossibleRelation.SELF.toString().equalsIgnoreCase(l.getRel())));
+            if (1 == selfLink.size()) {
+                ConstraintLayout entryLayout = result.findViewById(R.id.entry_account);
+                entryLayout.setOnClickListener(v -> {
+                    sharedUi.getFragment().switchTo(AccountFragment.newInstance(selfLink.get(0).getHref()));
+                });
+            }
 
             List<Link> orgLink = Lists.newArrayList(Collections2.filter(acc.getLinks(),
                     l -> PossibleRelation.ORGANIZATION.toString().equalsIgnoreCase(l.getRel())));

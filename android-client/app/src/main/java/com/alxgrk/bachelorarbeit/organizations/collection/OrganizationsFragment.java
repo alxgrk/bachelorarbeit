@@ -2,7 +2,6 @@ package com.alxgrk.bachelorarbeit.organizations.collection;
 
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +36,15 @@ public class OrganizationsFragment extends AbstractFragment {
         return super.onCreateView(inflater, container, new OrganizationsAsyncTask());
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if (null != mListener) {
+            mListener.onFragmentInteraction(this, getSavedLinks(), !hidden);
+        }
+    }
+
     class OrganizationsAsyncTask extends AbstractAsyncTask<OrganizationCollection> {
 
         @Override
@@ -55,7 +63,8 @@ public class OrganizationsFragment extends AbstractFragment {
 
         @Override
         protected void doAfter(OrganizationCollection orgs) {
-            OrganizationsUi organizationsUi = new OrganizationsUi(OrganizationsFragment.this, orgs.getLinks(),
+            setSavedLinks(orgs.getLinks());
+            OrganizationsUi organizationsUi = new OrganizationsUi(OrganizationsFragment.this, getSavedLinks(),
                     orgs.getMembers());
 
             for (ConstraintLayout orgEntry : organizationsUi.getUiOrgEntries()) {
@@ -68,7 +77,7 @@ public class OrganizationsFragment extends AbstractFragment {
             progressBar.setVisibility(View.GONE);
 
             if (mListener != null)
-                mListener.onFragmentInteraction(OrganizationsFragment.this, orgs.getLinks(), true);
+                mListener.onFragmentInteraction(OrganizationsFragment.this, getSavedLinks(), true);
         }
     }
 }

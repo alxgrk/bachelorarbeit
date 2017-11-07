@@ -17,9 +17,17 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 public class AbstractFragment extends Fragment {
 
     public static final String NEXT_HREF_ARG = "NEXT_HREF";
+
+    @Getter
+    @Setter(AccessLevel.PROTECTED)
+    private List<Link> savedLinks = Lists.newArrayList();
 
     protected OnFragmentInteractionListener mListener;
 
@@ -76,7 +84,7 @@ public class AbstractFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener.onFragmentInteraction(this, Lists.newArrayList(), false);
+        //mListener.onFragmentInteraction(this, Lists.newArrayList(), false);
         mListener = null;
     }
 
