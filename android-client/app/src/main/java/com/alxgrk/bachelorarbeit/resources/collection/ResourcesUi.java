@@ -1,4 +1,4 @@
-package com.alxgrk.bachelorarbeit.resources;
+package com.alxgrk.bachelorarbeit.resources.collection;
 
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
@@ -9,6 +9,7 @@ import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.accounts.collection.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
+import com.alxgrk.bachelorarbeit.resources.Resource;
 import com.alxgrk.bachelorarbeit.shared.SharedUi;
 import com.alxgrk.bachelorarbeit.view.BookingView;
 import com.google.common.base.Function;
@@ -19,21 +20,22 @@ import java.util.Collection;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.Singular;
 
-class ResourceUi {
+class ResourcesUi {
 
     @Getter
     private SharedUi sharedUi;
 
-    private final Resource resource;
+    private final Collection<Resource> resources;
 
     @Getter
-    private ConstraintLayout uiResource;
+    private List<ConstraintLayout> uiResEntries = Lists.newArrayList();
 
-    ResourceUi(ResourceFragment fragment, Resource resource) {
-        this.resource = resource;
+    ResourcesUi(ResourcesFragment fragment, List<Link> links, Collection<Resource> resources) {
+        this.resources = resources;
 
-        sharedUi = new SharedUi(fragment, resource.getLinks());
+        sharedUi = new SharedUi(fragment, links);
         sharedUi.createButtons();
 
         createResEntries();
@@ -68,7 +70,7 @@ class ResourceUi {
             return result;
         };
 
-        uiResource = resEntryCreationFuntion.apply(resource);
+        uiResEntries = Lists.newArrayList(Collections2.transform(resources, resEntryCreationFuntion));
     }
 
 }

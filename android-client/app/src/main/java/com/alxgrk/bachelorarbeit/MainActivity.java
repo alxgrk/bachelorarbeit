@@ -19,14 +19,14 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.alxgrk.bachelorarbeit.accounts.Account;
-import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
+import com.alxgrk.bachelorarbeit.accounts.collection.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
 import com.alxgrk.bachelorarbeit.organizations.Organization;
-import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
+import com.alxgrk.bachelorarbeit.organizations.collection.OrganizationsFragment;
 import com.alxgrk.bachelorarbeit.resources.Resource;
-import com.alxgrk.bachelorarbeit.resources.ResourcesFragment;
+import com.alxgrk.bachelorarbeit.resources.collection.ResourcesFragment;
 import com.alxgrk.bachelorarbeit.root.RootFragment;
 import com.alxgrk.bachelorarbeit.shared.AbstractFragment;
 import com.alxgrk.bachelorarbeit.shared.CreationFragment;

@@ -1,4 +1,4 @@
-package com.alxgrk.bachelorarbeit.organizations;
+package com.alxgrk.bachelorarbeit.organizations.collection;
 
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
@@ -9,36 +9,39 @@ import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.accounts.collection.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
-import com.alxgrk.bachelorarbeit.organizations.collection.OrganizationsFragment;
+import com.alxgrk.bachelorarbeit.organizations.Organization;
 import com.alxgrk.bachelorarbeit.shared.SharedUi;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
+import java.util.Collection;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.Singular;
 
-class OrganizationUi {
+class OrganizationsUi {
 
     @Getter
     private SharedUi sharedUi;
 
-    private Organization organization;
+    private Collection<Organization> organizations;
 
     @Getter
-    private ConstraintLayout uiOrg;
+    private List<ConstraintLayout> uiOrgEntries = Lists.newArrayList();
 
-    OrganizationUi(OrganizationFragment fragment, Organization organization) {
-        this.organization = organization;
+    OrganizationsUi(OrganizationsFragment fragment, @Singular List<Link> links,
+                    @Singular Collection<Organization> organizations) {
+        this.organizations = organizations;
 
-        sharedUi = new SharedUi(fragment, organization.getLinks());
+        sharedUi = new SharedUi(fragment, links);
         sharedUi.createButtons();
 
-        createOrgEntry();
+        createOrgEntries();
     }
 
-    private void createOrgEntry() {
+    private void createOrgEntries() {
         Function<Organization, ConstraintLayout> orgEntryCreationFuntion = org -> {
             ConstraintLayout result = (ConstraintLayout) sharedUi.getFragment().getLayoutInflater()
                     .inflate(R.layout.entry_org, null);
@@ -60,7 +63,7 @@ class OrganizationUi {
             return result;
         };
 
-        uiOrg = orgEntryCreationFuntion.apply(organization);
+        uiOrgEntries = Lists.newArrayList(Collections2.transform(organizations, orgEntryCreationFuntion));
     }
 
 }

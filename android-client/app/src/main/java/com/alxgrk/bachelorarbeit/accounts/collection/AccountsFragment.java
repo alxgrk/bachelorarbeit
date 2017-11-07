@@ -1,6 +1,5 @@
-package com.alxgrk.bachelorarbeit.accounts;
+package com.alxgrk.bachelorarbeit.accounts.collection;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.shared.AbstractFragment;
-import com.google.common.collect.Collections2;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -21,17 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collection;
-
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AccountsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AccountsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AccountsFragment extends AbstractFragment {
 
     private static final String TAG = AccountsFragment.class.getSimpleName();
@@ -62,24 +49,18 @@ public class AccountsFragment extends AbstractFragment {
                 String nextHref, RestTemplate template, HttpEntity<?> requestEntity) {
             ResponseEntity<AccountCollection> response = template.exchange(nextHref, HttpMethod.GET,
                     requestEntity, AccountCollection.class);
-            Log.d(TAG, "accountsAsyncTask: received response " + response);
+            Log.d(TAG, AccountsAsyncTask.class.getSimpleName() + ": received response " + response);
             return response;
         }
 
         @Override
         protected void doAfter(AccountCollection accounts) {
-            Collection<AccountUi.AccountButton> accountButtons = Collections2.transform(accounts.getLinks(),
-                    l -> new AccountUi.AccountButton(l.getRel(), l.getHref()));
+            AccountsUi accountsUi = new AccountsUi(AccountsFragment.this, accounts.getLinks(), accounts.getMembers());
 
-            AccountUi accountUi = AccountUi.builder(AccountsFragment.this)
-                    .accounts(accounts.getMembers())
-                    .buttonSpecs(accountButtons)
-                    .build();
-
-            for (ConstraintLayout accountEntry : accountUi.getUiAccountEntries()) {
+            for (ConstraintLayout accountEntry : accountsUi.getUiAccountEntries()) {
                 container.addView(accountEntry);
             }
-            for (Button button : accountUi.getUiButtons()) {
+            for (Button button : accountsUi.getSharedUi().getButtons()) {
                 container.addView(button);
             }
 

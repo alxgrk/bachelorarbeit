@@ -1,4 +1,4 @@
-package com.alxgrk.bachelorarbeit.accounts;
+package com.alxgrk.bachelorarbeit.accounts.collection;
 
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
@@ -6,33 +6,36 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.alxgrk.bachelorarbeit.R;
+import com.alxgrk.bachelorarbeit.accounts.Account;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
 import com.alxgrk.bachelorarbeit.organizations.OrganizationFragment;
+import com.alxgrk.bachelorarbeit.organizations.collection.OrganizationsFragment;
 import com.alxgrk.bachelorarbeit.resources.collection.ResourcesFragment;
 import com.alxgrk.bachelorarbeit.shared.SharedUi;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
+import java.util.Collection;
 import java.util.List;
 
 import lombok.Getter;
 
-class AccountUi {
+class AccountsUi {
 
     @Getter
     private SharedUi sharedUi;
 
-    private Account account;
+    private Collection<Account> accounts;
 
     @Getter
-    private ConstraintLayout uiAccount;
+    private List<ConstraintLayout> uiAccountEntries = Lists.newArrayList();
 
-    AccountUi(AccountFragment fragment, Account account) {
-        this.account = account;
+    AccountsUi(AccountsFragment fragment, List<Link> links, Collection<Account> accounts) {
+        this.accounts = accounts;
 
-        sharedUi = new SharedUi(fragment, account.getLinks());
+        sharedUi = new SharedUi(fragment, links);
         sharedUi.createButtons();
 
         createAccountEntries();
@@ -77,7 +80,7 @@ class AccountUi {
             return result;
         };
 
-        uiAccount = accountEntryCreationFuntion.apply(account);
+        uiAccountEntries = Lists.newArrayList(Collections2.transform(accounts, accountEntryCreationFuntion));
     }
 
 }

@@ -1,6 +1,5 @@
 package com.alxgrk.bachelorarbeit.root;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,7 +13,6 @@ import com.alxgrk.bachelorarbeit.SettingsActivity;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.shared.AbstractFragment;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 import org.springframework.http.HttpEntity;
@@ -22,8 +20,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Collection;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -90,12 +86,9 @@ public class RootFragment extends AbstractFragment {
 
         @Override
         protected void doAfter(Root root) {
-            Collection<RootUi.RootButton> rootButtons = Collections2.transform(root.getLinks(),
-                    l -> new RootUi.RootButton(l.getRel(), l.getHref()));
+            RootUi rootUi = new RootUi(RootFragment.this, root.getLinks());
 
-            RootUi rootUi = RootUi.builder(RootFragment.this).buttonSpecs(rootButtons).build();
-
-            for (Button button : rootUi.getUiButtons()) {
+            for (Button button : rootUi.getUi().getButtons()) {
                 container.addView(button);
             }
 

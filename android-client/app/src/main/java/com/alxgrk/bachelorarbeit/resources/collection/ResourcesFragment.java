@@ -1,6 +1,5 @@
-package com.alxgrk.bachelorarbeit.resources;
+package com.alxgrk.bachelorarbeit.resources.collection;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.shared.AbstractFragment;
-import com.google.common.collect.Collections2;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -21,17 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collection;
-
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ResourcesFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ResourcesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ResourcesFragment extends AbstractFragment {
 
     private static final String TAG = ResourcesFragment.class.getSimpleName();
@@ -62,24 +49,19 @@ public class ResourcesFragment extends AbstractFragment {
                 String nextHref, RestTemplate template, HttpEntity<?> requestEntity) {
             ResponseEntity<ResourceCollection> response = template.exchange(nextHref, HttpMethod.GET,
                     requestEntity, ResourceCollection.class);
-            Log.d(TAG, "resourcesAsyncTask: received response " + response);
+            Log.d(TAG, ResourcesAsyncTask.class.getSimpleName() + ": received response " + response);
             return response;
         }
 
         @Override
         protected void doAfter(ResourceCollection resources) {
-            Collection<ResourceUi.ResourceButton> resourcesButtons = Collections2.transform(resources.getLinks(),
-                    l -> new ResourceUi.ResourceButton(l.getRel(), l.getHref()));
+            ResourcesUi resourcesUi = new ResourcesUi(ResourcesFragment.this, resources.getLinks(),
+                    resources.getMembers());
 
-            ResourceUi resourceUi = ResourceUi.builder(ResourcesFragment.this)
-                    .resources(resources.getMembers())
-                    .buttonSpecs(resourcesButtons)
-                    .build();
-
-            for (ConstraintLayout resEntry : resourceUi.getUiResEntries()) {
+            for (ConstraintLayout resEntry : resourcesUi.getUiResEntries()) {
                 container.addView(resEntry);
             }
-            for (Button button : resourceUi.getUiButtons()) {
+            for (Button button : resourcesUi.getSharedUi().getButtons()) {
                 container.addView(button);
             }
 

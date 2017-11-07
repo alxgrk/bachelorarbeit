@@ -1,6 +1,5 @@
-package com.alxgrk.bachelorarbeit.organizations;
+package com.alxgrk.bachelorarbeit.organizations.collection;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
 import com.alxgrk.bachelorarbeit.shared.AbstractFragment;
-import com.google.common.collect.Collections2;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -21,17 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collection;
-
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OrganizationsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link OrganizationsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class OrganizationsFragment extends AbstractFragment {
 
     private static final String TAG = OrganizationsFragment.class.getSimpleName();
@@ -62,24 +49,19 @@ public class OrganizationsFragment extends AbstractFragment {
                 String nextHref, RestTemplate template, HttpEntity<?> requestEntity) {
             ResponseEntity<OrganizationCollection> response = template.exchange(nextHref, HttpMethod.GET,
                     requestEntity, OrganizationCollection.class);
-            Log.d(TAG, "orgsAsyncTask: received response " + response);
+            Log.d(TAG, OrganizationsAsyncTask.class.getSimpleName() + ": received response " + response);
             return response;
         }
 
         @Override
         protected void doAfter(OrganizationCollection orgs) {
-            Collection<OrganizationUi.OrganizationButton> orgButtons = Collections2.transform(orgs.getLinks(),
-                    l -> new OrganizationUi.OrganizationButton(l.getRel(), l.getHref()));
+            OrganizationsUi organizationsUi = new OrganizationsUi(OrganizationsFragment.this, orgs.getLinks(),
+                    orgs.getMembers());
 
-            OrganizationUi orgUi = OrganizationUi.builder(OrganizationsFragment.this)
-                    .organizations(orgs.getMembers())
-                    .buttonSpecs(orgButtons)
-                    .build();
-
-            for (ConstraintLayout orgEntry : orgUi.getUiOrgEntries()) {
+            for (ConstraintLayout orgEntry : organizationsUi.getUiOrgEntries()) {
                 container.addView(orgEntry);
             }
-            for (Button button : orgUi.getUiButtons()) {
+            for (Button button : organizationsUi.getSharedUi().getButtons()) {
                 container.addView(button);
             }
 
