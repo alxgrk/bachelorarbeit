@@ -56,41 +56,53 @@ class AccountsUi {
             TextView tvUsername = result.findViewById(R.id.tv_username);
             tvUsername.setText(acc.getUsername());
 
-            List<Link> selfLink = Lists.newArrayList(Collections2.filter(acc.getLinks(),
-                    l -> PossibleRelation.SELF.toString().equalsIgnoreCase(l.getRel())));
-            if (1 == selfLink.size()) {
-                ConstraintLayout entryLayout = result.findViewById(R.id.entry_account);
-                entryLayout.setOnClickListener(v -> {
-                    sharedUi.getFragment().switchTo(AccountFragment.newInstance(selfLink.get(0).getHref()));
-                });
-            }
+            processSelfLink(acc, result);
 
-            List<Link> orgLink = Lists.newArrayList(Collections2.filter(acc.getLinks(),
-                    l -> PossibleRelation.ORGANIZATION.toString().equalsIgnoreCase(l.getRel())));
-            if (1 == orgLink.size()) {
-                Button btnOrg = result.findViewById(R.id.btn_org);
-                btnOrg.setVisibility(View.VISIBLE);
-                btnOrg.setText(PossibleRelation.ORGANIZATION.toString());
-                btnOrg.setOnClickListener(v -> {
-                    sharedUi.getFragment().switchTo(OrganizationFragment.newInstance(orgLink.get(0).getHref()));
-                });
-            }
+            processOrgLink(acc, result);
 
-            List<Link> resourcesLink = Lists.newArrayList(Collections2.filter(acc.getLinks(),
-                    l -> PossibleRelation.RESOURCES.toString().equalsIgnoreCase(l.getRel())));
-            if (1 == resourcesLink.size()) {
-                Button btnRes = result.findViewById(R.id.btn_resources);
-                btnRes.setVisibility(View.VISIBLE);
-                btnRes.setText(PossibleRelation.RESOURCES.toString());
-                btnRes.setOnClickListener(v -> {
-                    sharedUi.getFragment().switchTo(ResourcesFragment.newInstance(resourcesLink.get(0).getHref()));
-                });
-            }
+            processResLink(acc, result);
 
             return result;
         };
 
         uiAccountEntries = Lists.newArrayList(Collections2.transform(accounts, accountEntryCreationFuntion));
+    }
+
+    private void processSelfLink(Account acc, ConstraintLayout result) {
+        List<Link> selfLink = Lists.newArrayList(Collections2.filter(acc.getLinks(),
+                l -> PossibleRelation.SELF.toString().equalsIgnoreCase(l.getRel())));
+        if (1 == selfLink.size()) {
+            ConstraintLayout entryLayout = result.findViewById(R.id.entry_account);
+            entryLayout.setOnClickListener(v -> {
+                sharedUi.getFragment().switchTo(AccountFragment.newInstance(selfLink.get(0).getHref()));
+            });
+        }
+    }
+
+    private void processOrgLink(Account acc, ConstraintLayout result) {
+        List<Link> orgLink = Lists.newArrayList(Collections2.filter(acc.getLinks(),
+                l -> PossibleRelation.ORGANIZATION.toString().equalsIgnoreCase(l.getRel())));
+        if (1 == orgLink.size()) {
+            Button btnOrg = result.findViewById(R.id.btn_org);
+            btnOrg.setVisibility(View.VISIBLE);
+            btnOrg.setText(PossibleRelation.ORGANIZATION.toString());
+            btnOrg.setOnClickListener(v -> {
+                sharedUi.getFragment().switchTo(OrganizationFragment.newInstance(orgLink.get(0).getHref()));
+            });
+        }
+    }
+
+    private void processResLink(Account acc, ConstraintLayout result) {
+        List<Link> resourcesLink = Lists.newArrayList(Collections2.filter(acc.getLinks(),
+                l -> PossibleRelation.RESOURCES.toString().equalsIgnoreCase(l.getRel())));
+        if (1 == resourcesLink.size()) {
+            Button btnRes = result.findViewById(R.id.btn_resources);
+            btnRes.setVisibility(View.VISIBLE);
+            btnRes.setText(PossibleRelation.RESOURCES.toString());
+            btnRes.setOnClickListener(v -> {
+                sharedUi.getFragment().switchTo(ResourcesFragment.newInstance(resourcesLink.get(0).getHref()));
+            });
+        }
     }
 
 }

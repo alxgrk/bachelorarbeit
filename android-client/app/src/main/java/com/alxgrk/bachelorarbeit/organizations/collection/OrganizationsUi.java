@@ -51,30 +51,38 @@ class OrganizationsUi {
             TextView tvName = result.findViewById(R.id.tv_name);
             tvName.setText(org.getName());
 
-            List<Link> selfLink = Lists.newArrayList(Collections2.filter(org.getLinks(),
-                    l -> PossibleRelation.SELF.toString().equalsIgnoreCase(l.getRel())));
-            if (1 == selfLink.size()) {
-                ConstraintLayout entryLayout = result.findViewById(R.id.entry_org);
-                entryLayout.setOnClickListener(v -> {
-                    sharedUi.getFragment().switchTo(OrganizationFragment.newInstance(selfLink.get(0).getHref()));
-                });
-            }
+            processSelfLink(org, result);
 
-            List<Link> membersLink = Lists.newArrayList(Collections2.filter(org.getLinks(),
-                    l -> PossibleRelation.MEMBERS.toString().equalsIgnoreCase(l.getRel())));
-            if (1 == membersLink.size()) {
-                Button btnOrg = result.findViewById(R.id.btn_members);
-                btnOrg.setVisibility(View.VISIBLE);
-                btnOrg.setText(PossibleRelation.MEMBERS.toString());
-                btnOrg.setOnClickListener(v -> {
-                    sharedUi.getFragment().switchTo(AccountsFragment.newInstance(membersLink.get(0).getHref()));
-                });
-            }
+            processMembersLink(org, result);
 
             return result;
         };
 
         uiOrgEntries = Lists.newArrayList(Collections2.transform(organizations, orgEntryCreationFuntion));
+    }
+
+    private void processSelfLink(Organization org, ConstraintLayout result) {
+        List<Link> selfLink = Lists.newArrayList(Collections2.filter(org.getLinks(),
+                l -> PossibleRelation.SELF.toString().equalsIgnoreCase(l.getRel())));
+        if (1 == selfLink.size()) {
+            ConstraintLayout entryLayout = result.findViewById(R.id.entry_org);
+            entryLayout.setOnClickListener(v -> {
+                sharedUi.getFragment().switchTo(OrganizationFragment.newInstance(selfLink.get(0).getHref()));
+            });
+        }
+    }
+
+    private void processMembersLink(Organization org, ConstraintLayout result) {
+        List<Link> membersLink = Lists.newArrayList(Collections2.filter(org.getLinks(),
+                l -> PossibleRelation.MEMBERS.toString().equalsIgnoreCase(l.getRel())));
+        if (1 == membersLink.size()) {
+            Button btnOrg = result.findViewById(R.id.btn_members);
+            btnOrg.setVisibility(View.VISIBLE);
+            btnOrg.setText(PossibleRelation.MEMBERS.toString());
+            btnOrg.setOnClickListener(v -> {
+                sharedUi.getFragment().switchTo(AccountsFragment.newInstance(membersLink.get(0).getHref()));
+            });
+        }
     }
 
 }

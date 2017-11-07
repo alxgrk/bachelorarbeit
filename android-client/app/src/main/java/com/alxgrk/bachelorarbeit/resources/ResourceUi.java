@@ -54,21 +54,25 @@ class ResourceUi {
                 bookingView.setBooked(res.getBookedTimeslots());
             }
 
-            List<Link> membersLink = Lists.newArrayList(Collections2.filter(res.getLinks(),
-                    l -> PossibleRelation.ADMINISTRATORS.toString().equalsIgnoreCase(l.getRel())));
-            if (1 == membersLink.size()) {
-                Button btnRes = result.findViewById(R.id.btn_admins);
-                btnRes.setVisibility(View.VISIBLE);
-                btnRes.setText(PossibleRelation.ADMINISTRATORS.toString());
-                btnRes.setOnClickListener(v -> {
-                    getSharedUi().getFragment().switchTo(AccountsFragment.newInstance(membersLink.get(0).getHref()));
-                });
-            }
+            processAdminsLink(res, result);
 
             return result;
         };
 
         uiResource = resEntryCreationFuntion.apply(resource);
+    }
+
+    private void processAdminsLink(Resource res, ConstraintLayout result) {
+        List<Link> administratorsLink = Lists.newArrayList(Collections2.filter(res.getLinks(),
+                l -> PossibleRelation.ADMINISTRATORS.toString().equalsIgnoreCase(l.getRel())));
+        if (1 == administratorsLink.size()) {
+            Button btnRes = result.findViewById(R.id.btn_admins);
+            btnRes.setVisibility(View.VISIBLE);
+            btnRes.setText(PossibleRelation.ADMINISTRATORS.toString());
+            btnRes.setOnClickListener(v -> {
+                getSharedUi().getFragment().switchTo(AccountsFragment.newInstance(administratorsLink.get(0).getHref()));
+            });
+        }
     }
 
 }
