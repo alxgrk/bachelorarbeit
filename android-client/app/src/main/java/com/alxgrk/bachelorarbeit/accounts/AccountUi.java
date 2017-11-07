@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
-import com.alxgrk.bachelorarbeit.organizations.Organization;
 import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
 import com.alxgrk.bachelorarbeit.resources.ResourcesFragment;
 import com.google.common.base.Function;

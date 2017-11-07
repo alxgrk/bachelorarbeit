@@ -28,6 +28,7 @@ import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
 import com.alxgrk.bachelorarbeit.resources.Resource;
 import com.alxgrk.bachelorarbeit.resources.ResourcesFragment;
 import com.alxgrk.bachelorarbeit.root.RootFragment;
+import com.alxgrk.bachelorarbeit.shared.AbstractFragment;
 import com.alxgrk.bachelorarbeit.shared.CreationFragment;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -36,10 +37,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        RootFragment.OnFragmentInteractionListener,
-        AccountsFragment.OnFragmentInteractionListener,
-        OrganizationsFragment.OnFragmentInteractionListener,
-        ResourcesFragment.OnFragmentInteractionListener,
+        AbstractFragment.OnFragmentInteractionListener,
         CreationFragment.OnFragmentInteractionListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -140,7 +138,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(RootFragment rootFragment, List<Link> links, boolean visible) {
+    public <F extends AbstractFragment> void onFragmentInteraction(F abstractFragment,
+                                                                   List<Link> links,
+                                                                   boolean visible) {
         List<Link> createLink = Lists.newArrayList(Collections2.filter(links, l ->
                 PossibleRelation.CREATE.toString().equalsIgnoreCase(l.getRel())));
 
@@ -148,59 +148,28 @@ public class MainActivity extends AppCompatActivity
         if (1 == createLink.size() && visible) {
             fab.setVisibility(View.VISIBLE);
             fab.setOnClickListener(view -> {
-                // not doing anything yet
+                if (abstractFragment instanceof RootFragment) {
+                    // not doing anything yet
+                } else {
+                    CreationFragment creationFragment = null;
+
+                    if (abstractFragment instanceof AccountsFragment) {
+                        creationFragment = CreationFragment.newInstance(createLink.get(0),
+                                HateoasMediaType.ACCOUNT_TYPE, Account.class, R.layout.add_screen_account);
+                    } else if (abstractFragment instanceof OrganizationsFragment) {
+                        creationFragment = CreationFragment.newInstance(createLink.get(0),
+                                HateoasMediaType.ORGANIZATION_TYPE, Organization.class, R.layout.add_screen_org);
+                    } else if (abstractFragment instanceof ResourcesFragment) {
+                        creationFragment = CreationFragment.newInstance(createLink.get(0),
+                                HateoasMediaType.RESOURCE_TYPE, Resource.class, R.layout.add_screen_resource);
+                    }
+
+                    transition(abstractFragment, creationFragment);
+                }
             });
         } else {
             fab.setVisibility(View.GONE);
             fab.setOnClickListener(null);
-        }
-    }
-
-    @Override
-    public void onFragmentInteraction(final AccountsFragment accountsFragment, List<Link> links) {
-        List<Link> createLink = Lists.newArrayList(Collections2.filter(links, l ->
-                PossibleRelation.CREATE.toString().equalsIgnoreCase(l.getRel())));
-
-        if (1 == createLink.size()) {
-            FloatingActionButton fab = findViewById(R.id.fab);
-            fab.setVisibility(View.VISIBLE);
-            fab.setOnClickListener(view -> {
-                CreationFragment fragment = CreationFragment.newInstance(createLink.get(0),
-                        HateoasMediaType.ACCOUNT_TYPE, Account.class, R.layout.add_screen_account);
-                transition(accountsFragment, fragment);
-            });
-        }
-    }
-
-    @Override
-    public void onFragmentInteraction(final OrganizationsFragment organizationsFragment, List<Link> links) {
-        List<Link> createLink = Lists.newArrayList(Collections2.filter(links, l ->
-                PossibleRelation.CREATE.toString().equalsIgnoreCase(l.getRel())));
-
-        if (1 == createLink.size()) {
-            FloatingActionButton fab = findViewById(R.id.fab);
-            fab.setVisibility(View.VISIBLE);
-            fab.setOnClickListener(view -> {
-                CreationFragment fragment = CreationFragment.newInstance(createLink.get(0),
-                        HateoasMediaType.ORGANIZATION_TYPE, Organization.class, R.layout.add_screen_org);
-                transition(organizationsFragment, fragment);
-            });
-        }
-    }
-
-    @Override
-    public void onFragmentInteraction(final ResourcesFragment resourcesFragment, List<Link> links) {
-        List<Link> createLink = Lists.newArrayList(Collections2.filter(links, l ->
-                PossibleRelation.CREATE.toString().equalsIgnoreCase(l.getRel())));
-
-        if (1 == createLink.size()) {
-            FloatingActionButton fab = findViewById(R.id.fab);
-            fab.setVisibility(View.VISIBLE);
-            fab.setOnClickListener(view -> {
-                CreationFragment fragment = CreationFragment.newInstance(createLink.get(0),
-                        HateoasMediaType.RESOURCE_TYPE, Resource.class, R.layout.add_screen_resource);
-                transition(resourcesFragment, fragment);
-            });
         }
     }
 

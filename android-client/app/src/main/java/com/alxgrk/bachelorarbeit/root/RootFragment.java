@@ -4,30 +4,26 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
-import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
-import com.alxgrk.bachelorarbeit.R;
 import com.alxgrk.bachelorarbeit.SettingsActivity;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
-import com.alxgrk.bachelorarbeit.hateoas.Link;
+import com.alxgrk.bachelorarbeit.shared.AbstractAsyncTask;
+import com.alxgrk.bachelorarbeit.shared.AbstractFragment;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
-import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -40,18 +36,12 @@ import static android.content.Context.MODE_PRIVATE;
  * Use the {@link RootFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RootFragment extends Fragment {
+public class RootFragment extends AbstractFragment {
 
     private static final String TAG = RootFragment.class.getSimpleName();
 
-    private OnFragmentInteractionListener mListener;
-
-    private LinearLayout rootContainer;
-
-    private ProgressBar progressBar;
-
     public RootFragment() {
-        // Required empty public constructor
+        super();
     }
 
     public static RootFragment newInstance() {
@@ -62,79 +52,38 @@ public class RootFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        new RootAsyncTask(this).execute();
+        SharedPreferences prefs = getContext()
+                .getSharedPreferences(SettingsActivity.SHARED_PREF_NAME, MODE_PRIVATE);
+        String entryUrl = prefs.getString(SettingsActivity.ENTRY_URL_KEY, SettingsActivity.ENTRY_URL_DEFAULT);
+
+        new RootAsyncTask().execute(entryUrl);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup viewContainer,
                              Bundle savedInstanceState) {
-        rootContainer = (LinearLayout) inflater.inflate(R.layout.fragment_root, container, false);
-
-        progressBar = container.findViewById(R.id.transition_progress);
-
-        return rootContainer;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+        return super.onCreateView(inflater, viewContainer, (AbstractAsyncTask) null);
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
 
-        if(null != mListener) {
+        if (null != mListener) {
             mListener.onFragmentInteraction(this, Lists.newArrayList(), !hidden);
         }
     }
 
-    <T extends Fragment> void switchTo(T fragment) {
-        progressBar.setVisibility(View.VISIBLE);
-
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(R.id.main_fragment_layout, fragment)
-                .addToBackStack(null)
-                .hide(this)
-                .commit();
-    }
-
-    public interface OnFragmentInteractionListener {
-        default void onFragmentInteraction(RootFragment rootFragment, List<Link> links) {
-            onFragmentInteraction(rootFragment, links, true);
-        }
-
-        void onFragmentInteraction(RootFragment rootFragment, List<Link> links, boolean visible);
-    }
-
     class RootAsyncTask extends AbstractAsyncTask<Root> {
 
-        private final String entryUrl;
-
-        RootAsyncTask(Fragment fragment) {
-            super(HateoasMediaType.ROOT_TYPE);
-
-            SharedPreferences prefs = fragment.getContext()
-                    .getSharedPreferences(SettingsActivity.SHARED_PREF_NAME, MODE_PRIVATE);
-            entryUrl = prefs.getString(SettingsActivity.ENTRY_URL_KEY, SettingsActivity.ENTRY_URL_DEFAULT);
+        @Override
+        protected MediaType getSupportedMediaType() {
+            return HateoasMediaType.ROOT_TYPE;
         }
 
         @Override
-        protected ResponseEntity<Root> doRequest(RestTemplate template, HttpEntity<?> requestEntity) {
-            ResponseEntity<Root> response = template.exchange(entryUrl, HttpMethod.GET, requestEntity, Root.class);
+        protected ResponseEntity<Root> doRequest(String nextHref, RestTemplate template, HttpEntity<?> requestEntity) {
+            ResponseEntity<Root> response = template.exchange(nextHref, HttpMethod.GET, requestEntity, Root.class);
             Log.d(TAG, "rootAsyncTask: received response " + response);
             return response;
         }
@@ -147,13 +96,13 @@ public class RootFragment extends Fragment {
             RootUi rootUi = RootUi.builder(RootFragment.this).buttonSpecs(rootButtons).build();
 
             for (Button button : rootUi.getUiButtons()) {
-                rootContainer.addView(button);
+                container.addView(button);
             }
 
             progressBar.setVisibility(View.GONE);
 
             if (mListener != null)
-                mListener.onFragmentInteraction(RootFragment.this, root.getLinks());
+                mListener.onFragmentInteraction(RootFragment.this, root.getLinks(), true);
         }
     }
 }
