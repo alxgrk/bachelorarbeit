@@ -33,5 +33,6 @@
     <string name="btn_create">create</string>
     <string name="available_from">available from</string>
     <string name="available_to">available to</string>
+    <string name="iv_delete_descr">clickable image view for deletion</string>
 
 </resources>

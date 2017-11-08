@@ -44,4 +44,19 @@
                         start      end
     -->
 
+
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="39dp"
+        android:layout_height="39dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/iv_delete_descr"
+        android:src="@android:drawable/ic_delete"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/btn_admins"
+        app:layout_constraintStart_toStartOf="@+id/btn_admins"
+        app:layout_constraintTop_toBottomOf="@id/btn_admins" />
+
 </android.support.constraint.ConstraintLayout>

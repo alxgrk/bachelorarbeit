@@ -32,12 +32,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.Calendar;
 
 import lombok.RequiredArgsConstructor;
@@ -282,7 +279,7 @@ public class CreationFragment extends Fragment implements DatePickerDialog.OnDat
                 MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
                 converter.setSupportedMediaTypes(Lists.newArrayList(contentType));
                 restTemplate.getMessageConverters().add(converter);
-                restTemplate.setErrorHandler(new CreationErrorHandler());
+                restTemplate.setErrorHandler(new AbstractAsyncTask.GenericErrorHandler());
 
                 String result = new ObjectMapper().writeValueAsString(body[0]);
                 Log.d(TAG, "Trying to post entity " + result);
@@ -320,19 +317,6 @@ public class CreationFragment extends Fragment implements DatePickerDialog.OnDat
             }
 
             goBack();
-        }
-    }
-
-    static class CreationErrorHandler implements ResponseErrorHandler {
-
-        @Override
-        public boolean hasError(ClientHttpResponse response) throws IOException {
-            return response.getStatusCode().value() >= 400;
-        }
-
-        @Override
-        public void handleError(ClientHttpResponse response) throws IOException {
-            Log.e(TAG, "An error occured: " + response.getHeaders() + response.getBody());
         }
     }
 }

@@ -84,7 +84,6 @@ public class AbstractFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        //mListener.onFragmentInteraction(this, Lists.newArrayList(), false);
         mListener = null;
     }
 
@@ -96,6 +95,16 @@ public class AbstractFragment extends Fragment {
                 .add(R.id.main_fragment_layout, fragment)
                 .addToBackStack(null)
                 .hide(this)
+                .commit();
+    }
+
+    public static void reload(Fragment fragment) {
+        FragmentManager fragmentManager = fragment.getFragmentManager();
+        fragmentManager.beginTransaction()
+                .remove(fragment)
+                .commitNowAllowingStateLoss();
+        fragmentManager.beginTransaction()
+                .add(R.id.main_fragment_layout, fragment)
                 .commit();
     }
 

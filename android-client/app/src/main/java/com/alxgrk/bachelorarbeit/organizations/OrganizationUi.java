@@ -1,15 +1,20 @@
 package com.alxgrk.bachelorarbeit.organizations;
 
+import android.app.Activity;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alxgrk.bachelorarbeit.R;
+import com.alxgrk.bachelorarbeit.accounts.Account;
 import com.alxgrk.bachelorarbeit.accounts.collection.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
 import com.alxgrk.bachelorarbeit.organizations.collection.OrganizationsFragment;
+import com.alxgrk.bachelorarbeit.shared.DeletionAsyncTask;
 import com.alxgrk.bachelorarbeit.shared.SharedUi;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -46,12 +51,28 @@ class OrganizationUi {
             TextView tvName = result.findViewById(R.id.tv_name);
             tvName.setText(org.getName());
 
+            processDeleteLink(org, result);
+
             processMembersLink(org, result);
 
             return result;
         };
 
         uiOrg = orgEntryCreationFuntion.apply(organization);
+    }
+
+    private void processDeleteLink(Organization organization, ConstraintLayout result) {
+        List<Link> deleteLink = Lists.newArrayList(Collections2.filter(organization.getLinks(),
+                l -> PossibleRelation.DELETE.toString().equalsIgnoreCase(l.getRel())));
+        if (1 == deleteLink.size()) {
+            ImageView ivDelete = result.findViewById(R.id.iv_delete);
+            ivDelete.setVisibility(View.VISIBLE);
+            ivDelete.setOnClickListener(v -> {
+                Activity fragmentActivity = sharedUi.getFragment().getActivity();
+                new DeletionAsyncTask(fragmentActivity, deleteLink.get(0).getHref()).execute();
+                fragmentActivity.onBackPressed();
+            });
+        }
     }
 
     private void processMembersLink(Organization org, ConstraintLayout result) {

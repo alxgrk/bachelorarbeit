@@ -1,14 +1,19 @@
 package com.alxgrk.bachelorarbeit.resources;
 
+import android.app.Activity;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alxgrk.bachelorarbeit.R;
+import com.alxgrk.bachelorarbeit.accounts.Account;
 import com.alxgrk.bachelorarbeit.accounts.collection.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
+import com.alxgrk.bachelorarbeit.shared.DeletionAsyncTask;
 import com.alxgrk.bachelorarbeit.shared.SharedUi;
 import com.alxgrk.bachelorarbeit.view.BookingView;
 import com.google.common.base.Function;
@@ -54,12 +59,28 @@ class ResourceUi {
                 bookingView.setBooked(res.getBookedTimeslots());
             }
 
+            processDeleteLink(res, result);
+
             processAdminsLink(res, result);
 
             return result;
         };
 
         uiResource = resEntryCreationFuntion.apply(resource);
+    }
+
+    private void processDeleteLink(Resource res, ConstraintLayout result) {
+        List<Link> deleteLink = Lists.newArrayList(Collections2.filter(res.getLinks(),
+                l -> PossibleRelation.DELETE.toString().equalsIgnoreCase(l.getRel())));
+        if (1 == deleteLink.size()) {
+            ImageView ivDelete = result.findViewById(R.id.iv_delete);
+            ivDelete.setVisibility(View.VISIBLE);
+            ivDelete.setOnClickListener(v -> {
+                Activity fragmentActivity = sharedUi.getFragment().getActivity();
+                new DeletionAsyncTask(fragmentActivity, deleteLink.get(0).getHref()).execute();
+                fragmentActivity.onBackPressed();
+            });
+        }
     }
 
     private void processAdminsLink(Resource res, ConstraintLayout result) {

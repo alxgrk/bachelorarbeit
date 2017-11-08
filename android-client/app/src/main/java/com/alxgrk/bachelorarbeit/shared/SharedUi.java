@@ -1,5 +1,6 @@
 package com.alxgrk.bachelorarbeit.shared;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import lombok.NonNull;
 import lombok.Value;
 
 import static com.alxgrk.bachelorarbeit.hateoas.PossibleRelation.SELF;
+import static com.alxgrk.bachelorarbeit.shared.AbstractFragment.reload;
 
 public class SharedUi {
 
@@ -48,15 +50,7 @@ public class SharedUi {
 
             switch (relation) {
                 case SELF:
-                    return createButtonWith("Reload", view -> {
-                        FragmentManager fragmentManager = fragment.getFragmentManager();
-                        fragmentManager.beginTransaction()
-                                .remove(fragment)
-                                .commitNowAllowingStateLoss();
-                        fragmentManager.beginTransaction()
-                                .add(R.id.main_fragment_layout, fragment)
-                                .commit();
-                    });
+                    return createButtonWith("Reload", view -> reload(fragment));
                 default:
                     // will never be passed due to filtering beforehand
                     return null;

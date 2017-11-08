@@ -9,9 +9,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -40,6 +43,8 @@ public abstract class AbstractAsyncTask<T> extends AsyncTask<Object, Void, T> {
             converter.setSupportedMediaTypes(supportedMediaTypes);
             restTemplate.getMessageConverters().add(converter);
 
+            restTemplate.setErrorHandler(new GenericErrorHandler());
+
             ResponseEntity<T> responseEntity = doRequest(nextHrefs[0].toString(), restTemplate, requestEntity);
 
             return responseEntity.getBody();
@@ -52,6 +57,7 @@ public abstract class AbstractAsyncTask<T> extends AsyncTask<Object, Void, T> {
 
     @Override
     protected void onPostExecute(T t) {
+        // TODO handle null result
         doAfter(t);
     }
 
@@ -78,4 +84,17 @@ public abstract class AbstractAsyncTask<T> extends AsyncTask<Object, Void, T> {
      * @param result the body of the response
      */
     protected abstract void doAfter(T result);
+
+    protected static class GenericErrorHandler implements ResponseErrorHandler {
+
+        @Override
+        public boolean hasError(ClientHttpResponse response) throws IOException {
+            return response.getStatusCode().value() >= 400;
+        }
+
+        @Override
+        public void handleError(ClientHttpResponse response) throws IOException {
+            Log.e(TAG, "An error occured: " + response.getHeaders() + response.getBody());
+        }
+    }
 }

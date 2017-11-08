@@ -1,8 +1,11 @@
 package com.alxgrk.bachelorarbeit.accounts;
 
+import android.app.Activity;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alxgrk.bachelorarbeit.R;
@@ -10,6 +13,8 @@ import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
 import com.alxgrk.bachelorarbeit.organizations.OrganizationFragment;
 import com.alxgrk.bachelorarbeit.resources.collection.ResourcesFragment;
+import com.alxgrk.bachelorarbeit.shared.AbstractFragment;
+import com.alxgrk.bachelorarbeit.shared.DeletionAsyncTask;
 import com.alxgrk.bachelorarbeit.shared.SharedUi;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -52,6 +57,8 @@ class AccountUi {
             TextView tvUsername = result.findViewById(R.id.tv_username);
             tvUsername.setText(acc.getUsername());
 
+            processDeleteLink(acc, result);
+
             processOrgLink(acc, result);
 
             processResLink(acc, result);
@@ -60,6 +67,20 @@ class AccountUi {
         };
 
         uiAccount = accountEntryCreationFuntion.apply(account);
+    }
+
+    private void processDeleteLink(Account acc, ConstraintLayout result) {
+        List<Link> deleteLink = Lists.newArrayList(Collections2.filter(acc.getLinks(),
+                l -> PossibleRelation.DELETE.toString().equalsIgnoreCase(l.getRel())));
+        if (1 == deleteLink.size()) {
+            ImageView ivDelete = result.findViewById(R.id.iv_delete);
+            ivDelete.setVisibility(View.VISIBLE);
+            ivDelete.setOnClickListener(v -> {
+                Activity fragmentActivity = sharedUi.getFragment().getActivity();
+                new DeletionAsyncTask(fragmentActivity, deleteLink.get(0).getHref()).execute();
+                fragmentActivity.onBackPressed();
+            });
+        }
     }
 
     private void processOrgLink(Account acc, ConstraintLayout result) {
