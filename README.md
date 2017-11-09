@@ -1,15 +1,15 @@
 # bachelorarbeit
 A repository containing all code for my Bachelor's thesis.
 
-# Starting the server
-To start a server locally, simply download the released '\*.jar' and run `java -jar *.jar`. 
-If you want to start from code instead of downloading the '\*.jar', make sure to haven `Maven` installed and run `mvn clean package spring-boot:run` at the projects root.
+## Starting the server
+To start a server locally, simply download the released `*.jar` and run `java -jar *.jar`. 
+If you want to start from code instead of downloading the `*.jar`, make sure to haven `Maven` installed and run `mvn clean package spring-boot:run` at the projects root.
 
-# Starting the android app
-When you have downloaded the '\*.apk' from the release section in this repository, simply use your phone to install it there. Make sure to authorize foreign content in developer options!
+## Starting the android app
+When you have downloaded the `*.apk` from the release section in this repository, simply use your phone to install it there. Make sure to authorize foreign content in developer options!
 If you want to install it from code, have Android-Studio (or similar) installed, import the project and run `install` within it.
 
-# How to run against a local server
+## How to run against a local server
 Since only the final servers from the master branch are deployed to AWS ([Level1|http://alxgrk-bachelor-level1.eu-central-1.elasticbeanstalk.com/] | [Level2|http://alxgrk-bachelor-level2.eu-central-1.elasticbeanstalk.com/] | [Level3|http://alxgrk-bachelor-level3.eu-central-1.elasticbeanstalk.com/]), you need to start the server for a specific stage on a specific *change0\** branch locally.
 If you then want to connect to this server from the android app, you have to do the following:
 1. start the server (see [Starting the server|Starting the server])
