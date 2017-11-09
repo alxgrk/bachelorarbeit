@@ -10,11 +10,11 @@ When you have downloaded the `*.apk` from the release section in this repository
 If you want to install it from code, have Android-Studio (or similar) installed, import the project and run `install` within it.
 
 ## How to run against a local server
-Since only the final servers from the master branch are deployed to AWS ([Level1|http://alxgrk-bachelor-level1.eu-central-1.elasticbeanstalk.com/] | [Level2|http://alxgrk-bachelor-level2.eu-central-1.elasticbeanstalk.com/] | [Level3|http://alxgrk-bachelor-level3.eu-central-1.elasticbeanstalk.com/]), you need to start the server for a specific stage on a specific *change0\** branch locally.
+Since only the final servers from the master branch are deployed to AWS ([Level1](http://alxgrk-bachelor-level1.eu-central-1.elasticbeanstalk.com/) | [Level2](http://alxgrk-bachelor-level2.eu-central-1.elasticbeanstalk.com/) | [Level3](http://alxgrk-bachelor-level3.eu-central-1.elasticbeanstalk.com/)), you need to start the server for a specific stage on a specific *change0\** branch locally.
 If you then want to connect to this server from the android app, you have to do the following:
-1. start the server (see [Starting the server|Starting the server])
+1. start the server (see [Starting the server])
 2. connect you phone to the computer (via USB)
-3. activate *USB-Debugging* in the developer options of your phone (see [here|https://www.greenbot.com/article/2457986/android/how-to-enable-developer-options-on-your-android-phone-or-tablet.html]) and authorize the connected computer
+3. activate *USB-Debugging* in the developer options of your phone (see [here](https://www.greenbot.com/article/2457986/android/how-to-enable-developer-options-on-your-android-phone-or-tablet.html) and authorize the connected computer
 4. activate *USB-Tethering* in the network settings of your phone
 5. run `ifconfig` (on any Unix-based system) / `ipconfig` (on Windows)
 6. extract the connection starting with something similar to `enp0s20u3: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>` - this is your usb tethering connection
