@@ -20,7 +20,9 @@
     <!-- Example General settings -->
     <string name="pref_header_general">Einstellungen</string>
 
-    <string name="pref_title_display_name">Einstiegs-URL</string>
+    <string name="pref_title_display_name">Einstiegs-URL Level3</string>
+    <string name="pref_title_display_name_2">Einstiegs-URL Level2</string>
+    <string name="pref_title_display_name_1">Einstiegs-URL Level1</string>
 
     <!-- Creation, Updating, Deletion -->
     <string name="new_account_title">New Account</string>

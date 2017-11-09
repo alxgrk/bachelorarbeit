@@ -57,7 +57,6 @@ public abstract class AbstractAsyncTask<T> extends AsyncTask<Object, Void, T> {
 
     @Override
     protected void onPostExecute(T t) {
-        // TODO handle null result
         doAfter(t);
     }
 

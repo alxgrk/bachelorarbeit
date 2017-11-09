@@ -20,6 +20,15 @@ public class DeletionAsyncTask extends AsyncTask<Void, Void, ResponseEntity<?>> 
 
     private final String linkForDeletion;
 
+    //necessary for level 1
+    private HttpMethod deletionMethod = HttpMethod.DELETE;
+
+    public DeletionAsyncTask(Activity activity, String linkForDeletion, HttpMethod deletionMethod) {
+        this(activity, linkForDeletion);
+
+        this.deletionMethod = deletionMethod;
+    }
+
     @Override
     protected ResponseEntity<?> doInBackground(Void... avoid) {
         try {
@@ -28,7 +37,7 @@ public class DeletionAsyncTask extends AsyncTask<Void, Void, ResponseEntity<?>> 
 
             restTemplate.setErrorHandler(new AbstractAsyncTask.GenericErrorHandler());
 
-            ResponseEntity<?> response = restTemplate.exchange(linkForDeletion, HttpMethod.DELETE,
+            ResponseEntity<?> response = restTemplate.exchange(linkForDeletion, deletionMethod,
                     null, null);
 
             Log.d(TAG, "Delete on " + linkForDeletion

@@ -43,7 +43,7 @@ class AccountsUi {
     }
 
     private void createAccountEntries() {
-        Function<Account, ConstraintLayout> accountEntryCreationFuntion = acc -> {
+        Function<Account, ConstraintLayout> accountEntryCreationFunction = acc -> {
             ConstraintLayout result = (ConstraintLayout) sharedUi.getFragment().getLayoutInflater()
                     .inflate(R.layout.entry_account, null);
 
@@ -65,7 +65,7 @@ class AccountsUi {
             return result;
         };
 
-        uiAccountEntries = Lists.newArrayList(Collections2.transform(accounts, accountEntryCreationFuntion));
+        uiAccountEntries = Lists.newArrayList(Collections2.transform(accounts, accountEntryCreationFunction));
     }
 
     private void processSelfLink(Account acc, ConstraintLayout result) {

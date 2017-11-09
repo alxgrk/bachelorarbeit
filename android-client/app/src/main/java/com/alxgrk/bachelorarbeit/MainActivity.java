@@ -53,14 +53,34 @@ public class MainActivity extends AppCompatActivity
             ProgressBar progressBar = findViewById(R.id.transition_progress);
             progressBar.setVisibility(View.VISIBLE);
 
-            Fragment fragment = RootFragment.newInstance();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_fragment_layout, fragment)
-                    .commit();
+            startAsLevelThree();
         }
 
         setUpUiComponents();
+    }
+
+    private void startAsLevelOne() {
+        Fragment fragment = com.alxgrk.bachelorarbeit.level1.RootFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_layout, fragment)
+                .commit();
+    }
+
+    private void startAsLevelTwo() {
+        Fragment fragment = com.alxgrk.bachelorarbeit.level2.RootFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_layout, fragment)
+                .commit();
+    }
+
+    private void startAsLevelThree() {
+        Fragment fragment = RootFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_layout, fragment)
+                .commit();
     }
 
     private void setUpUiComponents() {
@@ -74,6 +94,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setCheckedItem(R.id.nav_level3);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -112,12 +133,13 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_level1) {
             Toast.makeText(this, "level one", Toast.LENGTH_SHORT).show();
+            startAsLevelOne();
         } else if (id == R.id.nav_level2) {
             Toast.makeText(this, "level two", Toast.LENGTH_SHORT).show();
-
+            startAsLevelTwo();
         } else if (id == R.id.nav_level3) {
             Toast.makeText(this, "level three", Toast.LENGTH_SHORT).show();
-
+            startAsLevelThree();
         } else if (id == R.id.nav_github) {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_LINK));
             startActivity(browserIntent);
@@ -153,13 +175,19 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     CreationFragment creationFragment = null;
 
-                    if (abstractFragment instanceof AccountsFragment) {
+                    if (abstractFragment instanceof AccountsFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level2.accounts.collection.AccountsFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level1.accounts.collection.AccountsFragment) {
                         creationFragment = CreationFragment.newInstance(createLink.get(0),
                                 HateoasMediaType.ACCOUNT_TYPE, Account.class, R.layout.add_screen_account);
-                    } else if (abstractFragment instanceof OrganizationsFragment) {
+                    } else if (abstractFragment instanceof OrganizationsFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level2.organizations.collection.OrganizationsFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level1.organizations.collection.OrganizationsFragment) {
                         creationFragment = CreationFragment.newInstance(createLink.get(0),
                                 HateoasMediaType.ORGANIZATION_TYPE, Organization.class, R.layout.add_screen_org);
-                    } else if (abstractFragment instanceof ResourcesFragment) {
+                    } else if (abstractFragment instanceof ResourcesFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level2.resources.collection.ResourcesFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level1.resources.collection.ResourcesFragment) {
                         creationFragment = CreationFragment.newInstance(createLink.get(0),
                                 HateoasMediaType.RESOURCE_TYPE, Resource.class, R.layout.add_screen_resource);
                     }

@@ -22,7 +22,6 @@ public class Account {
     @JsonProperty("_links")
     private List<Link> links;
 
-    @Setter(onMethod = @__(@JsonIgnore))
     private Integer id;
 
     private String username;
