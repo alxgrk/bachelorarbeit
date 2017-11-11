@@ -9,28 +9,28 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-public abstract class AbstractAsyncTask<T> extends AsyncTask<Void, Void, T> {
+public abstract class AbstractAsyncTask<T> extends AsyncTask<Object, Void, T> {
 
     private static final String TAG = AbstractAsyncTask.class.getSimpleName();
-
-    private final MediaType supportedMediaType;
 
     @Override
     protected void onPreExecute() {
     }
 
     @Override
-    protected T doInBackground(Void... params) {
+    protected T doInBackground(Object... nextHrefs) {
         try {
-            List<MediaType> supportedMediaTypes = Lists.newArrayList(supportedMediaType);
+            List<MediaType> supportedMediaTypes = Lists.newArrayList(getSupportedMediaType());
 
             // Add the accept header
             HttpHeaders requestHeaders = new HttpHeaders();
@@ -43,7 +43,9 @@ public abstract class AbstractAsyncTask<T> extends AsyncTask<Void, Void, T> {
             converter.setSupportedMediaTypes(supportedMediaTypes);
             restTemplate.getMessageConverters().add(converter);
 
-            ResponseEntity<T> responseEntity = doRequest(restTemplate, requestEntity);
+            restTemplate.setErrorHandler(new GenericErrorHandler());
+
+            ResponseEntity<T> responseEntity = doRequest(nextHrefs[0].toString(), restTemplate, requestEntity);
 
             return responseEntity.getBody();
         } catch (Exception e) {
@@ -59,13 +61,21 @@ public abstract class AbstractAsyncTask<T> extends AsyncTask<Void, Void, T> {
     }
 
     /**
+     * Override this to provide the MediaType used for interaction with the REST API.
+     *
+     * @return the MediaType used for requests
+     */
+    protected abstract MediaType getSupportedMediaType();
+
+    /**
      * Use this method to call whatever method on a pre-configure RestTemplate.
      *
      * @param template      the RestTemplate configured with a specific MessageConverter
      * @param requestEntity a HttpEntity configure with the SupportedMediaType accept header
      * @return the response
      */
-    protected abstract ResponseEntity<T> doRequest(RestTemplate template, HttpEntity<?> requestEntity);
+    protected abstract ResponseEntity<T> doRequest(String nextHref, RestTemplate template,
+                                                   HttpEntity<?> requestEntity);
 
     /**
      * Will be executed after the task finished. Parent thread is UI-Thread!
@@ -73,4 +83,17 @@ public abstract class AbstractAsyncTask<T> extends AsyncTask<Void, Void, T> {
      * @param result the body of the response
      */
     protected abstract void doAfter(T result);
+
+    protected static class GenericErrorHandler implements ResponseErrorHandler {
+
+        @Override
+        public boolean hasError(ClientHttpResponse response) throws IOException {
+            return response.getStatusCode().value() >= 400;
+        }
+
+        @Override
+        public void handleError(ClientHttpResponse response) throws IOException {
+            Log.e(TAG, "An error occured: " + response.getHeaders() + response.getBody());
+        }
+    }
 }

@@ -20,14 +20,21 @@
     <!-- Example General settings -->
     <string name="pref_header_general">Einstellungen</string>
 
-    <string name="pref_title_display_name">Einstiegs-URL</string>
+    <string name="pref_title_display_name">Einstiegs-URL Level3</string>
+    <string name="pref_title_display_name_2">Einstiegs-URL Level2</string>
+    <string name="pref_title_display_name_1">Einstiegs-URL Level1</string>
 
     <!-- Creation, Updating, Deletion -->
     <string name="new_account_title">New Account</string>
+    <string name="new_org_title">New Organization</string>
+    <string name="new_res_title">New Resource</string>
     <string name="surname">surname</string>
     <string name="name">name</string>
     <string name="username">username</string>
     <string name="password">password</string>
     <string name="btn_create">create</string>
+    <string name="available_from">available from</string>
+    <string name="available_to">available to</string>
+    <string name="iv_delete_descr">clickable image view for deletion</string>
 
 </resources>

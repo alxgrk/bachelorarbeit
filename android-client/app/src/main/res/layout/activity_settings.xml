@@ -24,4 +24,34 @@
         android:layout_height="wrap_content"
         android:inputType="textUri"/>
 
+    <TextView
+        android:id="@+id/pref_entry_url_label_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pref_title_display_name_2"
+        android:labelFor="@id/pref_entry_url_2"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:layout_margin="@dimen/fab_margin"/>
+
+    <EditText
+        android:id="@+id/pref_entry_url_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textUri"/>
+
+    <TextView
+        android:id="@+id/pref_entry_url_label_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pref_title_display_name_1"
+        android:labelFor="@id/pref_entry_url_1"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:layout_margin="@dimen/fab_margin"/>
+
+    <EditText
+        android:id="@+id/pref_entry_url_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textUri"/>
+
 </LinearLayout>
