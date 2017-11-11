@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/entry_org"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/background_entry">
@@ -27,5 +28,19 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="39dp"
+        android:layout_height="39dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/iv_delete_descr"
+        android:src="@android:drawable/ic_delete"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/btn_members"
+        app:layout_constraintStart_toStartOf="@+id/btn_members"
+        app:layout_constraintTop_toBottomOf="@id/btn_members" />
 
 </android.support.constraint.ConstraintLayout>

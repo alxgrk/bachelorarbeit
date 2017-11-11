@@ -19,13 +19,16 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.alxgrk.bachelorarbeit.accounts.Account;
-import com.alxgrk.bachelorarbeit.accounts.AccountsFragment;
+import com.alxgrk.bachelorarbeit.accounts.collection.AccountsFragment;
 import com.alxgrk.bachelorarbeit.hateoas.HateoasMediaType;
 import com.alxgrk.bachelorarbeit.hateoas.Link;
 import com.alxgrk.bachelorarbeit.hateoas.PossibleRelation;
-import com.alxgrk.bachelorarbeit.organizations.OrganizationsFragment;
-import com.alxgrk.bachelorarbeit.resources.ResourcesFragment;
+import com.alxgrk.bachelorarbeit.organizations.Organization;
+import com.alxgrk.bachelorarbeit.organizations.collection.OrganizationsFragment;
+import com.alxgrk.bachelorarbeit.resources.Resource;
+import com.alxgrk.bachelorarbeit.resources.collection.ResourcesFragment;
 import com.alxgrk.bachelorarbeit.root.RootFragment;
+import com.alxgrk.bachelorarbeit.shared.AbstractFragment;
 import com.alxgrk.bachelorarbeit.shared.CreationFragment;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -34,10 +37,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        RootFragment.OnFragmentInteractionListener,
-        AccountsFragment.OnFragmentInteractionListener,
-        OrganizationsFragment.OnFragmentInteractionListener,
-        ResourcesFragment.OnFragmentInteractionListener {
+        AbstractFragment.OnFragmentInteractionListener,
+        CreationFragment.OnFragmentInteractionListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -52,14 +53,34 @@ public class MainActivity extends AppCompatActivity
             ProgressBar progressBar = findViewById(R.id.transition_progress);
             progressBar.setVisibility(View.VISIBLE);
 
-            Fragment fragment = RootFragment.newInstance();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_fragment_layout, fragment)
-                    .commit();
+            startAsLevelThree();
         }
 
         setUpUiComponents();
+    }
+
+    private void startAsLevelOne() {
+        Fragment fragment = com.alxgrk.bachelorarbeit.level1.RootFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_layout, fragment)
+                .commit();
+    }
+
+    private void startAsLevelTwo() {
+        Fragment fragment = com.alxgrk.bachelorarbeit.level2.RootFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_layout, fragment)
+                .commit();
+    }
+
+    private void startAsLevelThree() {
+        Fragment fragment = RootFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_layout, fragment)
+                .commit();
     }
 
     private void setUpUiComponents() {
@@ -73,6 +94,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setCheckedItem(R.id.nav_level3);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -111,12 +133,13 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_level1) {
             Toast.makeText(this, "level one", Toast.LENGTH_SHORT).show();
+            startAsLevelOne();
         } else if (id == R.id.nav_level2) {
             Toast.makeText(this, "level two", Toast.LENGTH_SHORT).show();
-
+            startAsLevelTwo();
         } else if (id == R.id.nav_level3) {
             Toast.makeText(this, "level three", Toast.LENGTH_SHORT).show();
-
+            startAsLevelThree();
         } else if (id == R.id.nav_github) {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_LINK));
             startActivity(browserIntent);
@@ -137,33 +160,50 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(RootFragment rootFragment, List<Link> links) {
-        // yet nothing to do
-    }
-
-    @Override
-    public void onFragmentInteraction(AccountsFragment accountsFragment, List<Link> links) {
+    public <F extends AbstractFragment> void onFragmentInteraction(F abstractFragment,
+                                                                   List<Link> links,
+                                                                   boolean visible) {
         List<Link> createLink = Lists.newArrayList(Collections2.filter(links, l ->
                 PossibleRelation.CREATE.toString().equalsIgnoreCase(l.getRel())));
 
-        if (1 == createLink.size()) {
-            FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
+        if (1 == createLink.size() && visible) {
             fab.setVisibility(View.VISIBLE);
             fab.setOnClickListener(view -> {
-                CreationFragment fragment = CreationFragment.newInstance(createLink.get(0),
-                        HateoasMediaType.ACCOUNT_TYPE, Account.class, R.layout.add_screen_account);
-                transition(accountsFragment, fragment);
+                if (abstractFragment instanceof RootFragment) {
+                    // not doing anything yet
+                } else {
+                    CreationFragment creationFragment = null;
+
+                    if (abstractFragment instanceof AccountsFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level2.accounts.collection.AccountsFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level1.accounts.collection.AccountsFragment) {
+                        creationFragment = CreationFragment.newInstance(createLink.get(0),
+                                HateoasMediaType.ACCOUNT_TYPE, Account.class, R.layout.add_screen_account);
+                    } else if (abstractFragment instanceof OrganizationsFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level2.organizations.collection.OrganizationsFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level1.organizations.collection.OrganizationsFragment) {
+                        creationFragment = CreationFragment.newInstance(createLink.get(0),
+                                HateoasMediaType.ORGANIZATION_TYPE, Organization.class, R.layout.add_screen_org);
+                    } else if (abstractFragment instanceof ResourcesFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level2.resources.collection.ResourcesFragment
+                            || abstractFragment instanceof com.alxgrk.bachelorarbeit.level1.resources.collection.ResourcesFragment) {
+                        creationFragment = CreationFragment.newInstance(createLink.get(0),
+                                HateoasMediaType.RESOURCE_TYPE, Resource.class, R.layout.add_screen_resource);
+                    }
+
+                    transition(abstractFragment, creationFragment);
+                }
             });
+        } else {
+            fab.setVisibility(View.GONE);
+            fab.setOnClickListener(null);
         }
     }
 
     @Override
-    public void onFragmentInteraction(OrganizationsFragment organizationsFragment) {
-
-    }
-
-    @Override
-    public void onFragmentInteraction(ResourcesFragment resourcesFragment) {
-
+    public void onFragmentInteraction(CreationFragment creationFragment, boolean visible) {
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 }
